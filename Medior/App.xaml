@@ -1,0 +1,17 @@
+﻿<Application x:Class="Medior.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Medior"
+             xmlns:services="clr-namespace:Medior.Services"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary>
+                    <services:ViewModelLocator x:Key="ViewModelLocator" />
+                </ResourceDictionary>
+                <ResourceDictionary Source="/Styles.xaml"></ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

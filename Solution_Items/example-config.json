@@ -1,0 +1,31 @@
+{
+  "Jobs": [
+    {
+      "Name": "Photos",
+      "Operation": "Move",
+      "SourceDirectory": "D:\\Sync\\Camera\\",
+      "DestinationFile": "D:\\Sorted\\Photos\\{yyyy}\\{MM}\\{dd}\\{camera}\\{HH}{mm} - {filename}.{extension}",
+      "IncludeExtensions": [ "png", "jpg", "jpeg" ],
+      "ExcludeExtensions": [],
+      "OverwriteAction": "CreateUnique"
+    },
+    {
+      "Name": "Videos",
+      "Operation": "Move",
+      "SourceDirectory": "D:\\Sync\\Camera\\",
+      "DestinationFile": "D:\\Sorted\\Videos\\{yyyy}\\{MM}\\{dd}\\{camera}\\{HH}{mm} - {filename}.{extension}",
+      "IncludeExtensions": [ "mp4", "avi", "m4v", "mov" ],
+      "ExcludeExtensions": [],
+      "OverwriteAction": "Overwrite"
+    },
+    {
+      "Name": "Others",
+      "Operation": "Move",
+      "SourceDirectory": "D:\\Sync\\Camera\\",
+      "DestinationFile": "D:\\Sorted\\Files\\{yyyy}\\{MM}\\{dd}\\{HH}{mm} - {filename}.{extension}",
+      "IncludeExtensions": [ "*" ],
+      "ExcludeExtensions": [ "png", "jpg", "jpeg", "mp4", "avi", "m4v", "mov" ],
+      "OverwriteAction": "DoNothing"
+    }
+  ]
+}
