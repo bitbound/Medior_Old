@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Timers;
 using Timer = System.Timers.Timer;
 
-namespace Medior.Core.Utilities
+namespace Medior.Core.Shared.Utilities
 {
     public static class Debouncer
     {

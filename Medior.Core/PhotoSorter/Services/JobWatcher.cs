@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using Medior.Core.PhotoSorter.Models;
-using Medior.Core.Utilities;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -10,6 +9,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Medior.Core.Shared.Models;
+using Medior.Core.Shared.Utilities;
 
 namespace Medior.Core.PhotoSorter.Services
 {
