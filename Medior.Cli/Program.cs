@@ -15,7 +15,11 @@ namespace Medior.Cli
 
         public static async Task<int> Main(string[] args)
         {
-            var rootCommand = new RootCommand("Sort your photos into folders based on metadata.");
+            var rootCommand = new RootCommand(
+                "Provides command line access to some Medior functions.  See https://medior.app for details.\n\n" +
+                "Use \"medior-cli [command] --help\" for info on specific commands.");
+
+            var sortCommand = new Command("sort", "Sort your photos into folders based on metadata.");
 
             var configOption = new Option<string>(
                 new[] { "--config-path", "-c" },
@@ -29,27 +33,27 @@ namespace Medior.Cli
 
                 return "Config file could not be found at the given path.";
             });
-            rootCommand.AddOption(configOption);
+            sortCommand.AddOption(configOption);
 
             var jobOption = new Option<string>(
                 new[] { "--job-name", "-j" },
                 () => string.Empty,
                 "If specified, will only run the named job from the config, then exit.  Implies --once.");
-            rootCommand.AddOption(jobOption);
+            sortCommand.AddOption(jobOption);
 
             var onceOption = new Option<bool>(
                 new[] { "--once", "-o" },
                 () => false,
                 "If true, will run sort jobs immediately, then exit.  If false, will run jobs, then block and monitor for changes in each job's source folder.");
-            rootCommand.AddOption(onceOption);
+            sortCommand.AddOption(onceOption);
 
             var dryRunOption = new Option<bool>(
                 new[] { "--dry-run", "-d" },
                 () => false,
                 "If true, no file operations will actually be executed.");
-            rootCommand.AddOption(dryRunOption);
+            sortCommand.AddOption(dryRunOption);
 
-            rootCommand.Handler = CommandHandler.Create((string configPath, string jobName, bool once, bool dryRun) =>
+            sortCommand.Handler = CommandHandler.Create((string configPath, string jobName, bool once, bool dryRun) =>
             {
                 using var host = Host.CreateDefaultBuilder(args)
                     .UseWindowsService(options =>
@@ -89,6 +93,8 @@ namespace Medior.Cli
 
                 return host.RunAsync();
             });
+
+            rootCommand.AddCommand(sortCommand);
 
             return await rootCommand.InvokeAsync(args);
         }
