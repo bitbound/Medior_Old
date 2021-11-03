@@ -4,11 +4,23 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Medior.Pages"
+      xmlns:utilities="clr-namespace:Medior.Utilities"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="AboutPage">
 
     <Grid>
-        <TextBlock Text="About" />
+        <TextBlock>
+            <Run>Icons made by</Run>
+            <Hyperlink Command="{Binding Source={x:Static utilities:Hyperlink.OpenInBrowser}}" 
+                       CommandParameter="https://www.flaticon.com/authors/nikita-golubev">
+                Nikita Golubev
+            </Hyperlink>
+            <Run>from</Run>
+            <Hyperlink Command="{Binding Source={x:Static utilities:Hyperlink.OpenInBrowser}}" 
+                       CommandParameter="https://www.flaticon.com/">
+                www.flaticon.com/
+            </Hyperlink>
+        </TextBlock>
     </Grid>
 </Page>

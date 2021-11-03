@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Medior.Services;
+using System;
 using System.Windows;
 
 namespace Medior
@@ -8,5 +9,9 @@ namespace Medior
     /// </summary>
     public partial class App : Application
     {
+        private void Application_Startup(object sender, StartupEventArgs e)
+        {
+            ServiceContainer.Build();
+        }
     }
 }
