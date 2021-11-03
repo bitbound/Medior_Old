@@ -1,6 +1,7 @@
-﻿using Medior.Core.Models;
+﻿using Medior.Core.PhotoSorter.Models;
+using Medior.Core.Shared.Services;
 
-namespace Medior.Core.Services
+namespace Medior.Core.PhotoSorter.Services
 {
     public interface IReportWriter
     {

@@ -1,11 +1,11 @@
-﻿using Medior.Core.Enums;
+﻿using Medior.Core.PhotoSorter.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Medior.Core.Models
+namespace Medior.Core.PhotoSorter.Models
 {
     public class JobReport
     {

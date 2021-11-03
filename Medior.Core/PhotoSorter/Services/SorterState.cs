@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Medior.Core.Services
+namespace Medior.Core.PhotoSorter.Services
 {
-    public interface IGlobalState
+    public interface ISorterState
     {
         string ConfigPath { get; init; }
         bool DryRun { get; init; }
@@ -14,7 +14,7 @@ namespace Medior.Core.Services
         bool Once { get; init; }
     }
 
-    public class GlobalState : IGlobalState
+    public class SorterState : ISorterState
     {
         public string ConfigPath { get; init; } = string.Empty;
         public string JobName { get; init; } = string.Empty;

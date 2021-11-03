@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using Medior.Core.Models;
+using Medior.Core.PhotoSorter.Models;
 using Medior.Core.Utilities;
 using System;
 using System.Collections.Concurrent;
@@ -9,8 +9,9 @@ using System.Runtime.Serialization;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Medior.Core.Shared.Models;
 
-namespace Medior.Core.Services
+namespace Medior.Core.PhotoSorter.Services
 {
     public interface IJobWatcher
     {
@@ -67,7 +68,7 @@ namespace Medior.Core.Services
                 }
 
                 var configString = await File.ReadAllTextAsync(configPath);
-                var config = JsonSerializer.Deserialize<SortConfig>(configString);
+                var config = JsonSerializer.Deserialize<MediorConfig>(configString);
 
                 if (config is null)
                 {
@@ -76,7 +77,7 @@ namespace Medior.Core.Services
 
                 await CancelWatchers();
 
-                foreach (var job in config.Jobs)
+                foreach (var job in config.SortJobs)
                 {
                     var watcher = new FileSystemWatcher(job.SourceDirectory);
 

@@ -1,11 +1,7 @@
-using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using Medior.Core.Services;
-using Medior.Core.BaseTypes;
 using System;
 using System.IO;
-using System.Threading.Tasks;
+using Medior.Core.PhotoSorter.Services;
 
 namespace Medior.Tests
 {

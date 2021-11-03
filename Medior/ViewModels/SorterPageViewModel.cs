@@ -1,4 +1,4 @@
-﻿using Medior.Core.Services;
+﻿using Medior.Core.PhotoSorter.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;

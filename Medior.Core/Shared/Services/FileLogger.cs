@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 
-namespace Medior.Core.Services
+namespace Medior.Core.Shared.Services
 {
     public class FileLogger : ILogger
     {

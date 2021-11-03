@@ -10,13 +10,18 @@
     <Description>Sort photos and videos into folders based on metadata, such as date daken and camera model.</Description>
     <Copyright>Copyright 2021 Jared Goodwin</Copyright>
     <PackageProjectUrl>https://github.com/lucent-sea/Medior</PackageProjectUrl>
-    <PackageIcon>image-gallery-96.png</PackageIcon>
+    <PackageIcon>comet.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/lucent-sea/Medior</RepositoryUrl>
+    <ApplicationIcon>comet.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\Medior\Media\image-gallery-96.png">
+    <Content Include="comet.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\Medior\Media\comet.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>

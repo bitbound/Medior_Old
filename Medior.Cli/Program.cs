@@ -1,12 +1,13 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Medior.Core.Services;
+using Medior.Core.Shared.Services;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
 using System.IO;
 using System.Threading.Tasks;
+using Medior.Core.PhotoSorter.Services;
 
 namespace Medior.Cli
 {
@@ -70,7 +71,7 @@ namespace Medior.Cli
                         services.AddSingleton<IChrono, Chrono>();
                         services.AddScoped<IReportWriter, ReportWriter>();
                         services.AddScoped<IConfigService, ConfigService>();
-                        services.AddSingleton<IGlobalState>(new GlobalState()
+                        services.AddSingleton<ISorterState>(new SorterState()
                         {
                             ConfigPath = configPath,
                             DryRun = dryRun,

@@ -1,7 +1,7 @@
-﻿using Medior.Core.Enums;
+﻿using Medior.Core.PhotoSorter.Enums;
 using System.Text.Json.Serialization;
 
-namespace Medior.Core.Models
+namespace Medior.Core.PhotoSorter.Models
 {
     public class SortJob
     {

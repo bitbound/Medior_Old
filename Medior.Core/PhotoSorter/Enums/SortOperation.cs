@@ -1,4 +1,4 @@
-﻿namespace Medior.Core.Enums
+﻿namespace Medior.Core.PhotoSorter.Enums
 {
     public enum SortOperation
     {

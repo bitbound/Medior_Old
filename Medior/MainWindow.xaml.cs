@@ -1,4 +1,4 @@
-﻿using Medior.MsStore;
+﻿using Medior.Core.Shared.MsStore;
 using Medior.Pages;
 using System;
 using System.Windows;

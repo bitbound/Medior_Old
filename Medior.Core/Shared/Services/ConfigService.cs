@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using Medior.Core.Models;
+using Medior.Core.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,12 +7,12 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Medior.Core.Services
+namespace Medior.Core.Shared.Services
 {
     public interface IConfigService
     {
-        Task<SortConfig> GetConfig(string configPath);
-        Task<SortConfig> GetSortConfig();
+        Task<MediorConfig> GetConfig(string configPath);
+        Task<MediorConfig> GetSortConfig();
     }
 
     public class ConfigService : IConfigService
@@ -28,17 +28,10 @@ namespace Medior.Core.Services
         {
             get
             {
-                if (OperatingSystem.IsWindows())
-                {
-                    return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Medior", "Config.json");
-                }
-                else
-                {
-                    return Path.Combine(Path.GetTempPath(), "Medior", "Config.json");
-                }
+                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Medior", "Config.json");
             }
         }
-        public async Task<SortConfig> GetSortConfig()
+        public async Task<MediorConfig> GetSortConfig()
         {
             try
             {
@@ -48,10 +41,10 @@ namespace Medior.Core.Services
             {
                 _logger.LogError(ex, "Error getting sort config.");
             }
-            return new SortConfig();
+            return new MediorConfig();
         }
 
-        public async Task<SortConfig> GetConfig(string configPath)
+        public async Task<MediorConfig> GetConfig(string configPath)
         {
 
             if (string.IsNullOrWhiteSpace(configPath))
@@ -65,7 +58,7 @@ namespace Medior.Core.Services
             }
 
             var configString = await File.ReadAllTextAsync(configPath);
-            return JsonSerializer.Deserialize<SortConfig>(configString) ?? new();
+            return JsonSerializer.Deserialize<MediorConfig>(configString) ?? new();
         }
     }
 }

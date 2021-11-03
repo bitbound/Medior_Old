@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Medior.Core.Enums
+namespace Medior.Core.PhotoSorter.Enums
 {
     public enum OverwriteAction
     {

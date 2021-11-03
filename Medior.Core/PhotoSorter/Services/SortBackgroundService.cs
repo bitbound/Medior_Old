@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Medior.Core.Services
+namespace Medior.Core.PhotoSorter.Services
 {
     public class SortBackgroundService : BackgroundService
     {
@@ -9,7 +9,7 @@ namespace Medior.Core.Services
         private readonly IJobWatcher _jobWatcher;
         private readonly IHostApplicationLifetime _appLifetime;
         private readonly IReportWriter _reportWriter;
-        private readonly IGlobalState _globalState;
+        private readonly ISorterState _globalState;
         private readonly ILogger<SortBackgroundService> _logger;
 
         public SortBackgroundService(
@@ -17,7 +17,7 @@ namespace Medior.Core.Services
             IJobWatcher jobWatcher,
             IHostApplicationLifetime appLifetime,
             IReportWriter reportWriter,
-            IGlobalState globalState,
+            ISorterState globalState,
 
             ILogger<SortBackgroundService> logger)
         {

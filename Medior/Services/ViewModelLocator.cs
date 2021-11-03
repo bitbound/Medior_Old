@@ -1,8 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Medior.Core.Services;
+using Medior.Core.Shared.Services;
 using Medior.ViewModels;
 using System;
+using Medior.Core.PhotoSorter.Services;
 
 namespace Medior.Services
 {
@@ -22,7 +23,7 @@ namespace Medior.Services
             serviceCollection.AddScoped<IReportWriter, ReportWriter>();
             serviceCollection.AddScoped<IConfigService, ConfigService>();
             serviceCollection.AddSingleton<IChrono, Chrono>();
-            serviceCollection.AddSingleton<IGlobalState>(new GlobalState()
+            serviceCollection.AddSingleton<ISorterState>(new SorterState()
             {
                 ConfigPath = string.Empty,
                 DryRun = false,

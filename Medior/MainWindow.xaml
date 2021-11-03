@@ -8,7 +8,7 @@
         mc:Ignorable="d"
         DataContext="{Binding MainWindowViewModel, Source={StaticResource ViewModelLocator}}"
         Loaded="Window_Loaded"
-        Title="Medior" Height="450" Width="650" Icon="Media/image-gallery-96.png">
+        Title="Medior" Height="450" Width="650" Icon="/Media/comet.png">
 
     <Grid>
         <Grid.ColumnDefinitions>

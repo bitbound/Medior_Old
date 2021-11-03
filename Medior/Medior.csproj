@@ -10,9 +10,18 @@
     <Copyright>Copyright 2021 Jared Goodwin</Copyright>
     <Description>Sort photos and videos into folders based on metadata, such as date daken and camera model.</Description>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageIcon>image-gallery-96.png</PackageIcon>
+    <PackageIcon>comet.png</PackageIcon>
     <RepositoryUrl>https://github.com/lucent-sea/Medior</RepositoryUrl>
+    <ApplicationIcon>Media\comet.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Media\comet.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Media\comet.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0-rc.2.21480.5" />
@@ -23,11 +32,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Media\image-gallery-96.png" />
+    <Resource Include="Media\comet.ico" />
+    <Resource Include="Media\comet.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Media\image-gallery-96.png">
+    <None Update="Media\comet.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>

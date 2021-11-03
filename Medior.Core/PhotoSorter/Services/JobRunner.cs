@@ -1,9 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
-using Medior.Core.Enums;
-using Medior.Core.Models;
+using Medior.Core.PhotoSorter.Enums;
+using Medior.Core.PhotoSorter.Models;
 using System.Text.Json;
+using Medior.Core.Shared.Services;
 
-namespace Medior.Core.Services
+namespace Medior.Core.PhotoSorter.Services
 {
     public interface IJobRunner
     {
@@ -85,7 +86,7 @@ namespace Medior.Core.Services
         public async Task<JobReport> RunJob(string configPath, string jobName, bool dryRun)
         {
             var config = await _configService.GetConfig(configPath);
-            var job = config.Jobs?.FirstOrDefault(x =>
+            var job = config.SortJobs?.FirstOrDefault(x =>
                 x.Name?.Equals(jobName, StringComparison.OrdinalIgnoreCase) ?? false);
 
             if (job is null)
@@ -107,7 +108,7 @@ namespace Medior.Core.Services
             var config = await _configService.GetConfig(configPath);
             var reports = new List<JobReport>();
 
-            foreach (var job in config.Jobs)
+            foreach (var job in config.SortJobs)
             {
                 var report = await RunJob(job, dryRun);
                 reports.Add(report);

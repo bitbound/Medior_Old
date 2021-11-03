@@ -1,4 +1,4 @@
-﻿namespace Medior.Core.Services
+﻿namespace Medior.Core.Shared.Services
 {
     public interface IFileSystem
     {

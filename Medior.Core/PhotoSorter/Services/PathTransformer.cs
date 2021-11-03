@@ -1,4 +1,4 @@
-﻿namespace Medior.Core.Services
+﻿namespace Medior.Core.PhotoSorter.Services
 {
     public interface IPathTransformer
     {

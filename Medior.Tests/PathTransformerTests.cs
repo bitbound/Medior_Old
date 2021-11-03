@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Medior.Core.Services;
 using System;
 using System.IO;
+using Medior.Core.PhotoSorter.Services;
 
 namespace Medior.Tests
 {
