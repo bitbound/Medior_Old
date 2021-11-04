@@ -4,6 +4,7 @@ namespace Medior.Core.Shared.Models
 {
     public class MediorConfig
     {
-        public SortJob[] SortJobs { get; init; } = Array.Empty<SortJob>();
+        public List<SortJob> SortJobs { get; init; } = new();
+        public List<Guid> FavoriteModules { get; init; } = new();
     }
 }

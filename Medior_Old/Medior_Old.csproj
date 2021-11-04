@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows10.0.17763.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <Authors>Jared Goodwin</Authors>
+    <PackageProjectUrl>https://github.com/lucent-sea/Medior</PackageProjectUrl>
+    <Copyright>Copyright 2021 Jared Goodwin</Copyright>
+    <Description>Sort photos and videos into folders based on metadata, such as date daken and camera model.</Description>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>comet.png</PackageIcon>
+    <RepositoryUrl>https://github.com/lucent-sea/Medior</RepositoryUrl>
+    <ApplicationIcon>Media\comet.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Medior %28Package%29\**" />
+    <EmbeddedResource Remove="Medior %28Package%29\**" />
+    <None Remove="Medior %28Package%29\**" />
+    <Page Remove="Medior %28Package%29\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MahApps.Metro" Version="2.4.9" />
+    <PackageReference Include="MahApps.Metro.IconPacks" Version="4.11.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0-rc.2.21480.5" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0-rc.2.21480.5" />
+    <PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.1.1" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.1056-prerelease" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Medior.Core\Medior.Core.csproj" />
+  </ItemGroup>
+
+</Project>
