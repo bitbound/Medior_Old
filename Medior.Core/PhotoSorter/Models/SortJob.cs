@@ -5,6 +5,8 @@ namespace Medior.Core.PhotoSorter.Models
 {
     public class SortJob
     {
+        public Guid Id { get; set; } = Guid.NewGuid();
+
         public string DestinationFile { get; set; } = string.Empty;
         public string NoExifDirectory { get; set; } = string.Empty;
 

@@ -47,7 +47,7 @@ namespace Medior
 
             InitializeComponent();
 
-            this.SetWindowSize(1000, 700);
+            //this.SetWindowSize(1000, 700);
         }
 
         public MainWindowViewModel ViewModel { get; } = Ioc.Default.GetRequiredService<MainWindowViewModel>();

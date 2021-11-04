@@ -23,14 +23,11 @@
 
             <ComboBox Grid.Column="0" 
                       PlaceholderText="Select or create a sort job"
+                      DisplayMemberPath="Name"
+                      SelectedValuePath="Id"
                       ItemsSource="{x:Bind ViewModel.SortJobs}"
                       SelectedItem="{x:Bind ViewModel.SelectedJob, Mode=TwoWay}"
                       VerticalAlignment="Center">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate x:DataType="psModels:SortJob">
-                        <ComboBoxItem Content="{x:Bind Name}"></ComboBoxItem>
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
             </ComboBox>
 
             <CommandBar Grid.Column="1" DefaultLabelPosition="Right" HorizontalAlignment="Left">
