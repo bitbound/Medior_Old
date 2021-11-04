@@ -1,4 +1,5 @@
 ﻿using Medior.Core.Shared.MsStore;
+using Medior.Extensions;
 using Medior.Pages;
 using Medior.Services;
 using Medior.ViewModels;
@@ -39,9 +40,8 @@ namespace Medior
 
             InitializeComponent();
 
-            var hwnd = WindowNative.GetWindowHandle(this);
-            var context = StoreContext.GetDefault();
-            InitializeWithWindow.Initialize(context, hwnd);
+            this.SetStoreContext();
+            this.SetWindowSize(800, 600);
 
             _ = ViewModel?.LoadFavorites();
         }
@@ -53,8 +53,10 @@ namespace Medior
 
         private void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
+            
             if (args.IsSettingsSelected)
             {
+                sender.Header = "Settings";
                 NavigationFrame.Navigate(typeof(SettingsPage));
             }
             else
@@ -65,7 +67,7 @@ namespace Medior
                 {
                     return;
                 }
-                this.
+                
                 var selectedItemTag = (string)selectedItem.Tag;
                 sender.Header = selectedItemTag;
                 var pageName = $"Medior.Pages.{selectedItemTag}";
@@ -75,6 +77,11 @@ namespace Medior
                     NavigationFrame.Navigate(pageType);
                 }
             }
+        }
+
+        private void CtrlF_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+        {
+            AppModuleSearch.Focus(FocusState.Programmatic);
         }
     }
 }

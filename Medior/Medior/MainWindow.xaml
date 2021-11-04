@@ -20,8 +20,18 @@
 
         <NavigationView Grid.Row="1" 
                         IsBackButtonVisible="Collapsed" 
-                        Header="Modules"
                         SelectionChanged="NavigationView_SelectionChanged">
+
+            <NavigationView.AutoSuggestBox>
+                <AutoSuggestBox x:Name="AppModuleSearch" 
+                                PlaceholderText="Search" 
+                                QueryIcon="Find">
+                    <AutoSuggestBox.KeyboardAccelerators>
+                        <KeyboardAccelerator Modifiers="Control" Key="F" Invoked="CtrlF_Invoked" />
+                    </AutoSuggestBox.KeyboardAccelerators>
+                </AutoSuggestBox>
+            </NavigationView.AutoSuggestBox>
+            
             <NavigationView.MenuItems>
                 <NavigationViewItem Icon="BrowsePhotos" Content="Photo Sorter" Tag="PhotoSorterPage" />
             </NavigationView.MenuItems>

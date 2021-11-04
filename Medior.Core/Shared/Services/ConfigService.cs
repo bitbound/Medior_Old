@@ -22,7 +22,7 @@ namespace Medior.Core.Shared.Services
         {
             FavoriteModules = new()
             {
-                ModuleIds.PhotoSorter
+                AppModuleIds.PhotoSorter
             }
         };
 
