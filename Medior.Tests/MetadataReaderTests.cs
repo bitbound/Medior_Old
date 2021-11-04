@@ -2,19 +2,22 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
 using Medior.Core.PhotoSorter.Services;
+using Medior.Core.Shared.Services;
 
 namespace Medior.Tests
 {
     [TestClass]
     public class MetadataReaderTests
     {
-        private MetadataReader _metadataReader = new();
+        private static FileSystem _fileSystemImpl = new FileSystem();
+
+        private MetadataReader _metadataReader = new(_fileSystemImpl);
 
 
         [TestInitialize]
         public void Init()
         {
-            _metadataReader = new MetadataReader();
+            _metadataReader = new MetadataReader(_fileSystemImpl);
         }
 
         [TestMethod]

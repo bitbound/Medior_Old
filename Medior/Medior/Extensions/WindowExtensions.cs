@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Graphics.Capture;
 using Windows.Services.Store;
 using WinRT.Interop;
 
@@ -30,6 +31,14 @@ namespace Medior.Extensions
             var hwnd = WindowNative.GetWindowHandle(self);
             var context = StoreContext.GetDefault();
             InitializeWithWindow.Initialize(context, hwnd);
+        }
+
+        public static async Task<GraphicsCaptureItem> InvokeGraphicsCapturePicker(this Window self)
+        {
+            var hwnd = WindowNative.GetWindowHandle(self);
+            var picker = new GraphicsCapturePicker();
+            InitializeWithWindow.Initialize(picker, hwnd);
+            return await picker.PickSingleItemAsync();
         }
     }
 }

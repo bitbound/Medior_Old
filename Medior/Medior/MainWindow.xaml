@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Medior"
+    xmlns:models="using:Medior.Models"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -19,7 +20,9 @@
         </StackPanel>
 
         <NavigationView Grid.Row="1" 
-                        IsBackButtonVisible="Collapsed" 
+                        IsBackButtonVisible="Collapsed"
+                        MenuItemsSource="{x:Bind ViewModel.AppModulesMain}"
+                        FooterMenuItemsSource="{x:Bind ViewModel.AppModulesFooter}"
                         SelectionChanged="NavigationView_SelectionChanged">
 
             <NavigationView.AutoSuggestBox>
@@ -31,14 +34,20 @@
                     </AutoSuggestBox.KeyboardAccelerators>
                 </AutoSuggestBox>
             </NavigationView.AutoSuggestBox>
-            
-            <NavigationView.MenuItems>
-                <NavigationViewItem Icon="BrowsePhotos" Content="Photo Sorter" Tag="PhotoSorterPage" />
-            </NavigationView.MenuItems>
 
-            <NavigationView.FooterMenuItems>
-                <NavigationViewItem Icon="Help" Content="About" Tag="AboutPage" />
-            </NavigationView.FooterMenuItems>
+            <NavigationView.MenuItemTemplate>
+                <DataTemplate x:DataType="models:AppModule">
+                    <NavigationViewItem 
+                    Content="{x:Bind Label}"
+                    Tag="{x:Bind PageName}"
+                    ToolTipService.ToolTip="{x:Bind Tooltip}">
+                        <NavigationViewItem.Icon>
+                            <SymbolIcon Symbol="{x:Bind Icon}"></SymbolIcon>
+                        </NavigationViewItem.Icon>
+                    </NavigationViewItem>
+                </DataTemplate>
+            </NavigationView.MenuItemTemplate>
+ 
 
             <Frame x:Name="NavigationFrame"></Frame>
         </NavigationView>

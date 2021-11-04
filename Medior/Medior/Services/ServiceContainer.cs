@@ -26,6 +26,7 @@ namespace Medior.Services
             collection.AddScoped<IReportWriter, ReportWriter>();
             collection.AddScoped<IConfigService, ConfigService>();
             collection.AddScoped<IProcessEx, ProcessEx>();
+            collection.AddSingleton<IAppModuleStore, AppModuleStore>();
             collection.AddSingleton<IChrono, Chrono>();
             collection.AddSingleton<ISorterState>(new SorterState()
             {
@@ -36,7 +37,7 @@ namespace Medior.Services
             });
 
             collection.AddScoped<MainWindowViewModel>();
-            collection.AddScoped<SorterPageViewModel>();
+            collection.AddScoped<PhotoSorterViewModel>();
 
             var serviceProvider = collection.BuildServiceProvider();
 

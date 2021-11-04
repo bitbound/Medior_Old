@@ -1,5 +1,6 @@
 ﻿using Medior.Core.Shared.MsStore;
 using Medior.Extensions;
+using Medior.Models;
 using Medior.Pages;
 using Medior.Services;
 using Medior.ViewModels;
@@ -14,9 +15,11 @@ using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Runtime.Versioning;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Graphics.Capture;
@@ -37,19 +40,16 @@ namespace Medior
         public MainWindow()
         {
             Title = "Medior";
+            this.SetStoreContext();
+            this.SetWindowSize(1000, 700);
+            ViewModel.LoadMenuItems().GetAwaiter().GetResult();
 
             InitializeComponent();
-
-            this.SetStoreContext();
-            this.SetWindowSize(800, 600);
-
-            _ = ViewModel?.LoadFavorites();
         }
 
         public MainWindowViewModel ViewModel { get; } = Ioc.Default.GetRequiredService<MainWindowViewModel>();
 
         public UIElement CustomTitleBar => TitleBarElement;
-
 
         private void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
@@ -61,16 +61,15 @@ namespace Medior
             }
             else
             {
-                var selectedItem = (NavigationViewItem)args.SelectedItem;
+                var selectedItem = (AppModule)args.SelectedItem;
 
                 if (selectedItem is null)
                 {
                     return;
                 }
                 
-                var selectedItemTag = (string)selectedItem.Tag;
-                sender.Header = selectedItemTag;
-                var pageName = $"Medior.Pages.{selectedItemTag}";
+                sender.Header = selectedItem.Label;
+                var pageName = $"Medior.Pages.{selectedItem.PageName}";
                 Type? pageType = Type.GetType(pageName);
                 if (pageType is not null)
                 {

@@ -11,6 +11,6 @@ namespace Medior.Services
     public static class ViewModelLocator
     {
         public static MainWindowViewModel MainWindowViewModel => Ioc.Default.GetRequiredService<MainWindowViewModel>();
-        public static SorterPageViewModel SorterPageViewModel => Ioc.Default.GetRequiredService<SorterPageViewModel>();
+        public static PhotoSorterViewModel SorterPageViewModel => Ioc.Default.GetRequiredService<PhotoSorterViewModel>();
     }
 }

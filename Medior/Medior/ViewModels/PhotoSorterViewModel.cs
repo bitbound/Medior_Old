@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace Medior.ViewModels
 {
-    public class SorterPageViewModel : ObservableObject
+    public class PhotoSorterViewModel : ObservableObject
     {
         private readonly IJobRunner _jobRunner;
 
-        public SorterPageViewModel(IJobRunner jobRunner)
+        public PhotoSorterViewModel(IJobRunner jobRunner)
         {
             _jobRunner = jobRunner;
         }

@@ -2,22 +2,25 @@
 using System;
 using System.IO;
 using Medior.Core.PhotoSorter.Services;
+using Medior.Core.Shared.Services;
 
 namespace Medior.Tests
 {
     [TestClass]
     public class PathTransformerTests
     {
+        private static FileSystem _fileSystemImpl = new FileSystem();
+
         private readonly DateTime _dateTaken = new(2021, 9, 27, 7, 22, 00);
         private readonly string _exampleDestination = @"D:\Photos\Sorted\{yyyy}\{MM}\{dd}\{camera}\{HH}_{mm} - {filename}.{extension}";
         private readonly string _exampleSource = @"D:\Sync\Camera\WP_20151116_08_38_40_Pro.jpg";
         private readonly string _expectedTransform = @"D:\Photos\Sorted\2021\09\27\Nikon\07_22 - WP_20151116_08_38_40_Pro.jpg";
-        private PathTransformer _pathTransformer = new();
+        private PathTransformer _pathTransformer = new(_fileSystemImpl);
 
         [TestInitialize]
         public void Init()
         {
-            _pathTransformer = new PathTransformer();
+            _pathTransformer = new PathTransformer(_fileSystemImpl);
         }
 
         [TestMethod]
