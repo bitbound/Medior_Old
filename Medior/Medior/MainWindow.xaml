@@ -49,7 +49,7 @@
             </NavigationView.MenuItemTemplate>
  
 
-            <Frame x:Name="NavigationFrame"></Frame>
+            <Frame Margin="5" x:Name="NavigationFrame"></Frame>
         </NavigationView>
     </Grid>
 </Window>

@@ -41,10 +41,11 @@ namespace Medior
         {
             Title = "Medior";
             this.SetStoreContext();
-            this.SetWindowSize(1000, 700);
             ViewModel.LoadMenuItems().GetAwaiter().GetResult();
 
             InitializeComponent();
+
+            this.SetWindowSize(1000, 700);
         }
 
         public MainWindowViewModel ViewModel { get; } = Ioc.Default.GetRequiredService<MainWindowViewModel>();

@@ -35,6 +35,9 @@ namespace Medior.ViewModels
 
         public async Task LoadMenuItems()
         {
+            AppModulesMain.Clear();
+            AppModulesFooter.Clear();
+
             foreach (var mainModule in _appModuleStore.AllModules.Where(x => x.ModuleType == AppModuleType.Main))
             {
                 AppModulesMain.Add(mainModule);
