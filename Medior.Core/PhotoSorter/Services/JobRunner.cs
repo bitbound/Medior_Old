@@ -37,7 +37,6 @@ namespace Medior.Core.PhotoSorter.Services
             IConfigService configService,
             ILogger<JobRunner> logger)
         {
-            // TODO: Implement and use IFileSystem.
             _fileSystem = fileSystem;
             _metaDataReader = metaDataReader;
             _pathTransformer = pathTransformer;
@@ -160,7 +159,7 @@ namespace Medior.Core.PhotoSorter.Services
                     return Task.FromResult(operationResult);
                 }
 
-                if (File.Exists(destinationFile) && job.OverwriteAction == OverwriteAction.DoNothing)
+                if (_fileSystem.FileExists(destinationFile) && job.OverwriteAction == OverwriteAction.DoNothing)
                 {
                     _logger.LogWarning("Destination file exists.  Skipping.  Destination file: {destinationFile}", destinationFile);
                     operationResult = new OperationResult()
@@ -173,7 +172,7 @@ namespace Medior.Core.PhotoSorter.Services
                     return Task.FromResult(operationResult);
                 }
 
-                if (File.Exists(destinationFile) && job.OverwriteAction == OverwriteAction.CreateUnique)
+                if (_fileSystem.FileExists(destinationFile) && job.OverwriteAction == OverwriteAction.CreateUnique)
                 {
                     _logger.LogWarning("Destination file exists. Creating unique file name.");
                     destinationFile = _pathTransformer.GetUniqueFilePath(destinationFile);
@@ -195,10 +194,10 @@ namespace Medior.Core.PhotoSorter.Services
                 switch (job.Operation)
                 {
                     case SortOperation.Move:
-                        File.Move(file, destinationFile, true);
+                        _fileSystem.MoveFile(file, destinationFile, true);
                         break;
                     case SortOperation.Copy:
-                        File.Copy(file, destinationFile, true);
+                        _fileSystem.CopyFile(file, destinationFile, true);
                         break;
                     default:
                         break;

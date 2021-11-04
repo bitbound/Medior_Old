@@ -71,6 +71,7 @@ namespace Medior.Cli
                         services.AddSingleton<IChrono, Chrono>();
                         services.AddScoped<IReportWriter, ReportWriter>();
                         services.AddScoped<IConfigService, ConfigService>();
+                        services.AddScoped<IProcessEx, ProcessEx>();
                         services.AddSingleton<ISorterState>(new SorterState()
                         {
                             ConfigPath = configPath,

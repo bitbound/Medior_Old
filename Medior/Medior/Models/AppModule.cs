@@ -10,6 +10,6 @@ namespace Medior.Core.Shared.Models
     {
         public Guid Id { get; init; } = Guid.Empty;
         public string Label { get; init; } = string.Empty;
-        public string Tooltip { get; internal set; }
+        public string Tooltip { get; init; } = string.Empty;
     }
 }

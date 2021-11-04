@@ -3,6 +3,7 @@ using Medior.Core.BaseTypes;
 using MetadataExtractor;
 using MetadataExtractor.Formats.Exif;
 using MetadataExtractor.Formats.QuickTime;
+using Medior.Core.Shared.Services;
 
 namespace Medior.Core.PhotoSorter.Services
 {
@@ -14,6 +15,13 @@ namespace Medior.Core.PhotoSorter.Services
 
     public class MetadataReader : IMetadataReader
     {
+        private readonly IFileSystem _fileSystem;
+
+        public MetadataReader(IFileSystem fileSystem)
+        {
+            _fileSystem = fileSystem;
+        }
+
         /// <summary>
         /// Formats an EXIF DateTime to a format that can be parsed in .NET.
         /// </summary>
@@ -48,7 +56,7 @@ namespace Medior.Core.PhotoSorter.Services
         {
             try
             {
-                if (!File.Exists(filePath))
+                if (!_fileSystem.FileExists(filePath))
                 {
                     return Result.Fail<ExifData>("File could not be found.");
                 }

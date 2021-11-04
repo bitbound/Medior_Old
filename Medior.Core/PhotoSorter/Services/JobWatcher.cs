@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Medior.Core.Shared.Models;
 using Medior.Core.Shared.Utilities;
+using Medior.Core.Shared.Services;
 
 namespace Medior.Core.PhotoSorter.Services
 {
@@ -27,12 +28,18 @@ namespace Medior.Core.PhotoSorter.Services
 
         private readonly IJobRunner _jobRunner;
         private readonly IReportWriter _reportWriter;
+        private readonly IFileSystem _fileSystem;
         private readonly ILogger<JobWatcher> _logger;
 
-        public JobWatcher(IJobRunner jobRunner, IReportWriter reportWriter, ILogger<JobWatcher> logger)
+        public JobWatcher(
+            IJobRunner jobRunner, 
+            IReportWriter reportWriter,
+            IFileSystem fileSystem,
+            ILogger<JobWatcher> logger)
         {
             _jobRunner = jobRunner;
             _reportWriter = reportWriter;
+            _fileSystem = fileSystem;
             _logger = logger;
         }
 
@@ -67,7 +74,7 @@ namespace Medior.Core.PhotoSorter.Services
                     throw new ArgumentNullException(nameof(configPath));
                 }
 
-                var configString = await File.ReadAllTextAsync(configPath);
+                var configString = await _fileSystem.ReadAllTextAsync(configPath);
                 var config = JsonSerializer.Deserialize<MediorConfig>(configString);
 
                 if (config is null)

@@ -26,10 +26,12 @@ namespace Medior.Core.Shared.Services
             }
         };
 
+        private readonly IFileSystem _fileSystem;
         private readonly ILogger<ConfigService> _logger;
 
-        public ConfigService(ILogger<ConfigService> logger)
+        public ConfigService(IFileSystem fileSystem, ILogger<ConfigService> logger)
         {
+            _fileSystem = fileSystem;
             _logger = logger;
         }
 
@@ -54,12 +56,12 @@ namespace Medior.Core.Shared.Services
                     throw new ArgumentNullException(nameof(configPath));
                 }
 
-                if (!File.Exists(configPath))
+                if (!_fileSystem.FileExists(configPath))
                 {
                     return DefaultConfig;
                 }
 
-                var configString = await File.ReadAllTextAsync(configPath);
+                var configString = await _fileSystem.ReadAllTextAsync(configPath);
                 return JsonSerializer.Deserialize<MediorConfig>(configString) ?? new();
             }
             catch (Exception ex)

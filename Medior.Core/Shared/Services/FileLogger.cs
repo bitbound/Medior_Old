@@ -76,16 +76,16 @@ namespace Medior.Core.Shared.Services
             }
         }
 
-        private async Task CheckLogFileExists()
+        private Task CheckLogFileExists()
         {
-            if (!File.Exists(LogPath))
+            using var scope = _services.CreateScope();
+            var fileSystem = scope.ServiceProvider.GetRequiredService<IFileSystem>();
+
+            if (!fileSystem.FileExists(LogPath))
             {
-                File.Create(LogPath).Close();
-                if (OperatingSystem.IsLinux())
-                {
-                    await Process.Start("sudo", $"chmod 775 {LogPath}").WaitForExitAsync();
-                }
+                fileSystem.CreateFile(LogPath).Close();
             }
+            return Task.CompletedTask;
         }
 
         private string FormatLogEntry(LogLevel logLevel, string categoryName, string state, Exception? exception, string[] scopeStack)
@@ -108,7 +108,7 @@ namespace Medior.Core.Shared.Services
                         $"[{categoryName}]\t"
                 ) +
                 $"Message: {state}\t" +
-                $"Exception: {exMessage}{Environment.NewLine}";
+                $"Exception: {exMessage}";
         }
 
         private async void SinkTimer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
@@ -117,16 +117,19 @@ namespace Medior.Core.Shared.Services
             {
                 await _writeLock.WaitAsync();
 
+                using var scope = _services.CreateScope();
+                var fileSystem = scope.ServiceProvider.GetRequiredService<IFileSystem>();
+
                 await CheckLogFileExists();
 
-                var message = string.Empty;
+                var lines = new List<string>();
 
                 while (_logQueue.TryDequeue(out var entry))
                 {
-                    message += entry;
+                    lines.Add(entry);
                 }
-
-                File.AppendAllText(LogPath, message);
+                
+                await fileSystem.AppendAllLinesAsync(LogPath, lines);
             }
             catch (Exception ex)
             {

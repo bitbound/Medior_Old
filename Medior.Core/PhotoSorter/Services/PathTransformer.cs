@@ -1,4 +1,6 @@
-﻿namespace Medior.Core.PhotoSorter.Services
+﻿using Medior.Core.Shared.Services;
+
+namespace Medior.Core.PhotoSorter.Services
 {
     public interface IPathTransformer
     {
@@ -19,13 +21,20 @@
         public const string Month = "{MM}";
         public const string Year = "{yyyy}";
 
+        private readonly IFileSystem _fileSystem;
+
+        public PathTransformer(IFileSystem fileSystem)
+        {
+            _fileSystem = fileSystem;
+        }
+
         public string GetUniqueFilePath(string destinationFile)
         {
             var uniquePath = destinationFile;
 
             for (var i = 0; true; i++)
             {
-                if (!File.Exists(uniquePath))
+                if (!_fileSystem.FileExists(uniquePath))
                 {
                     break;
                 }

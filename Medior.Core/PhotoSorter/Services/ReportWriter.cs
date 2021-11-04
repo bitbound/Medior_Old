@@ -12,12 +12,14 @@ namespace Medior.Core.PhotoSorter.Services
     public class ReportWriter : IReportWriter
     {
         private readonly IChrono _chrono;
+        private readonly IFileSystem _fileSystem;
 
         private string LogPath => Path.Combine(Path.GetTempPath(), $"Medior_Report_{_chrono.Now:yyyy-MM-dd HH.mm.ss.fff}.log");
 
-        public ReportWriter(IChrono chrono)
+        public ReportWriter(IChrono chrono, IFileSystem fileSystem)
         {
             _chrono = chrono;
+            _fileSystem = fileSystem;
         }
 
         public async Task<string> WriteReports(IEnumerable<JobReport> reports)
@@ -124,7 +126,7 @@ namespace Medior.Core.PhotoSorter.Services
                     $"Post-Operation Path: {result.PostOperationPath}\t");
             }
 
-            await File.AppendAllLinesAsync(logPath, reportLines);
+            await _fileSystem.AppendAllLinesAsync(logPath, reportLines);
         }
     }
 }

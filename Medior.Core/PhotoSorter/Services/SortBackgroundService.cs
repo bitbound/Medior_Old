@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using Medior.Core.Shared.Services;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace Medior.Core.PhotoSorter.Services
@@ -10,14 +11,16 @@ namespace Medior.Core.PhotoSorter.Services
         private readonly IHostApplicationLifetime _appLifetime;
         private readonly IReportWriter _reportWriter;
         private readonly ISorterState _globalState;
+        private readonly IFileSystem _fileSystem;
         private readonly ILogger<SortBackgroundService> _logger;
 
         public SortBackgroundService(
-            IJobRunner jobRunner, 
+            IJobRunner jobRunner,
             IJobWatcher jobWatcher,
             IHostApplicationLifetime appLifetime,
             IReportWriter reportWriter,
-            ISorterState globalState,
+            IFileSystem fileSystem,
+            ISorterState sorterState,
 
             ILogger<SortBackgroundService> logger)
         {
@@ -25,7 +28,8 @@ namespace Medior.Core.PhotoSorter.Services
             _jobWatcher = jobWatcher;
             _appLifetime = appLifetime;
             _reportWriter = reportWriter;
-            _globalState = globalState;
+            _globalState = sorterState;
+            _fileSystem = fileSystem;
             _logger = logger;
         }
 
@@ -47,7 +51,7 @@ namespace Medior.Core.PhotoSorter.Services
 
                     configPath = Path.Combine(exeDir, "config.json");
 
-                    if (File.Exists(configPath))
+                    if (_fileSystem.FileExists(configPath))
                     {
                         _logger.LogInformation("Found config file: {configPath}.", configPath);
                     }
