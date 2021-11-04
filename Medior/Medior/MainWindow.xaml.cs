@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Runtime.Versioning;
 using Windows.Foundation;
@@ -32,13 +33,14 @@ using WinRT.Interop;
 
 namespace Medior
 {
-    /// <summary>
-    /// An empty window that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class MainWindow : Window
     {
+        public static MainWindow? Instance { get; private set; }
+
         public MainWindow()
         {
+            Instance = this;
+
             Title = "Medior";
             this.SetStoreContext();
             ViewModel.LoadMenuItems().GetAwaiter().GetResult();
@@ -82,6 +84,11 @@ namespace Medior
         private void CtrlF_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
         {
             AppModuleSearch.Focus(FocusState.Programmatic);
+        }
+
+        private void AppModuleSearch_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        {
+            ViewModel.FilterModules(sender.Text);
         }
     }
 }

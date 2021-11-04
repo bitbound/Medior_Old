@@ -12,19 +12,16 @@ namespace Medior.Core.Shared.Services
 {
     public interface IConfigService
     {
-        Task<MediorConfig> GetConfig(string configPath);
-        Task<MediorConfig> GetConfig();
+        MediorConfig Current { get; }
+        MediorConfig GetConfig();
+        MediorConfig GetConfig(string configPath);
+        void SaveConfig();
     }
 
     public class ConfigService : IConfigService
     {
-        public static MediorConfig DefaultConfig => new()
-        {
-            FavoriteModules = new()
-            {
-                AppModuleIds.PhotoSorter
-            }
-        };
+        private static MediorConfig? _config;
+
 
         private readonly IFileSystem _fileSystem;
         private readonly ILogger<ConfigService> _logger;
@@ -42,33 +39,64 @@ namespace Medior.Core.Shared.Services
                 return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Medior", "Config.json");
             }
         }
-        public async Task<MediorConfig> GetConfig()
+
+        public MediorConfig Current => _config ?? (_config = GetConfig());
+
+        public MediorConfig GetConfig()
         {
-            return await GetConfig(DefaultConfigPath);
+            return GetConfig(DefaultConfigPath);
         }
 
-        public async Task<MediorConfig> GetConfig(string configPath)
+        public MediorConfig GetConfig(string configPath)
         {
             try
             {
+                if (_config is not null)
+                {
+                    return _config;
+                }
+
                 if (string.IsNullOrWhiteSpace(configPath))
                 {
                     throw new ArgumentNullException(nameof(configPath));
                 }
 
-                if (!_fileSystem.FileExists(configPath))
+                if (_fileSystem.FileExists(configPath))
                 {
-                    return DefaultConfig;
+                    var configString = _fileSystem.ReadAllText(configPath);
+                    _config = JsonSerializer.Deserialize<MediorConfig>(configString);
                 }
-
-                var configString = await _fileSystem.ReadAllTextAsync(configPath);
-                return JsonSerializer.Deserialize<MediorConfig>(configString) ?? new();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error getting sort config.");
+                _logger.LogError(ex, "Error getting Medior config.");
             }
-            return DefaultConfig;
+            return _config ?? new();
+        }
+
+        public void SaveConfig()
+        {
+            try
+            {
+                if (_config is null)
+                {
+                    return;
+                }
+
+                var dirName = Path.GetDirectoryName(DefaultConfigPath);
+                if (dirName is null)
+                {
+                    throw new DirectoryNotFoundException(nameof(DefaultConfigPath));
+                }
+
+                _fileSystem.CreateDirectory(dirName);
+                var serializedConfig = JsonSerializer.Serialize(_config);
+                 _fileSystem.WriteAllText(DefaultConfigPath, serializedConfig);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving Medior config.");
+            }
         }
     }
 }

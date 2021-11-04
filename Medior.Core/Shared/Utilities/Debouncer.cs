@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
@@ -13,7 +14,7 @@ namespace Medior.Core.Shared.Utilities
     {
         private static readonly ConcurrentDictionary<object, Timer> _timers = new();
 
-        public static void Debounce(object key, TimeSpan wait, Action action)
+        public static void Debounce(TimeSpan wait, Action action, [CallerMemberName]string key = "")
         {
             if (_timers.TryRemove(key, out var timer))
             {
@@ -22,6 +23,7 @@ namespace Medior.Core.Shared.Utilities
             }
 
             timer = new Timer(wait.TotalMilliseconds);
+            timer.AutoReset = false;
             timer.Elapsed += (s, e) => action();
             _timers.TryAdd(key, timer);
             timer.Start();

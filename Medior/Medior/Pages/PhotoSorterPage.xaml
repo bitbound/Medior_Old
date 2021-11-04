@@ -5,10 +5,39 @@
     xmlns:local="using:Medior.Pages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:psModels="using:Medior.Core.PhotoSorter.Models"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid Padding="10">
-        <TextBlock>Photo Sorter</TextBlock>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+
+            <ComboBox Grid.Column="0" 
+                      PlaceholderText="Select or create a sort job"
+                      ItemsSource="{x:Bind ViewModel.SortJobs}"
+                      SelectedItem="{x:Bind ViewModel.SelectedJob, Mode=TwoWay}"
+                      VerticalAlignment="Center">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate x:DataType="psModels:SortJob">
+                        <ComboBoxItem Content="{x:Bind Name}"></ComboBoxItem>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <CommandBar Grid.Column="1" DefaultLabelPosition="Right" HorizontalAlignment="Left">
+                <AppBarButton Label="New" Icon="Add" Click="AddJobButton_Click" />
+                <AppBarButton Label="Rename" Icon="Rename" />
+                <AppBarButton Label="Delete" Icon="Delete" />
+            </CommandBar>
+        </Grid>
     </Grid>
 </Page>

@@ -40,5 +40,11 @@ namespace Medior.Extensions
             InitializeWithWindow.Initialize(picker, hwnd);
             return await picker.PickSingleItemAsync();
         }
+
+        public static void CoreInitialize(this Window self, object target)
+        {
+            var hwnd = WindowNative.GetWindowHandle(self);
+            InitializeWithWindow.Initialize(target, hwnd);
+        }
     }
 }

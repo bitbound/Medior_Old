@@ -21,13 +21,16 @@
 
         <NavigationView Grid.Row="1" 
                         IsBackButtonVisible="Collapsed"
+                        SelectedItem="{x:Bind ViewModel.SelectedModule, Mode=TwoWay}"
                         MenuItemsSource="{x:Bind ViewModel.AppModulesMain}"
                         FooterMenuItemsSource="{x:Bind ViewModel.AppModulesFooter}"
                         SelectionChanged="NavigationView_SelectionChanged">
 
             <NavigationView.AutoSuggestBox>
                 <AutoSuggestBox x:Name="AppModuleSearch" 
-                                PlaceholderText="Search" 
+                                PlaceholderText="Search"
+                                Text="{x:Bind ViewModel.SearchText}"
+                                TextChanged="AppModuleSearch_TextChanged"
                                 QueryIcon="Find">
                     <AutoSuggestBox.KeyboardAccelerators>
                         <KeyboardAccelerator Modifiers="Control" Key="F" Invoked="CtrlF_Invoked" />
@@ -38,9 +41,10 @@
             <NavigationView.MenuItemTemplate>
                 <DataTemplate x:DataType="models:AppModule">
                     <NavigationViewItem 
-                    Content="{x:Bind Label}"
-                    Tag="{x:Bind PageName}"
-                    ToolTipService.ToolTip="{x:Bind Tooltip}">
+                        Content="{x:Bind Label}"
+                        Visibility="{x:Bind IsShown}"
+                        Tag="{x:Bind PageName}"
+                        ToolTipService.ToolTip="{x:Bind Tooltip}">
                         <NavigationViewItem.Icon>
                             <SymbolIcon Symbol="{x:Bind Icon}"></SymbolIcon>
                         </NavigationViewItem.Icon>

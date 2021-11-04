@@ -121,7 +121,7 @@ namespace Medior.Core.PhotoSorter.Services
                 return;
             }
 
-            Debouncer.Debounce(sender, TimeSpan.FromSeconds(5), async () =>
+            Debouncer.Debounce(TimeSpan.FromSeconds(5), async () =>
             {
                 try
                 {

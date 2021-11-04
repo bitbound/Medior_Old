@@ -14,10 +14,18 @@ namespace Medior.Services
     public interface IAppModuleStore
     {
         AppModule[] AllModules { get; }
+        IEnumerable<AppModule> FooterModules { get; }
+        IEnumerable<AppModule> MainModules { get; }
     }
 
     public class AppModuleStore : IAppModuleStore
     {
+        public IEnumerable<AppModule> MainModules =>
+            AllModules.Where(x => x.ModuleType == AppModuleType.Main);
+
+        public IEnumerable<AppModule> FooterModules =>
+            AllModules.Where(x => x.ModuleType == AppModuleType.Footer);
+
         public AppModule[] AllModules { get; } = new AppModule[]
         {
             new()

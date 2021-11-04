@@ -84,7 +84,7 @@ namespace Medior.Core.PhotoSorter.Services
 
         public async Task<JobReport> RunJob(string configPath, string jobName, bool dryRun)
         {
-            var config = await _configService.GetConfig(configPath);
+            var config = _configService.GetConfig(configPath);
             var job = config.SortJobs?.FirstOrDefault(x =>
                 x.Name?.Equals(jobName, StringComparison.OrdinalIgnoreCase) ?? false);
 
@@ -104,7 +104,7 @@ namespace Medior.Core.PhotoSorter.Services
 
         public async Task<List<JobReport>> RunJobs(string configPath, bool dryRun)
         {
-            var config = await _configService.GetConfig(configPath);
+            var config = _configService.GetConfig(configPath);
             var reports = new List<JobReport>();
 
             foreach (var job in config.SortJobs)
