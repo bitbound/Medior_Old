@@ -9,9 +9,9 @@ namespace Medior.Core.PhotoSorter.Models
 {
     public class JobReport
     {
-        public string JobName { get; init; } = string.Empty;
-        public SortOperation Operation { get; init; }
-        public List<OperationResult> Results { get; init; } = new();
+        public string JobName { get; set; } = string.Empty;
+        public SortOperation Operation { get; set; }
+        public List<OperationResult> Results { get; set; } = new();
         public bool DryRun { get; internal set; }
     }
 }

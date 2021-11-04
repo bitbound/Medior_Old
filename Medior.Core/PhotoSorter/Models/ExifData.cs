@@ -2,7 +2,7 @@
 {
     public class ExifData
     {
-        public DateTime DateTaken { get; init; }
-        public string? CameraModel { get; init; }
+        public DateTime DateTaken { get; set; }
+        public string? CameraModel { get; set; }
     }
 }
