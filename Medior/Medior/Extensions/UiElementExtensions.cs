@@ -17,6 +17,19 @@ namespace Medior.Extensions
             dialog.XamlRoot = self.XamlRoot;
             dialog.Content = message;
             dialog.CloseButtonText = "Close";
+            dialog.DefaultButton = ContentDialogButton.Close;
+            return await dialog.ShowAsync();
+        }
+
+        public static async Task<ContentDialogResult> Confirm(this UIElement self, string title, string message)
+        {
+            var dialog = new ContentDialog();
+            dialog.Title = title;
+            dialog.XamlRoot = self.XamlRoot;
+            dialog.Content = message;
+            dialog.PrimaryButtonText = "Yes";
+            dialog.CloseButtonText = "No";
+            dialog.DefaultButton = ContentDialogButton.Primary;
             return await dialog.ShowAsync();
         }
 

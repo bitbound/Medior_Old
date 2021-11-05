@@ -45,14 +45,36 @@ namespace Medior.ViewModels
             _configService.SaveConfig();
 
             LoadSortJobs();
-            SelectedJob = SortJobs.LastOrDefault();
+            SelectedJob = SortJobs.FirstOrDefault(x => x.Id == sortJob.Id);
         }
+
+        public void RenameSortJob(string newName)
+        {
+            var modifiedJob = _configService.Current.SortJobs.Find(x => x.Id == SelectedJob?.Id);
+            if (modifiedJob is null)
+            {
+                return;
+            }
+
+            modifiedJob.Name = newName;
+            _configService.SaveConfig();
+            LoadSortJobs();
+            SelectedJob = SortJobs.FirstOrDefault(x => x.Id == modifiedJob.Id);
+        }
+
+        public void DeleteSortJob()
+        {
+            _configService.Current.SortJobs.RemoveAll(x => x.Id == SelectedJob?.Id);
+            _configService.SaveConfig();
+            LoadSortJobs();
+        }
+
 
         private void LoadSortJobs()
         {
             SortJobs.Clear();
 
-            foreach (var job in _configService.Current.SortJobs)
+            foreach (var job in _configService.Current.SortJobs.OrderBy(x => x.Name))
             {
                 SortJobs.Add(job);
             }

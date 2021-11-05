@@ -12,8 +12,10 @@
     <Grid Padding="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition />
         </Grid.RowDefinitions>
 
+        <!-- Profile Bar -->
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -32,9 +34,20 @@
 
             <CommandBar Grid.Column="1" DefaultLabelPosition="Right" HorizontalAlignment="Left">
                 <AppBarButton Label="New" Icon="Add" Click="AddJobButton_Click" />
-                <AppBarButton Label="Rename" Icon="Rename" />
-                <AppBarButton Label="Delete" Icon="Delete" />
+                <AppBarButton Label="Rename" Icon="Rename" Click="RenameButton_Click" />
+                <AppBarButton Label="Delete" Icon="Delete" Click="DeleteButton_Click" />
             </CommandBar>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <Grid ColumnSpacing="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                
+                
+            </Grid>
         </Grid>
     </Grid>
 </Page>

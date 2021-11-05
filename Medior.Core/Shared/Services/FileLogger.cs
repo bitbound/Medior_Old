@@ -26,7 +26,7 @@ namespace Medior.Core.Shared.Services
             get
             {
                 var chrono = _services.GetRequiredService<IChrono>();
-                return Path.Combine(Path.GetTempPath(), $"Medior_{chrono.Now:yyyy-MM-dd}.log");
+                return Path.Combine(Path.GetTempPath(), "Medior", $"Medior_{chrono.Now:yyyy-MM-dd}.log");
             }
         }
 
@@ -128,7 +128,14 @@ namespace Medior.Core.Shared.Services
                 {
                     lines.Add(entry);
                 }
-                
+
+                var dirPath = Path.GetDirectoryName(LogPath);
+                if (string.IsNullOrWhiteSpace(dirPath))
+                {
+                    return;
+                }
+
+                fileSystem.CreateDirectory(dirPath);
                 await fileSystem.AppendAllLinesAsync(LogPath, lines);
             }
             catch (Exception ex)

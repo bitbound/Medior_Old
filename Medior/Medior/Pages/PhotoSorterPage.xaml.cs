@@ -36,10 +36,28 @@ namespace Medior.Pages
 
         private async void AddJobButton_Click(object sender, RoutedEventArgs e)
         {
-            var (result, newName) = await this.Prompt("New Sort Job",
+            var (result, sortJobName) = await this.Prompt("New Sort Job",
                 "Enter a name for the new sort job.",
                 "Sort job name",
                 "Save");
+
+            if (result == ContentDialogResult.Primary)
+            {
+                if (string.IsNullOrWhiteSpace(sortJobName))
+                {
+                    await this.Alert("Name Required", "You must specify a name.");
+                    return;
+                }
+                ViewModel.CreateNewSortJob(sortJobName.Trim());
+            }
+        }
+
+        private async void RenameButton_Click(object sender, RoutedEventArgs e)
+        {
+            var (result, newName) = await this.Prompt("New Name",
+               "Enter a new name for this sort job.",
+               "New name for sort job",
+               "Save");
 
             if (result == ContentDialogResult.Primary)
             {
@@ -48,7 +66,18 @@ namespace Medior.Pages
                     await this.Alert("Name Required", "You must specify a name.");
                     return;
                 }
-                ViewModel.CreateNewSortJob(newName.Trim());
+                ViewModel.RenameSortJob(newName.Trim());
+            }
+        }
+
+        private async void DeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            var result = await this.Confirm("Confirm Delete",
+                "Are you sure you want to delete this sort job?");
+
+            if (result == ContentDialogResult.Primary)
+            {
+                ViewModel.DeleteSortJob();
             }
         }
     }
