@@ -94,8 +94,7 @@ namespace Medior.Core.PhotoSorter.Services
                 return new JobReport()
                 {
                     DryRun = dryRun,
-                    JobName = jobName,
-                    Operation = SortOperation.Unknown
+                    JobName = jobName
                 };
             }
 

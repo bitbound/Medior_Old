@@ -18,6 +18,8 @@ namespace Medior.Core.PhotoSorter.Services
         public const string Filename = "{filename}";
         public const string Hour = "{HH}";
         public const string Minute = "{mm}";
+        public const string Second = "{ss}";
+        public const string Millisecond = "{fff}";
         public const string Month = "{MM}";
         public const string Year = "{yyyy}";
 
@@ -75,6 +77,8 @@ namespace Medior.Core.PhotoSorter.Services
                 .Replace(Day, dateTaken.Day.ToString().PadLeft(2, '0'))
                 .Replace(Hour, dateTaken.Hour.ToString().PadLeft(2, '0'))
                 .Replace(Minute, dateTaken.Minute.ToString().PadLeft(2, '0'))
+                .Replace(Second, dateTaken.Second.ToString().PadLeft(2, '0'))
+                .Replace(Millisecond, dateTaken.Millisecond.ToString().PadLeft(3, '0'))
                 .Replace(Camera, camera?.Trim())
                 .Replace(Filename, Path.GetFileNameWithoutExtension(sourceFile))
                 .Replace(Extension, Path.GetExtension(sourceFile)[1..]);

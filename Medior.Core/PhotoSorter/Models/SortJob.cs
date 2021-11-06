@@ -1,9 +1,11 @@
-﻿using Medior.Core.PhotoSorter.Enums;
+﻿using Medior.Core.BaseTypes;
+using Medior.Core.Interfaces;
+using Medior.Core.PhotoSorter.Enums;
 using System.Text.Json.Serialization;
 
 namespace Medior.Core.PhotoSorter.Models
 {
-    public class SortJob
+    public class SortJob : IdModel
     {
         public Guid Id { get; set; } = Guid.NewGuid();
 

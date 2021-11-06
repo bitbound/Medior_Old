@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Medior.Core.BaseTypes
 {
-    public class ViewModelBase : ObservableObject
+    public abstract class ViewModelBase : ObservableObject
     {
         public void InvokePropertyChanged(string propertyName)
         {

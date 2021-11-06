@@ -20,6 +20,9 @@ namespace Medior.Core.Shared.Services
 
     public class ConfigService : IConfigService
     {
+        public static string DefaultConfigPath =>
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Medior", "Config.json");
+
         private static MediorConfig? _config;
 
 
@@ -30,14 +33,6 @@ namespace Medior.Core.Shared.Services
         {
             _fileSystem = fileSystem;
             _logger = logger;
-        }
-
-        private string DefaultConfigPath
-        {
-            get
-            {
-                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Medior", "Config.json");
-            }
         }
 
         public MediorConfig Current => _config ?? (_config = GetConfig());

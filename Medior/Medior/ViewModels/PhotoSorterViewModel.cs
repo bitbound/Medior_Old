@@ -8,18 +8,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Medior.Core.Extensions;
+using Windows.UI.Notifications;
 
 namespace Medior.ViewModels
 {
     public class PhotoSorterViewModel : ViewModelBase
     {
         private readonly IConfigService _configService;
+        private readonly IPathTransformer _pathTransformer;
         private readonly IJobRunner _jobRunner;
         private SortJob? _selectedJob;
 
-        public PhotoSorterViewModel(IConfigService configService, IJobRunner jobRunner)
+        public PhotoSorterViewModel(
+            IConfigService configService,
+            IPathTransformer pathTransformer,
+            IJobRunner jobRunner)
         {
             _configService = configService;
+            _pathTransformer = pathTransformer;
             _jobRunner = jobRunner;
             
             LoadSortJobs();
@@ -34,6 +41,7 @@ namespace Medior.ViewModels
             set => SetProperty(ref _selectedJob, value);
         }
 
+
         public void CreateNewSortJob(string sortJobName)
         {
             var sortJob = new SortJob()
@@ -46,6 +54,27 @@ namespace Medior.ViewModels
 
             LoadSortJobs();
             SelectedJob = SortJobs.FirstOrDefault(x => x.Id == sortJob.Id);
+        }
+
+        public void DeleteSortJob()
+        {
+            _configService.Current.SortJobs.RemoveAll(x => x.Id == SelectedJob?.Id);
+            _configService.SaveConfig();
+            LoadSortJobs();
+        }
+
+        public string GetDestinationTransform()
+        {
+            if (string.IsNullOrWhiteSpace(SelectedJob?.DestinationFile))
+            {
+                return string.Empty;
+            }
+
+            return _pathTransformer.TransformPath(
+                "Example.ext",
+                SelectedJob.DestinationFile,
+                DateTime.Now,
+                "Example Camera");
         }
 
         public void RenameSortJob(string newName)
@@ -62,11 +91,18 @@ namespace Medior.ViewModels
             SelectedJob = SortJobs.FirstOrDefault(x => x.Id == modifiedJob.Id);
         }
 
-        public void DeleteSortJob()
+        public void SaveJob()
         {
-            _configService.Current.SortJobs.RemoveAll(x => x.Id == SelectedJob?.Id);
-            _configService.SaveConfig();
-            LoadSortJobs();
+            if (_selectedJob is null)
+            {
+                return;
+            }
+
+            if (_configService.Current.SortJobs.TryReplace(_selectedJob))
+            {
+                _configService.SaveConfig();
+                
+            }
         }
 
 
@@ -79,5 +115,6 @@ namespace Medior.ViewModels
                 SortJobs.Add(job);
             }
         }
+
     }
 }
