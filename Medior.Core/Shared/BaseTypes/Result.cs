@@ -1,4 +1,4 @@
-﻿namespace Medior.Core.BaseTypes
+﻿namespace Medior.Core.Shared.BaseTypes
 {
     public class Result
     {

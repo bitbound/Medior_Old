@@ -1,4 +1,4 @@
-﻿using Medior.Core.BaseTypes;
+﻿using Medior.Core.Shared.BaseTypes;
 using Medior.Core.Shared.Models;
 using Medior.Core.Shared.Services;
 using Medior.Core.Shared.Utilities;

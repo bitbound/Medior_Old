@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Medior.Core.Interfaces
+namespace Medior.Core.Shared.Interfaces
 {
     public interface IdModel
     {

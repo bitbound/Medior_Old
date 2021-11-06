@@ -1,4 +1,4 @@
-﻿using Medior.Core.BaseTypes;
+﻿using Medior.Core.Shared.BaseTypes;
 using Medior.Core.PhotoSorter.Models;
 using Medior.Core.PhotoSorter.Services;
 using Medior.Core.Shared.Services;
@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Medior.Core.Extensions;
+using Medior.Core.Shared.Extensions;
 using Windows.UI.Notifications;
 
 namespace Medior.ViewModels

@@ -1,6 +1,6 @@
-﻿namespace Medior.Core.BaseTypes
+﻿namespace Medior.Core.Shared.BaseTypes
 {
-    public static class Extensions
+    public static class GenericExtensions
     {
         public static T Apply<T>(this T self, Action<T> action)
         {

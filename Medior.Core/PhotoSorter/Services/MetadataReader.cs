@@ -1,5 +1,5 @@
 ﻿using Medior.Core.PhotoSorter.Models;
-using Medior.Core.BaseTypes;
+using Medior.Core.Shared.BaseTypes;
 using MetadataExtractor;
 using MetadataExtractor.Formats.Exif;
 using MetadataExtractor.Formats.QuickTime;

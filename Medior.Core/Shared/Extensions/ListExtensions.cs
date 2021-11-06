@@ -1,11 +1,11 @@
-﻿using Medior.Core.Interfaces;
+﻿using Medior.Core.Shared.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Medior.Core.Extensions
+namespace Medior.Core.Shared.Extensions
 {
     public static class ListExtensions
     {

@@ -1,6 +1,5 @@
-﻿using Medior.Core.BaseTypes;
-using Medior.Core.Interfaces;
-using Medior.Core.PhotoSorter.Enums;
+﻿using Medior.Core.PhotoSorter.Enums;
+using Medior.Core.Shared.Interfaces;
 using System.Text.Json.Serialization;
 
 namespace Medior.Core.PhotoSorter.Models

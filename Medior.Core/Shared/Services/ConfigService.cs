@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Medior.Core.BaseTypes;
 
 namespace Medior.Core.Shared.Services
 {
