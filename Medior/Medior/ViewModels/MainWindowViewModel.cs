@@ -39,7 +39,7 @@ namespace Medior.ViewModels
         public object? SelectedModule { get; set; }
 
 
-        public async Task LoadMenuItems()
+        public void LoadMenuItems()
         {
             AppModulesMain.Clear();
             AppModulesFooter.Clear();

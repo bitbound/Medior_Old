@@ -43,7 +43,7 @@ namespace Medior
 
             Title = "Medior";
             this.SetStoreContext();
-            ViewModel.LoadMenuItems().GetAwaiter().GetResult();
+            ViewModel.LoadMenuItems();
 
             InitializeComponent();
 
