@@ -1,6 +1,7 @@
 ﻿using Medior.Extensions;
 using Medior.ViewModels;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
+using Microsoft.Toolkit.Mvvm.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -34,51 +35,59 @@ namespace Medior.Pages
 
         public PhotoSorterViewModel ViewModel { get; } = Ioc.Default.GetRequiredService<PhotoSorterViewModel>();
 
-        private async void AddJobButton_Click(object sender, RoutedEventArgs e)
-        {
-            var (result, sortJobName) = await this.Prompt("New Sort Job",
+        public AsyncRelayCommand NewJob => new(
+            async () =>
+            {
+                var (result, sortJobName) = await this.Prompt("New Sort Job",
                 "Enter a name for the new sort job.",
                 "Sort job name",
                 "Save");
 
-            if (result == ContentDialogResult.Primary)
-            {
-                if (string.IsNullOrWhiteSpace(sortJobName))
+                if (result == ContentDialogResult.Primary)
                 {
-                    await this.Alert("Name Required", "You must specify a name.");
-                    return;
+                    if (string.IsNullOrWhiteSpace(sortJobName))
+                    {
+                        await this.Alert("Name Required", "You must specify a name.");
+                        return;
+                    }
+                    ViewModel.CreateNewSortJob(sortJobName.Trim());
                 }
-                ViewModel.CreateNewSortJob(sortJobName.Trim());
             }
-        }
+        );
 
-        private async void RenameButton_Click(object sender, RoutedEventArgs e)
-        {
-            var (result, newName) = await this.Prompt("New Name",
-               "Enter a new name for this sort job.",
-               "New name for sort job",
-               "Save");
-
-            if (result == ContentDialogResult.Primary)
+        public AsyncRelayCommand DeleteJob => new(
+            async () =>
             {
-                if (string.IsNullOrWhiteSpace(newName))
+                var result = await this.Confirm("Confirm Delete",
+                   "Are you sure you want to delete this sort job?");
+
+                if (result == ContentDialogResult.Primary)
                 {
-                    await this.Alert("Name Required", "You must specify a name.");
-                    return;
+                    ViewModel.DeleteSortJob();
                 }
-                ViewModel.RenameSortJob(newName.Trim());
-            }
-        }
+            },
+            () => ViewModel.SelectedJob is not null
+        );
 
-        private async void DeleteButton_Click(object sender, RoutedEventArgs e)
-        {
-            var result = await this.Confirm("Confirm Delete",
-                "Are you sure you want to delete this sort job?");
-
-            if (result == ContentDialogResult.Primary)
+        public AsyncRelayCommand RenameJob => new(
+            async () =>
             {
-                ViewModel.DeleteSortJob();
-            }
-        }
+                var (result, newName) = await this.Prompt("New Name",
+                   "Enter a new name for this sort job.",
+                   "New name for sort job",
+                   "Save");
+
+                if (result == ContentDialogResult.Primary)
+                {
+                    if (string.IsNullOrWhiteSpace(newName))
+                    {
+                        await this.Alert("Name Required", "You must specify a name.");
+                        return;
+                    }
+                    ViewModel.RenameSortJob(newName.Trim());
+                }
+            },
+            () => ViewModel.SelectedJob is not null
+        );
     }
 }

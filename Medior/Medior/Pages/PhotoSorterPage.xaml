@@ -9,20 +9,9 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid Padding="10">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
+    <Grid Padding="10" Grid.RowDefinitions="Auto, *">
 
-        <!-- Profile Bar -->
-        <Grid Grid.Row="0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-
-
+        <Grid Grid.Row="0" Grid.ColumnDefinitions="Auto, *">
             <ComboBox Grid.Column="0" 
                       PlaceholderText="Select or create a sort job"
                       DisplayMemberPath="Name"
@@ -33,20 +22,27 @@
             </ComboBox>
 
             <CommandBar Grid.Column="1" DefaultLabelPosition="Right" HorizontalAlignment="Left">
-                <AppBarButton Label="New" Icon="Add" Click="AddJobButton_Click" />
-                <AppBarButton Label="Rename" Icon="Rename" Click="RenameButton_Click" />
-                <AppBarButton Label="Delete" Icon="Delete" Click="DeleteButton_Click" />
+                <AppBarButton Label="New" Icon="Add" Command="{x:Bind NewJob }"/>
+                <AppBarButton Label="Rename" Icon="Rename" Command="{x:Bind RenameJob}" />
+                <AppBarButton Label="Delete" Icon="Delete" Command="{x:Bind DeleteJob}" />
             </CommandBar>
         </Grid>
 
         <Grid Grid.Row="1">
-            <Grid ColumnSpacing="5">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                
-                
+            <Grid RowSpacing="10"
+                  ColumnSpacing="10"
+                  Grid.ColumnDefinitions="Auto, *" 
+                  Grid.RowDefinitions="Auto, Auto, Auto, Auto, *">
+
+                <TextBlock Grid.Row="0" Text="Source Directory" />
+                <TextBox Grid.Row="0" Grid.Column="1" 
+                         PlaceholderText="The source directory to search recursively for photos and videos"
+                         Text="{x:Bind ViewModel.SelectedJob.SourceDirectory}" />
+
+                <TextBlock Grid.Row="1" Text="Destination File Path" />
+                <TextBox Grid.Row="1" Grid.Column="1" 
+                         PlaceholderText="The destination path, after variables are transformed, where each file will be placed."
+                         Text="{x:Bind ViewModel.SelectedJob.DestinationFile}" />
             </Grid>
         </Grid>
     </Grid>

@@ -21,7 +21,7 @@ namespace Medior.ViewModels
         {
             _configService = configService;
             _jobRunner = jobRunner;
-
+            
             LoadSortJobs();
         }
 
