@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Medior.Core.Shared.Extensions;
 using Windows.UI.Notifications;
+using Microsoft.Extensions.Logging;
 
 namespace Medior.ViewModels
 {
@@ -18,16 +19,19 @@ namespace Medior.ViewModels
         private readonly IConfigService _configService;
         private readonly IPathTransformer _pathTransformer;
         private readonly IJobRunner _jobRunner;
+        private readonly ILogger<PhotoSorterViewModel> _logger;
         private SortJob? _selectedJob;
 
         public PhotoSorterViewModel(
             IConfigService configService,
             IPathTransformer pathTransformer,
-            IJobRunner jobRunner)
+            IJobRunner jobRunner,
+            ILogger<PhotoSorterViewModel> logger)
         {
             _configService = configService;
             _pathTransformer = pathTransformer;
             _jobRunner = jobRunner;
+            _logger = logger;
             
             LoadSortJobs();
         }
@@ -101,7 +105,6 @@ namespace Medior.ViewModels
             if (_configService.Current.SortJobs.TryReplace(_selectedJob))
             {
                 _configService.SaveConfig();
-                
             }
         }
 

@@ -76,17 +76,6 @@ namespace Medior.Core.Shared.Services
             }
         }
 
-        private Task CheckLogFileExists()
-        {
-            using var scope = _services.CreateScope();
-            var fileSystem = scope.ServiceProvider.GetRequiredService<IFileSystem>();
-
-            if (!fileSystem.FileExists(LogPath))
-            {
-                fileSystem.CreateFile(LogPath).Close();
-            }
-            return Task.CompletedTask;
-        }
 
         private string FormatLogEntry(LogLevel logLevel, string categoryName, string state, Exception? exception, string[] scopeStack)
         {
@@ -120,8 +109,6 @@ namespace Medior.Core.Shared.Services
                 using var scope = _services.CreateScope();
                 var fileSystem = scope.ServiceProvider.GetRequiredService<IFileSystem>();
 
-                await CheckLogFileExists();
-
                 var lines = new List<string>();
 
                 while (_logQueue.TryDequeue(out var entry))
@@ -135,7 +122,12 @@ namespace Medior.Core.Shared.Services
                     return;
                 }
 
-                fileSystem.CreateDirectory(dirPath);
+                if (!fileSystem.FileExists(LogPath))
+                {
+                    fileSystem.CreateDirectory(dirPath);
+                    fileSystem.CreateFile(LogPath).Close();
+                }
+
                 await fileSystem.AppendAllLinesAsync(LogPath, lines);
             }
             catch (Exception ex)

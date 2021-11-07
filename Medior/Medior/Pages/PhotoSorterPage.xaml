@@ -5,8 +5,8 @@
     xmlns:local="using:Medior.Pages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:psModels="using:Medior.Core.PhotoSorter.Models"
     mc:Ignorable="d"
+    x:DefaultBindMode="OneWay"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid Padding="10" Grid.RowDefinitions="Auto, *" RowSpacing="10">
@@ -89,7 +89,7 @@
                 <ComboBox Grid.Row="2" 
                           Grid.Column="1"
                           ItemsSource="{x:Bind GetSortOperations()}"
-                          SelectedValue="{x:Bind ViewModel.SelectedJob.Operation, Mode=TwoWay}" />
+                          SelectedItem="{x:Bind ViewModel.SelectedJob.Operation, Mode=TwoWay}" />
             </Grid>
         </Grid>
     </Grid>
