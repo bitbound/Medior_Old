@@ -9,13 +9,13 @@
   IgnorableNamespaces="uap rescap uap6 uap3">
 
   <Identity
-    Name="4de80286-001a-4e08-ba7e-a6bf3320303b"
-    Publisher="CN=trans"
+    Name="19621Translucency.Medior"
+    Publisher="CN=Translucency"
     Version="1.0.0.0" />
 
   <Properties>
     <DisplayName>Medior</DisplayName>
-    <PublisherDisplayName>Jared Goodwin</PublisherDisplayName>
+    <PublisherDisplayName>Translucency</PublisherDisplayName>
     <Logo>Images\StoreLogo.png</Logo>
   </Properties>
 

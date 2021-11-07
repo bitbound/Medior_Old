@@ -112,6 +112,7 @@ namespace Medior.ViewModels
         private void LoadSortJobs()
         {
             SortJobs.Clear();
+            SelectedJob = null;
 
             foreach (var job in _configService.Current.SortJobs.OrderBy(x => x.Name))
             {
