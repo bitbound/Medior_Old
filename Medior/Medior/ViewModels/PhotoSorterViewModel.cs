@@ -65,6 +65,7 @@ namespace Medior.ViewModels
             _configService.Current.SortJobs.RemoveAll(x => x.Id == SelectedJob?.Id);
             _configService.SaveConfig();
             LoadSortJobs();
+            SelectedJob = SortJobs.FirstOrDefault();
         }
 
         public string GetDestinationTransform()
@@ -112,7 +113,6 @@ namespace Medior.ViewModels
         private void LoadSortJobs()
         {
             SortJobs.Clear();
-            SelectedJob = null;
 
             foreach (var job in _configService.Current.SortJobs.OrderBy(x => x.Name))
             {
