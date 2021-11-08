@@ -4,16 +4,18 @@
       "Name": "Photos",
       "Operation": "Move",
       "SourceDirectory": "D:\\Sync\\Camera\\",
-      "DestinationFile": "D:\\Sorted\\Photos\\{yyyy}\\{MM}\\{dd}\\{camera}\\{HH}{mm} - {filename}.{extension}",
+      "DestinationFile": "D:\\Sorted\\Photos\\{year}\\{month}\\{day}\\{camera}\\{HH}{mm} - {filename}.{extension}",
+      "NoExifDirectory": "",
       "IncludeExtensions": [ "png", "jpg", "jpeg" ],
       "ExcludeExtensions": [],
-      "OverwriteAction": "CreateUnique"
+      "OverwriteAction": "New"
     },
     {
       "Name": "Videos",
       "Operation": "Move",
       "SourceDirectory": "D:\\Sync\\Camera\\",
-      "DestinationFile": "D:\\Sorted\\Videos\\{yyyy}\\{MM}\\{dd}\\{camera}\\{HH}{mm} - {filename}.{extension}",
+      "DestinationFile": "D:\\Sorted\\Videos\\{year}\\{month}\\{day}\\{camera}\\{HH}{mm} - {filename}.{extension}",
+      "NoExifDirectory": "",
       "IncludeExtensions": [ "mp4", "avi", "m4v", "mov" ],
       "ExcludeExtensions": [],
       "OverwriteAction": "Overwrite"
@@ -22,10 +24,11 @@
       "Name": "Others",
       "Operation": "Move",
       "SourceDirectory": "D:\\Sync\\Camera\\",
-      "DestinationFile": "D:\\Sorted\\Files\\{yyyy}\\{MM}\\{dd}\\{HH}{mm} - {filename}.{extension}",
+      "DestinationFile": "D:\\Sorted\\Files\\{year}\\{month}\\{day}\\{hour}{minute} - {filename}.{extension}",
+      "NoExifDirectory": "",
       "IncludeExtensions": [ "*" ],
       "ExcludeExtensions": [ "png", "jpg", "jpeg", "mp4", "avi", "m4v", "mov" ],
-      "OverwriteAction": "DoNothing"
+      "OverwriteAction": "Skip"
     }
   ]
 }

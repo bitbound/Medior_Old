@@ -6,7 +6,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    x:DefaultBindMode="OneWay"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid Padding="10" Grid.RowDefinitions="Auto, *" RowSpacing="10">
@@ -16,7 +15,7 @@
                       PlaceholderText="Select or create a sort job"
                       DisplayMemberPath="Name"
                       SelectedValuePath="Id"
-                      ItemsSource="{x:Bind ViewModel.SortJobs}"
+                      ItemsSource="{x:Bind ViewModel.SortJobs, Mode=OneWay}"
                       SelectedItem="{x:Bind ViewModel.SelectedJob, Mode=TwoWay}"
                       SelectionChanged="SortJobComboBox_SelectionChanged"
                       VerticalAlignment="Center">
@@ -24,7 +23,7 @@
 
             <CommandBar Grid.Column="1" DefaultLabelPosition="Right" HorizontalAlignment="Left">
                 <AppBarButton Label="New" Icon="Add" Command="{x:Bind NewJob }"/>
-                <AppBarButton Label="Save" Icon="Save" Command="{x:Bind SaveJob }" />
+                <AppBarButton Label="Save" Icon="Save" Command="{x:Bind SaveJob}" />
                 <AppBarButton Label="Rename" Icon="Rename" Command="{x:Bind RenameJob }" />
                 <AppBarButton Label="Delete" Icon="Delete" Command="{x:Bind DeleteJob }" />
             </CommandBar>
@@ -42,7 +41,7 @@
             <Grid RowSpacing="10"
                   ColumnSpacing="10"
                   Grid.ColumnDefinitions="Auto, *" 
-                  Grid.RowDefinitions="Auto, Auto, Auto, Auto, *">
+                  Grid.RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, *">
                 
 
                 <TextBlock Grid.Row="0" Text="Source Directory" VerticalAlignment="Center" />
@@ -58,7 +57,7 @@
 
                     <Button Grid.Column="1" 
                             ToolTipService.ToolTip="Show destination path as if it were applied to an example file named 'Example.ext', with a date taken of right now." 
-                            Command="{x:Bind ShowDestinationTransform}">
+                            Command="{x:Bind ShowDestinationTransform, Mode=OneWay}">
                         <SymbolIcon Symbol="Accept" />
                     </Button>
                     
@@ -69,13 +68,13 @@
                             <Flyout>
                                 <StackPanel>
                                     <TextBlock FontWeight="Bold" Text="Available Variables" Margin="0,0,0,10" />
-                                    <TextBlock>{yyyy} - Year</TextBlock>
-                                    <TextBlock>{MM} - Month</TextBlock>
-                                    <TextBlock>{dd} - Day</TextBlock>
-                                    <TextBlock>{HH} - Hour</TextBlock>
-                                    <TextBlock>{mm} - Minute</TextBlock>
-                                    <TextBlock>{ss} - Second</TextBlock>
-                                    <TextBlock>{fff} - Millisecond</TextBlock>
+                                    <TextBlock>{year} - Year taken</TextBlock>
+                                    <TextBlock>{month} - Month taken</TextBlock>
+                                    <TextBlock>{day} - Day taken</TextBlock>
+                                    <TextBlock>{hour} - Hour taken</TextBlock>
+                                    <TextBlock>{minute} - Minute taken</TextBlock>
+                                    <TextBlock>{second} - Second taken</TextBlock>
+                                    <TextBlock>{millisecond} - Millisecond take</TextBlock>
                                     <TextBlock>{filename} - File name without extension</TextBlock>
                                     <TextBlock>{extension} - File extension</TextBlock>
                                     <TextBlock>{camera} - Camera model</TextBlock>
@@ -88,8 +87,32 @@
                 <TextBlock Grid.Row="2" Text="Sort Operation" VerticalAlignment="Center" />
                 <ComboBox Grid.Row="2" 
                           Grid.Column="1"
-                          ItemsSource="{x:Bind GetSortOperations()}"
+                          ItemsSource="{x:Bind ViewModel.GetSortOperations()}"
                           SelectedItem="{x:Bind ViewModel.SelectedJob.Operation, Mode=TwoWay}" />
+
+                <TextBlock Grid.Row="3" Text="Overwrite Action" VerticalAlignment="Center" />
+                <ComboBox Grid.Row="3" 
+                          Grid.Column="1"
+                          ItemsSource="{x:Bind ViewModel.GetOverwriteActions()}"
+                          SelectedItem="{x:Bind ViewModel.SelectedJob.OverwriteAction, Mode=TwoWay}" />
+
+                <TextBlock Grid.Row="4" Text="Include Extensions" VerticalAlignment="Center" />
+                <TextBox Grid.Row="4" 
+                         Grid.Column="1"
+                         PlaceholderText="A comma-separted list of extensions to include (e.g. 'jpg, png').  Use '*' for all except excluded extensions."
+                         Text="{x:Bind ViewModel.GetIncludeExtensions(), BindBack=ViewModel.SetIncludeExtensions, Mode=TwoWay}" />
+
+                <TextBlock Grid.Row="5" Text="Include Extensions" VerticalAlignment="Center" />
+                <TextBox Grid.Row="5" 
+                         Grid.Column="1"
+                         PlaceholderText="A comma-separated list of extensions to exclude/skip (e.g. 'mp4, mov')."
+                         Text="{x:Bind ViewModel.GetExcludeExtensions(), BindBack=ViewModel.SetExcludeExtensions, Mode=TwoWay}" />
+
+                <TextBlock Grid.Row="6" Text="Missing EXIF Directory" VerticalAlignment="Center" />
+                <TextBox Grid.Row="6" 
+                         Grid.Column="1"
+                         PlaceholderText="Where to move files that do not contain EXIF data.  Leave blank to leave files in place."
+                         Text="{x:Bind ViewModel.SelectedJob.NoExifDirectory, Mode=TwoWay}" />
             </Grid>
         </Grid>
     </Grid>

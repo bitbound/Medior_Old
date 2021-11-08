@@ -24,10 +24,11 @@ namespace Medior.Services
             collection.AddScoped<IPathTransformer, PathTransformer>();
             collection.AddScoped<IFileSystem, FileSystem>();
             collection.AddScoped<IReportWriter, ReportWriter>();
-            collection.AddScoped<IConfigService, ConfigService>();
             collection.AddScoped<IProcessEx, ProcessEx>();
             collection.AddSingleton<IAppModuleStore, AppModuleStore>();
             collection.AddSingleton<IChrono, Chrono>();
+            collection.AddSingleton<IAppSettings, AppSettings>();
+            collection.AddSingleton<IConfigService, ConfigService>();
             collection.AddSingleton<ISorterState>(new SorterState()
             {
                 ConfigPath = string.Empty,

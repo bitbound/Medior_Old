@@ -76,6 +76,7 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="comet.png" />
     <Content Include="Images\BadgeLogo.scale-100.png" />
     <Content Include="Images\BadgeLogo.scale-125.png" />
     <Content Include="Images\BadgeLogo.scale-150.png" />
@@ -142,6 +143,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Diagnostics" Version="7.1.1-preview3" />
+    <PackageReference Include="Microsoft.Toolkit" Version="7.1.1" />
     <PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.1.1" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.0.0-preview3">
       <IncludeAssets>build</IncludeAssets>

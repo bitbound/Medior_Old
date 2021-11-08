@@ -158,7 +158,7 @@ namespace Medior.Core.PhotoSorter.Services
                     return Task.FromResult(operationResult);
                 }
 
-                if (_fileSystem.FileExists(destinationFile) && job.OverwriteAction == OverwriteAction.DoNothing)
+                if (_fileSystem.FileExists(destinationFile) && job.OverwriteAction == OverwriteAction.Skip)
                 {
                     _logger.LogWarning("Destination file exists.  Skipping.  Destination file: {destinationFile}", destinationFile);
                     operationResult = new OperationResult()
@@ -171,7 +171,7 @@ namespace Medior.Core.PhotoSorter.Services
                     return Task.FromResult(operationResult);
                 }
 
-                if (_fileSystem.FileExists(destinationFile) && job.OverwriteAction == OverwriteAction.CreateUnique)
+                if (_fileSystem.FileExists(destinationFile) && job.OverwriteAction == OverwriteAction.New)
                 {
                     _logger.LogWarning("Destination file exists. Creating unique file name.");
                     destinationFile = _pathTransformer.GetUniqueFilePath(destinationFile);

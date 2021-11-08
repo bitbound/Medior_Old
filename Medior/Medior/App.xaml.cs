@@ -1,6 +1,8 @@
 ﻿using Medior.Core.ScreenCapture.Helpers;
 using Medior.Core.Shared.MsStore;
 using Medior.Services;
+using Microsoft.Extensions.Logging;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -56,6 +58,8 @@ namespace Medior
         {
             ServiceContainer.Build();
 
+            UnhandledException += App_UnhandledException;
+
             _mainWindow = new MainWindow
             {
                 ExtendsContentIntoTitleBar = true
@@ -64,6 +68,12 @@ namespace Medior
             _mainWindow.SetTitleBar(_mainWindow.CustomTitleBar);
 
             _mainWindow.Activate();
+        }
+
+        private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
+        {
+            var logger = Ioc.Default.GetRequiredService<ILogger<App>>();
+            logger.LogError(e.Exception, "An unhandled exception occurred.");
         }
     }
 }

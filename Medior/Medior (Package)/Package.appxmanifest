@@ -42,6 +42,14 @@
         <uap:SplashScreen Image="Images\SplashScreen.png" />
         <uap:LockScreen BadgeLogo="Images\BadgeLogo.png" Notification="badgeAndTileText"/>
       </uap:VisualElements>
+      <Extensions>
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="medior" DesiredView="default">
+            <uap:Logo>comet.png</uap:Logo>
+            <uap:DisplayName>Medior Handler</uap:DisplayName>
+          </uap:Protocol>
+        </uap:Extension>
+      </Extensions>
     </Application>
   </Applications>
 

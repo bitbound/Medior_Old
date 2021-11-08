@@ -18,17 +18,17 @@ namespace Medior.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
-        private readonly IConfigService _configService;
+        private readonly IAppSettings _appSettings;
         private readonly IAppModuleStore _appModuleStore;
         private readonly ILogger<MainWindowViewModel> _logger;
 
 
         public MainWindowViewModel(
-            IConfigService configService,
+            IAppSettings appSettings,
             IAppModuleStore appModuleStore,
             ILogger<MainWindowViewModel> logger)
         {
-            _configService = configService;
+            _appSettings = appSettings;
             _appModuleStore = appModuleStore;
             _logger = logger;
         }
@@ -54,7 +54,7 @@ namespace Medior.ViewModels
                 AppModulesFooter.Add(mainModule);
             }
 
-            var favModules = AppModulesMain.Where(x => _configService.Current.FavoriteModules.Contains(x.Id));
+            var favModules = AppModulesMain.Where(x => _appSettings.FavoriteModules.Contains(x.Id));
             foreach (var module in favModules)
             {
                 module.IsFavorited = true;

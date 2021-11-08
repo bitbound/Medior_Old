@@ -13,15 +13,15 @@ namespace Medior.Core.PhotoSorter.Services
     public class PathTransformer : IPathTransformer
     {
         public const string Camera = "{camera}";
-        public const string Day = "{dd}";
+        public const string Day = "{day}";
         public const string Extension = "{extension}";
         public const string Filename = "{filename}";
-        public const string Hour = "{HH}";
-        public const string Minute = "{mm}";
-        public const string Second = "{ss}";
-        public const string Millisecond = "{fff}";
-        public const string Month = "{MM}";
-        public const string Year = "{yyyy}";
+        public const string Hour = "{hour}";
+        public const string Minute = "{minute}";
+        public const string Second = "{second}";
+        public const string Millisecond = "{millisecond}";
+        public const string Month = "{month}";
+        public const string Year = "{year}";
 
         private readonly IFileSystem _fileSystem;
 

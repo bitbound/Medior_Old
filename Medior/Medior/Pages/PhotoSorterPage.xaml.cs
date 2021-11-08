@@ -1,4 +1,5 @@
-﻿using Medior.Core.PhotoSorter.Enums;
+﻿using CommunityToolkit.Diagnostics;
+using Medior.Core.PhotoSorter.Enums;
 using Medior.Extensions;
 using Medior.ViewModels;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
@@ -163,11 +164,6 @@ namespace Medior.Pages
                 }
                 return _showDestinationTransform;
             }
-        }
-
-        public SortOperation[] GetSortOperations()
-        {
-            return Enum.GetValues<SortOperation>();
         }
 
         private void SortJobComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

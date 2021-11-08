@@ -9,7 +9,7 @@ namespace Medior.Core.Shared.Extensions
 {
     public static class ListExtensions
     {
-        public static bool TryReplace<T>(this List<T> self, T newItem)
+        public static bool TryReplace<T>(this IList<T> self, T newItem)
             where T : IdModel
         {
             if (newItem is null)
@@ -17,8 +17,16 @@ namespace Medior.Core.Shared.Extensions
                 return false;
             }
 
-            var index = self.FindIndex(x => x.Id == newItem.Id);
-            if (index < 0)
+            var foundItem = self.FirstOrDefault(x => x.Id == newItem.Id);
+
+            if (foundItem is null)
+            {
+                return false;
+            }
+
+            var index = self.IndexOf(foundItem);
+
+            if (index == -1)
             {
                 return false;
             }

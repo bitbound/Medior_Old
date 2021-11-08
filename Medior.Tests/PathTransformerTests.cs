@@ -12,7 +12,7 @@ namespace Medior.Tests
         private static FileSystem _fileSystemImpl = new FileSystem();
 
         private readonly DateTime _dateTaken = new(2021, 9, 27, 7, 22, 00);
-        private readonly string _exampleDestination = @"D:\Photos\Sorted\{yyyy}\{MM}\{dd}\{camera}\{HH}_{mm} - {filename}.{extension}";
+        private readonly string _exampleDestination = @"D:\Photos\Sorted\{year}\{month}\{day}\{camera}\{hour}_{minute} - {filename}.{extension}";
         private readonly string _exampleSource = @"D:\Sync\Camera\WP_20151116_08_38_40_Pro.jpg";
         private readonly string _expectedTransform = @"D:\Photos\Sorted\2021\09\27\Nikon\07_22 - WP_20151116_08_38_40_Pro.jpg";
         private PathTransformer _pathTransformer = new(_fileSystemImpl);
@@ -41,7 +41,7 @@ namespace Medior.Tests
             Assert.AreEqual(_expectedTransform, result);
 
             result = _pathTransformer.TransformPath(_exampleSource, _exampleDestination);
-            Assert.AreEqual(@"D:\Photos\Sorted\{yyyy}\{MM}\{dd}\{camera}\{HH}_{mm} - WP_20151116_08_38_40_Pro.jpg", result);
+            Assert.AreEqual(@"D:\Photos\Sorted\{year}\{month}\{day}\{camera}\{hour}_{minute} - WP_20151116_08_38_40_Pro.jpg", result);
         }
 
         [TestMethod]
