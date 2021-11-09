@@ -22,7 +22,7 @@
             </ComboBox>
 
             <CommandBar Grid.Column="1" DefaultLabelPosition="Right" HorizontalAlignment="Left">
-                <AppBarButton Label="New" Icon="Add" Command="{x:Bind NewJob }"/>
+                <AppBarButton Label="New" Icon="Add" Command="{x:Bind NewJob}"/>
                 <AppBarButton Label="Save" Icon="Save" Command="{x:Bind SaveJob}" />
                 <AppBarButton Label="Rename" Icon="Rename" Command="{x:Bind RenameJob }" />
                 <AppBarButton Label="Delete" Icon="Delete" Command="{x:Bind DeleteJob }" />
@@ -53,11 +53,11 @@
                 <Grid Grid.Row="1" Grid.Column="1" Grid.ColumnDefinitions="*, Auto, Auto" ColumnSpacing="10">
                     <TextBox Grid.Column="0" 
                          PlaceholderText="The destination path, after variables are transformed, where each file will be placed."
-                         Text="{x:Bind ViewModel.SelectedJob.DestinationFile, Mode=TwoWay}" />
+                         Text="{x:Bind ViewModel.SelectedJob.DestinationFile, Mode=TwoWay}" TextChanged="DestinationFileTextBox_TextChanged" />
 
                     <Button Grid.Column="1" 
                             ToolTipService.ToolTip="Show destination path as if it were applied to an example file named 'Example.ext', with a date taken of right now." 
-                            Command="{x:Bind ShowDestinationTransform, Mode=OneWay}">
+                            Command="{x:Bind ShowDestinationTransform}">
                         <SymbolIcon Symbol="Accept" />
                     </Button>
                     
@@ -102,7 +102,7 @@
                          PlaceholderText="A comma-separted list of extensions to include (e.g. 'jpg, png').  Use '*' for all except excluded extensions."
                          Text="{x:Bind ViewModel.GetIncludeExtensions(), BindBack=ViewModel.SetIncludeExtensions, Mode=TwoWay}" />
 
-                <TextBlock Grid.Row="5" Text="Include Extensions" VerticalAlignment="Center" />
+                <TextBlock Grid.Row="5" Text="Exclude Extensions" VerticalAlignment="Center" />
                 <TextBox Grid.Row="5" 
                          Grid.Column="1"
                          PlaceholderText="A comma-separated list of extensions to exclude/skip (e.g. 'mp4, mov')."
@@ -113,6 +113,23 @@
                          Grid.Column="1"
                          PlaceholderText="Where to move files that do not contain EXIF data.  Leave blank to leave files in place."
                          Text="{x:Bind ViewModel.SelectedJob.NoExifDirectory, Mode=TwoWay}" />
+
+                <Grid Grid.Row="8" 
+                      Grid.ColumnSpan="2" 
+                      ColumnSpacing="20" 
+                      ColumnDefinitions="*, Auto" 
+                      VerticalAlignment="Bottom">
+                    
+                    <ProgressBar Grid.Column="0" Visibility="{x:Bind ViewModel.IsJobRunning}" />
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <CheckBox Content="Dry Run" 
+                                  IsChecked="{x:Bind ViewModel.IsDryRun, Mode=TwoWay}"
+                                  ToolTipService.ToolTip="Simulate running this job and get a report of what will happen, without actually making changes."/>
+                        
+                        <Button Content="Cancel" Command="{x:Bind CancelJob}" />
+                        <Button Content="Start" Command="{x:Bind StartJob}" Margin="10,0,0,0" />
+                    </StackPanel>
+                </Grid>
             </Grid>
         </Grid>
     </Grid>

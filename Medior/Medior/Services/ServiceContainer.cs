@@ -20,11 +20,11 @@ namespace Medior.Services
             collection.AddLogging();
             collection.AddScoped<IMetadataReader, MetadataReader>();
             collection.AddScoped<IJobRunner, JobRunner>();
-            collection.AddSingleton<IJobWatcher, JobWatcher>();
             collection.AddScoped<IPathTransformer, PathTransformer>();
             collection.AddScoped<IFileSystem, FileSystem>();
             collection.AddScoped<IReportWriter, ReportWriter>();
             collection.AddScoped<IProcessEx, ProcessEx>();
+            collection.AddSingleton<IJobWatcher, JobWatcher>();
             collection.AddSingleton<IAppModuleStore, AppModuleStore>();
             collection.AddSingleton<IChrono, Chrono>();
             collection.AddSingleton<IAppSettings, AppSettings>();
@@ -37,8 +37,8 @@ namespace Medior.Services
                 Once = true
             });
 
-            collection.AddScoped<MainWindowViewModel>();
-            collection.AddScoped<PhotoSorterViewModel>();
+            collection.AddSingleton<MainWindowViewModel>();
+            collection.AddSingleton<PhotoSorterViewModel>();
 
             var serviceProvider = collection.BuildServiceProvider();
 

@@ -12,6 +12,7 @@ namespace Medior.Core.PhotoSorter.Models
         public string JobName { get; set; } = string.Empty;
         public SortOperation Operation { get; set; }
         public List<OperationResult> Results { get; set; } = new();
-        public bool DryRun { get; internal set; }
+        public bool DryRun { get; set; }
+        public string ReportPath { get; set; } = String.Empty;
     }
 }

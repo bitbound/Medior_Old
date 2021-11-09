@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Diagnostics;
 using Medior.Core.PhotoSorter.Enums;
+using Medior.Core.PhotoSorter.Models;
+using Medior.Core.Shared.Services;
 using Medior.Extensions;
 using Medior.ViewModels;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
@@ -13,9 +15,11 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using WinRT.Interop;
@@ -35,6 +39,9 @@ namespace Medior.Pages
         private RelayCommand? _saveJob;
         private AsyncRelayCommand? _newJob;
         private AsyncRelayCommand? _showDestinationTransform;
+        private AsyncRelayCommand? _startJob;
+        private RelayCommand? _cancelJob;
+        private CancellationTokenSource? _jobCancelTokenSource;
 
         public PhotoSorterPage()
         {
@@ -42,6 +49,24 @@ namespace Medior.Pages
         }
 
         public PhotoSorterViewModel ViewModel { get; } = Ioc.Default.GetRequiredService<PhotoSorterViewModel>();
+
+        public RelayCommand CancelJob
+        {
+            get
+            {
+                if (_cancelJob is null)
+                {
+                    _cancelJob = new(
+                        () =>
+                        {
+                            _jobCancelTokenSource?.Cancel();
+                        },
+                        () => ViewModel.IsJobRunning
+                    );
+                }
+                return _cancelJob;
+            }
+        }
 
         public AsyncRelayCommand NewJob
         {
@@ -166,6 +191,54 @@ namespace Medior.Pages
             }
         }
 
+        public AsyncRelayCommand StartJob
+        {
+            get
+            {
+                if (_startJob is null)
+                {
+                    _startJob = new(
+                        async () =>
+                        {
+                            ViewModel.SaveJob();
+                            _jobCancelTokenSource = new CancellationTokenSource();
+                            ViewModel.IsJobRunning = true;
+                            UpdateCommandsCanExecute();
+                            JobReport report;
+                            try
+                            {
+                                report = await ViewModel.StartJob(_jobCancelTokenSource.Token);
+                            }
+                            finally
+                            {
+                                ViewModel.IsJobRunning = false;
+                                UpdateCommandsCanExecute();
+                            }
+
+                            var result = await this.Confirm(
+                                "Job Finished",
+                                "Job run completed.  Would you like to open the report directory?");
+                            if (result == ContentDialogResult.Primary)
+                            {
+                                Process.Start(new ProcessStartInfo()
+                                {
+                                    FileName = Path.GetDirectoryName(report.ReportPath) ?? "",
+                                    UseShellExecute = true
+                                });
+                            }
+                        },
+                        () => ViewModel.SelectedJob is not null && !ViewModel.IsJobRunning
+                    );
+                }
+                return _startJob;
+            }
+        }
+
+        private void DestinationFileTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            ShowDestinationTransform.NotifyCanExecuteChanged();
+        }
+
         private void SortJobComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             UpdateCommandsCanExecute();
@@ -177,6 +250,8 @@ namespace Medior.Pages
             DeleteJob.NotifyCanExecuteChanged();
             RenameJob.NotifyCanExecuteChanged();
             ShowDestinationTransform.NotifyCanExecuteChanged();
+            StartJob.NotifyCanExecuteChanged();
+            CancelJob.NotifyCanExecuteChanged();
         }
     }
 }

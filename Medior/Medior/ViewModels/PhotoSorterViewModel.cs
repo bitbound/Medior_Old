@@ -7,6 +7,9 @@ using Medior.Core.Shared.Extensions;
 using Microsoft.Extensions.Logging;
 using Medior.Services;
 using Medior.Core.PhotoSorter.Enums;
+using System.Threading.Tasks;
+using CommunityToolkit.Diagnostics;
+using System.Threading;
 
 namespace Medior.ViewModels
 {
@@ -15,21 +18,38 @@ namespace Medior.ViewModels
         private readonly IAppSettings _appSettings;
         private readonly IPathTransformer _pathTransformer;
         private readonly IJobRunner _jobRunner;
+        private readonly IReportWriter _reportWriter;
         private readonly ILogger<PhotoSorterViewModel> _logger;
         private SortJob? _selectedJob;
+        private bool _isDryRun;
+        private bool _isJobRunning;
 
         public PhotoSorterViewModel(
             IAppSettings appSettings,
             IPathTransformer pathTransformer,
             IJobRunner jobRunner,
+            IReportWriter reportWriter,
             ILogger<PhotoSorterViewModel> logger)
         {
             _appSettings = appSettings;
             _pathTransformer = pathTransformer;
             _jobRunner = jobRunner;
+            _reportWriter = reportWriter;
             _logger = logger;
             
             LoadSortJobs();
+        }
+
+        public bool IsDryRun
+        {
+            get => _isDryRun;
+            set => SetProperty(ref _isDryRun, value);
+        }
+
+        public bool IsJobRunning
+        {
+            get => _isJobRunning;
+            set => SetProperty(ref _isJobRunning, value);
         }
 
 
@@ -45,7 +65,6 @@ namespace Medior.ViewModels
                 InvokePropertyChanged(nameof(GetExcludeExtensions));
             }
         }
-
 
         public void CreateNewSortJob(string sortJobName)
         {
@@ -159,6 +178,14 @@ namespace Medior.ViewModels
 
             SelectedJob.IncludeExtensions = extensions.Split(",", StringSplitOptions.TrimEntries);
             SaveAppSettings();
+        }
+
+        public async Task<JobReport> StartJob(CancellationToken cancellationToken)
+        {
+            Guard.IsNotNull(SelectedJob, nameof(SelectedJob));
+            var report = await _jobRunner.RunJob(SelectedJob, IsDryRun);
+            report.ReportPath = await _reportWriter.WriteReport(report);
+            return report;
         }
 
         private void LoadSortJobs()

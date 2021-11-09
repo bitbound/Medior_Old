@@ -14,7 +14,9 @@ namespace Medior.Core.PhotoSorter.Services
         private readonly IChrono _chrono;
         private readonly IFileSystem _fileSystem;
 
-        private string LogPath => Path.Combine(Path.GetTempPath(), $"Medior_Report_{_chrono.Now:yyyy-MM-dd HH.mm.ss.fff}.log");
+        private string LogPath => Path.Combine(Path.GetTempPath(),
+            "Medior",
+            $"PhotoSorter_Report_{_chrono.Now:yyyy-MM-dd HH.mm.ss.fff}.log");
 
         public ReportWriter(IChrono chrono, IFileSystem fileSystem)
         {
@@ -54,7 +56,7 @@ namespace Medior.Core.PhotoSorter.Services
                 }
                 if (result.WasSkipped)
                 {
-                    errors.Add(result);
+                    wasSkipped.Add(result);
                 }
                 if (!result.FoundExifData)
                 {

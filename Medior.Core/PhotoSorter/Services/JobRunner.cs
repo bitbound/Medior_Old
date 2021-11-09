@@ -8,11 +8,11 @@ namespace Medior.Core.PhotoSorter.Services
 {
     public interface IJobRunner
     {
-        Task<JobReport> RunJob(SortJob job, bool dryRun);
+        Task<JobReport> RunJob(SortJob job, bool dryRun, CancellationToken cancellationToken = default);
 
-        Task<JobReport> RunJob(string configPath, string jobName, bool dryRun);
+        Task<JobReport> RunJob(string configPath, string jobName, bool dryRun, CancellationToken cancellationToken = default);
 
-        Task<List<JobReport>> RunJobs(string configPath, bool dryRun);
+        Task<List<JobReport>> RunJobs(string configPath, bool dryRun, CancellationToken cancellationToken = default);
     }
 
     public class JobRunner : IJobRunner
@@ -44,7 +44,7 @@ namespace Medior.Core.PhotoSorter.Services
             _logger = logger;
         }
 
-        public async Task<JobReport> RunJob(SortJob job, bool dryRun)
+        public async Task<JobReport> RunJob(SortJob job, bool dryRun, CancellationToken cancellationToken = default)
         {
             var jobReport = new JobReport()
             {
@@ -66,7 +66,13 @@ namespace Medior.Core.PhotoSorter.Services
 
                     foreach (var file in files)
                     {
+                        if (cancellationToken.IsCancellationRequested)
+                        {
+                            _logger.LogInformation("Job run cancelled.");
+                            break;
+                        }
                         var result = await PerformFileOperation(job, dryRun, file);
+                        jobReport.Results.Add(result);
                     }
                 }
             }
@@ -82,7 +88,7 @@ namespace Medior.Core.PhotoSorter.Services
             return jobReport;
         }
 
-        public async Task<JobReport> RunJob(string configPath, string jobName, bool dryRun)
+        public async Task<JobReport> RunJob(string configPath, string jobName, bool dryRun, CancellationToken cancellationToken = default)
         {
             var config = _configService.GetConfig(configPath);
             var job = config.SortJobs?.FirstOrDefault(x =>
@@ -98,17 +104,17 @@ namespace Medior.Core.PhotoSorter.Services
                 };
             }
 
-            return await RunJob(job, dryRun);
+            return await RunJob(job, dryRun, cancellationToken);
         }
 
-        public async Task<List<JobReport>> RunJobs(string configPath, bool dryRun)
+        public async Task<List<JobReport>> RunJobs(string configPath, bool dryRun, CancellationToken cancellationToken = default)
         {
             var config = _configService.GetConfig(configPath);
             var reports = new List<JobReport>();
 
             foreach (var job in config.SortJobs)
             {
-                var report = await RunJob(job, dryRun);
+                var report = await RunJob(job, dryRun, cancellationToken);
                 reports.Add(report);
             }
 

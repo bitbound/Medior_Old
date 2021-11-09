@@ -72,16 +72,16 @@ namespace Medior.Core.PhotoSorter.Services
             }
 
             return destinationFile
-                .Replace(Year, dateTaken.Year.ToString().PadLeft(4, '0'))
-                .Replace(Month, dateTaken.Month.ToString().PadLeft(2, '0'))
-                .Replace(Day, dateTaken.Day.ToString().PadLeft(2, '0'))
-                .Replace(Hour, dateTaken.Hour.ToString().PadLeft(2, '0'))
-                .Replace(Minute, dateTaken.Minute.ToString().PadLeft(2, '0'))
-                .Replace(Second, dateTaken.Second.ToString().PadLeft(2, '0'))
-                .Replace(Millisecond, dateTaken.Millisecond.ToString().PadLeft(3, '0'))
-                .Replace(Camera, camera?.Trim())
-                .Replace(Filename, Path.GetFileNameWithoutExtension(sourceFile))
-                .Replace(Extension, Path.GetExtension(sourceFile)[1..]);
+                .Replace(Year, dateTaken.Year.ToString().PadLeft(4, '0'), StringComparison.OrdinalIgnoreCase)
+                .Replace(Month, dateTaken.Month.ToString().PadLeft(2, '0'), StringComparison.OrdinalIgnoreCase)
+                .Replace(Day, dateTaken.Day.ToString().PadLeft(2, '0'), StringComparison.OrdinalIgnoreCase)
+                .Replace(Hour, dateTaken.Hour.ToString().PadLeft(2, '0'), StringComparison.OrdinalIgnoreCase)
+                .Replace(Minute, dateTaken.Minute.ToString().PadLeft(2, '0'), StringComparison.OrdinalIgnoreCase)
+                .Replace(Second, dateTaken.Second.ToString().PadLeft(2, '0'), StringComparison.OrdinalIgnoreCase)
+                .Replace(Millisecond, dateTaken.Millisecond.ToString().PadLeft(3, '0'), StringComparison.OrdinalIgnoreCase)
+                .Replace(Camera, camera?.Trim(), StringComparison.OrdinalIgnoreCase)
+                .Replace(Filename, Path.GetFileNameWithoutExtension(sourceFile), StringComparison.OrdinalIgnoreCase)
+                .Replace(Extension, Path.GetExtension(sourceFile)[1..], StringComparison.OrdinalIgnoreCase);
         }
 
         public string TransformPath(string sourceFile, string destinationFile)
