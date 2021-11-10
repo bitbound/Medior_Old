@@ -21,7 +21,7 @@
 
         <NavigationView Grid.Row="1" 
                         IsBackButtonVisible="Collapsed"
-                        SelectedItem="{x:Bind ViewModel.SelectedModule, Mode=TwoWay}"
+                        SelectedItem="{x:Bind ViewModel.SelectedNavItem, Mode=TwoWay}"
                         MenuItemsSource="{x:Bind ViewModel.AppModulesMain}"
                         FooterMenuItemsSource="{x:Bind ViewModel.AppModulesFooter}"
                         SelectionChanged="NavigationView_SelectionChanged">
@@ -45,10 +45,20 @@
                             Visibility="{x:Bind IsShown}"
                             Tag="{x:Bind PageName}"
                             Icon="{x:Bind IconElement}"
-                            ToolTipService.ToolTip="{x:Bind Tooltip}">
+                            ToolTipService.ToolTip="{x:Bind Description}">
                     </NavigationViewItem>
                 </DataTemplate>
             </NavigationView.MenuItemTemplate>
+
+            
+            <NavigationView.Header>
+                <StackPanel Spacing="5" Margin="0,0,0,10">
+                    <TextBlock Text="{x:Bind ViewModel.SelectedModule.Label, Mode=OneWay}" />
+                    <TextBlock FontWeight="Normal"
+                               FontSize="14"
+                               Text="{x:Bind ViewModel.SelectedModule.Description, Mode=OneWay}" />
+                </StackPanel>
+            </NavigationView.Header>
  
 
             <Frame x:Name="NavigationFrame"></Frame>

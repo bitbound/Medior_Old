@@ -30,18 +30,9 @@ namespace Medior.Services
         {
             new()
             {
-                Id = AppModuleIds.PhotoSorter,
-                Label = "Photo Sorter",
-                Tooltip = "Sort photos and videos into folders based on EXIF data",
-                PageName = "PhotoSorterPage",
-                Icon = Symbol.BrowsePhotos,
-                ModuleType = AppModuleType.Main
-            },
-            new()
-            {
                 Id = AppModuleIds.ScreenCapture,
                 Label = "Screen Capture",
-                Tooltip = "Capture and share images and videos of your desktop",
+                Description = "Capture and share images and videos of your desktop",
                 PageName = "ScreenCapturePage",
                 Icon = Symbol.Camera,
                 ModuleType = AppModuleType.Main
@@ -50,16 +41,34 @@ namespace Medior.Services
             {
                 Id = AppModuleIds.RemoteHelp,
                 Label = "Remote Help",
-                Tooltip = "Give or receive PC support by sharing desktops",
+                Description = "Give or receive PC support by sharing desktops",
                 PageName = "RemoteHelpPage",
                 FontIcon = "\xE703",
                 ModuleType = AppModuleType.Main
             },
             new()
             {
+                Id = AppModuleIds.PhotoSorter,
+                Label = "Photo Sorter",
+                Description = "Sort photos and videos into folders based on EXIF data",
+                PageName = "PhotoSorterPage",
+                Icon = Symbol.BrowsePhotos,
+                ModuleType = AppModuleType.Main
+            },
+            new()
+            {
+                Id = AppModuleIds.QrCodeCreator,
+                Label = "QR Code Creator",
+                Description = "Generate QR codes to scan with your phone",
+                PageName = "PhotoSorterPage",
+                FontIcon = "\xED14",
+                ModuleType = AppModuleType.Main
+            },
+            new()
+            {
                 Id = AppModuleIds.GuidGenerator,
                 Label = "GUID Generator",
-                Tooltip = "Quickly generate a GUID",
+                Description = "Quickly generate GUIDs",
                 PageName = "GuidGeneratorPage",
                 FontIcon = "\xE943",
                 ModuleType = AppModuleType.Main
@@ -68,7 +77,7 @@ namespace Medior.Services
             {
                 Id = AppModuleIds.About,
                 Label = "About",
-                Tooltip = "Info about Medior",
+                Description = "Information about this app",
                 PageName = "AboutPage",
                 Icon = Symbol.Help,
                 ModuleType = AppModuleType.Footer

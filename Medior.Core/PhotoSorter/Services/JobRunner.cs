@@ -60,7 +60,7 @@ namespace Medior.Core.PhotoSorter.Services
 
             try
             {
-                await _runLock.WaitAsync();
+                await _runLock.WaitAsync(cancellationToken);
 
                 _logger.LogInformation("Starting job run: {job}", JsonSerializer.Serialize(job));
                 

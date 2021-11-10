@@ -60,7 +60,7 @@ namespace Medior
             
             if (args.IsSettingsSelected)
             {
-                sender.Header = "Settings";
+                ViewModel.SelectedModule = ViewModel.SettingsAppModule;
                 NavigationFrame.Navigate(typeof(SettingsPage));
             }
             else
@@ -71,8 +71,7 @@ namespace Medior
                 {
                     return;
                 }
-                
-                sender.Header = selectedItem.Label;
+
                 var pageName = $"Medior.Pages.{selectedItem.PageName}";
                 Type? pageType = Type.GetType(pageName);
                 if (pageType is not null)

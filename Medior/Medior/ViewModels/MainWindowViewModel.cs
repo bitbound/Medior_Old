@@ -21,7 +21,8 @@ namespace Medior.ViewModels
         private readonly IAppSettings _appSettings;
         private readonly IAppModuleStore _appModuleStore;
         private readonly ILogger<MainWindowViewModel> _logger;
-
+        private AppModule? _selectedModule;
+        private object? _selectedNavItem;
 
         public MainWindowViewModel(
             IAppSettings appSettings,
@@ -36,39 +37,76 @@ namespace Medior.ViewModels
         public ObservableCollectionEx<AppModule> AppModulesMain { get; } = new();
         public ObservableCollectionEx<AppModule> AppModulesFooter { get; } = new();
         public string SearchText { get; set; } = string.Empty;
-        public object? SelectedModule { get; set; }
+
+        public AppModule SettingsAppModule { get; } = new()
+        {
+            Label = "Settings"
+        };
+
+        public object? SelectedNavItem
+        {
+            get => _selectedNavItem;
+            set
+            {
+                SetProperty(ref _selectedNavItem, value);
+                if (value is AppModule appModule)
+                {
+                    SelectedModule = appModule;
+                }
+            }
+        }
+
+        public AppModule? SelectedModule
+        {
+            get => _selectedModule;
+            set => SetProperty(ref _selectedModule, value);
+        }
 
 
         public void LoadMenuItems()
         {
-            AppModulesMain.Clear();
-            AppModulesFooter.Clear();
-
-            foreach (var mainModule in _appModuleStore.MainModules)
+            try
             {
-                AppModulesMain.Add(mainModule);
-            }
+                AppModulesMain.Clear();
+                AppModulesFooter.Clear();
 
-            foreach (var mainModule in _appModuleStore.FooterModules)
+                foreach (var mainModule in _appModuleStore.MainModules)
+                {
+                    AppModulesMain.Add(mainModule);
+                }
+
+                foreach (var mainModule in _appModuleStore.FooterModules)
+                {
+                    AppModulesFooter.Add(mainModule);
+                }
+
+                var favModules = AppModulesMain.Where(x => _appSettings.FavoriteModules.Contains(x.Id));
+                foreach (var module in favModules)
+                {
+                    module.IsFavorited = true;
+                }
+
+                SelectedModule = AppModulesMain.FirstOrDefault();
+            }
+            catch (Exception ex)
             {
-                AppModulesFooter.Add(mainModule);
+                _logger.LogError(ex, "Error loading menu items.");
             }
-
-            var favModules = AppModulesMain.Where(x => _appSettings.FavoriteModules.Contains(x.Id));
-            foreach (var module in favModules)
-            {
-                module.IsFavorited = true;
-            }
-
-            SelectedModule = AppModulesMain.FirstOrDefault();
         }
 
         public void FilterModules(string searchText)
         {
-            foreach (var module in AppModulesMain)
+            try
             {
-                module.IsShown = module.Label.Contains(searchText.Trim(), StringComparison.OrdinalIgnoreCase);
-                AppModulesMain.InvokeCollectionChanged();
+                foreach (var module in AppModulesMain)
+                {
+                    module.IsShown = module.Label.Contains(searchText.Trim(), StringComparison.OrdinalIgnoreCase);
+                    AppModulesMain.InvokeCollectionChanged();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error filtering modules.");
             }
         }
     }

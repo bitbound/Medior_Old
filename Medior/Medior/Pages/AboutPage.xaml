@@ -62,6 +62,14 @@
                     (License)
                 </Hyperlink>
             </TextBlock>
+            <TextBlock>
+                <Hyperlink NavigateUri="https://github.com/codebude/QRCoder/">
+                    QRCoder
+                </Hyperlink>
+                <Hyperlink FontSize="10" NavigateUri="https://github.com/codebude/QRCoder/blob/master/LICENSE.txt">
+                    (License)
+                </Hyperlink>
+            </TextBlock>
         </StackPanel>
     </Grid>
 </Page>

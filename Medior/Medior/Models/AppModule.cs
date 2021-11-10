@@ -52,7 +52,7 @@ namespace Medior.Models
                 }
             }
         }
-        public string Tooltip { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
     }
 
 }
