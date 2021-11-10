@@ -2,6 +2,8 @@
 using Medior.Enums;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +33,25 @@ namespace Medior.Models
         public AppModuleType ModuleType { get; set; }
         public string PageName { get; set; } = string.Empty;
         public Symbol Icon { get; set; }
+        public string? FontIcon { get; set; }
+        public IconElement IconElement
+        {
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(FontIcon))
+                {
+                    return new FontIcon()
+                    {
+                        FontFamily = new FontFamily("Segoe MDL2 Assets"),
+                        Glyph = FontIcon
+                    };
+                }
+                else
+                {
+                    return new SymbolIcon(Icon);
+                }
+            }
+        }
         public string Tooltip { get; set; } = string.Empty;
     }
 

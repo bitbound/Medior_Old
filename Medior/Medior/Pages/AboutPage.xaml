@@ -8,16 +8,60 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <Page.Resources>
+        <Style x:Key="HeaderStyle" TargetType="TextBlock">
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="Margin" Value="0,20,0,5" />
+        </Style>
+    </Page.Resources>
+    
     <Grid Padding="10">
-        <TextBlock>
-            <Run>Icons made by</Run>
-            <Hyperlink NavigateUri="https://www.flaticon.com/authors/nikita-golubev">
-                Nikita Golubev
-            </Hyperlink>
-            <Run>from</Run>
-            <Hyperlink NavigateUri="https://www.flaticon.com/">
-                www.flaticon.com/
-            </Hyperlink>
-        </TextBlock>
+        <StackPanel Spacing="5">
+            <TextBlock Text="App Info" Style="{StaticResource HeaderStyle}" />
+            <TextBlock Text="Copyright (c) Jared Goodwin.  All rights reserved." />
+            <TextBlock>
+                <Run Text="Version: " />
+                <Run Text="{x:Bind Version}" FontWeight="Bold" />
+            </TextBlock>
+            <TextBlock>
+                <Run>Main icon made by</Run>
+                <Hyperlink NavigateUri="https://www.flaticon.com/authors/nikita-golubev">
+                    Nikita Golubev
+                </Hyperlink>
+                <Run>from</Run>
+                <Hyperlink NavigateUri="https://www.flaticon.com/">
+                    www.flaticon.com
+                </Hyperlink>
+            </TextBlock>
+
+            
+            
+            <TextBlock Text="Dependencies and Libraries" Style="{StaticResource HeaderStyle}" />
+            <TextBlock>
+                <Hyperlink NavigateUri="https://github.com/CommunityToolkit/WindowsCommunityToolkit">
+                    Windows Community Toolkit
+                </Hyperlink>
+                <Hyperlink FontSize="10" NavigateUri="https://github.com/CommunityToolkit/WindowsCommunityToolkit/blob/main/License.md">
+                    (License)
+                </Hyperlink>
+            </TextBlock>
+            <TextBlock>
+                <Hyperlink NavigateUri="https://github.com/drewnoakes/metadata-extractor-dotnet">
+                    MetadataExtractor
+                </Hyperlink>
+                <Hyperlink FontSize="10" NavigateUri="https://github.com/drewnoakes/metadata-extractor-dotnet/blob/master/LICENSE">
+                    (License)
+                </Hyperlink>
+            </TextBlock>
+            <TextBlock>
+                <Hyperlink NavigateUri="https://github.com/dotnet/pinvoke">
+                    dotnet/pinvoke
+                </Hyperlink>
+                <Hyperlink FontSize="10" NavigateUri="https://github.com/dotnet/pinvoke/blob/master/LICENSE">
+                    (License)
+                </Hyperlink>
+            </TextBlock>
+        </StackPanel>
     </Grid>
 </Page>

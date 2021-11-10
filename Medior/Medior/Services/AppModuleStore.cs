@@ -39,6 +39,33 @@ namespace Medior.Services
             },
             new()
             {
+                Id = AppModuleIds.ScreenCapture,
+                Label = "Screen Capture",
+                Tooltip = "Capture and share images and videos of your desktop",
+                PageName = "ScreenCapturePage",
+                Icon = Symbol.Camera,
+                ModuleType = AppModuleType.Main
+            },
+            new()
+            {
+                Id = AppModuleIds.RemoteHelp,
+                Label = "Remote Help",
+                Tooltip = "Give or receive PC support by sharing desktops",
+                PageName = "RemoteHelpPage",
+                FontIcon = "\xE703",
+                ModuleType = AppModuleType.Main
+            },
+            new()
+            {
+                Id = AppModuleIds.GuidGenerator,
+                Label = "GUID Generator",
+                Tooltip = "Quickly generate a GUID",
+                PageName = "GuidGeneratorPage",
+                FontIcon = "\xE943",
+                ModuleType = AppModuleType.Main
+            },
+            new()
+            {
                 Id = AppModuleIds.About,
                 Label = "About",
                 Tooltip = "Info about Medior",

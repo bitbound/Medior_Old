@@ -40,6 +40,7 @@ namespace Medior.Services
 
             collection.AddSingleton<MainWindowViewModel>();
             collection.AddSingleton<PhotoSorterViewModel>();
+            collection.AddSingleton<SettingsViewModel>();
 
             var serviceProvider = collection.BuildServiceProvider();
 

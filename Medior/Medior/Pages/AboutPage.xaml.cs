@@ -17,5 +17,7 @@ namespace Medior.Pages
         {
             InitializeComponent();
         }
+
+        public string? Version => typeof(AboutPage)?.Assembly?.GetName()?.Version?.ToString();
     }
 }
