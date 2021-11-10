@@ -10,34 +10,43 @@ using Medior.Core.PhotoSorter.Enums;
 using System.Threading.Tasks;
 using CommunityToolkit.Diagnostics;
 using System.Threading;
+using Microsoft.UI.Dispatching;
 
 namespace Medior.ViewModels
 {
     public class PhotoSorterViewModel : ViewModelBase
     {
         private readonly IAppSettings _appSettings;
-        private readonly IPathTransformer _pathTransformer;
         private readonly IJobRunner _jobRunner;
-        private readonly IReportWriter _reportWriter;
         private readonly ILogger<PhotoSorterViewModel> _logger;
-        private SortJob? _selectedJob;
+        private readonly IPathTransformer _pathTransformer;
+        private readonly IReportWriter _reportWriter;
+        private readonly IDispatcherService _dispatcherService;
+        private string? _currentJobRunnerFile;
         private bool _isDryRun;
         private bool _isJobRunning;
+        private SortJob? _selectedJob;
+        private int _jobRunnerProgress;
 
         public PhotoSorterViewModel(
             IAppSettings appSettings,
             IPathTransformer pathTransformer,
             IJobRunner jobRunner,
             IReportWriter reportWriter,
+            IDispatcherService dispatcherService,
             ILogger<PhotoSorterViewModel> logger)
         {
             _appSettings = appSettings;
             _pathTransformer = pathTransformer;
             _jobRunner = jobRunner;
             _reportWriter = reportWriter;
+            _dispatcherService = dispatcherService;
             _logger = logger;
             
             LoadSortJobs();
+
+            _jobRunner.ProgressChanged += JobRunner_ProgressChanged;
+            _jobRunner.CurrentTaskChanged += JobRunner_CurrentTaskChanged;
         }
 
         public bool IsDryRun
@@ -52,9 +61,6 @@ namespace Medior.ViewModels
             set => SetProperty(ref _isJobRunning, value);
         }
 
-
-        public ObservableCollectionEx<SortJob> SortJobs { get; } = new();
-
         public SortJob? SelectedJob
         {
             get => _selectedJob;
@@ -66,13 +72,15 @@ namespace Medior.ViewModels
             }
         }
 
+        public ObservableCollectionEx<SortJob> SortJobs { get; } = new();
+
         public void CreateNewSortJob(string sortJobName)
         {
             var sortJob = new SortJob()
             {
                 Name = sortJobName
             };
-            
+
             SortJobs.Add(sortJob);
             SaveAppSettings();
 
@@ -88,7 +96,7 @@ namespace Medior.ViewModels
                 SaveAppSettings();
                 LoadSortJobs();
                 SelectedJob = SortJobs.FirstOrDefault();
-            }           
+            }
         }
 
         public string GetDestinationTransform()
@@ -122,7 +130,6 @@ namespace Medior.ViewModels
             }
             return string.Join(", ", SelectedJob.IncludeExtensions);
         }
-
 
         public OverwriteAction[] GetOverwriteActions()
         {
@@ -183,11 +190,48 @@ namespace Medior.ViewModels
         public async Task<JobReport> StartJob(CancellationToken cancellationToken)
         {
             Guard.IsNotNull(SelectedJob, nameof(SelectedJob));
-            var report = await _jobRunner.RunJob(SelectedJob, IsDryRun);
+            var report = await _jobRunner.RunJob(SelectedJob, IsDryRun, cancellationToken);
             report.ReportPath = await _reportWriter.WriteReport(report);
             return report;
         }
 
+        public string CurrentJobRunnerTask
+        {
+            get => _currentJobRunnerFile ?? "";
+            set => SetProperty(ref _currentJobRunnerFile, value);
+        }
+
+        public int JobRunnerProgress
+        {
+            get => _jobRunnerProgress;
+            set
+            {
+                SetProperty(ref _jobRunnerProgress, value);
+                InvokePropertyChanged(nameof(JobRunnerProgressPercent));
+            }
+        }
+
+        public string JobRunnerProgressPercent
+        {
+            get => $"{JobRunnerProgress}%";
+        }
+
+        private void JobRunner_CurrentTaskChanged(object? sender, string task)
+        {
+            _dispatcherService.MainWindowDispatcher?.TryEnqueue(() =>
+            {
+                CurrentJobRunnerTask = task;
+            });
+
+        }
+
+        private void JobRunner_ProgressChanged(object? sender, System.ComponentModel.ProgressChangedEventArgs e)
+        {
+            _dispatcherService.MainWindowDispatcher?.TryEnqueue(() =>
+            {
+                JobRunnerProgress = e.ProgressPercentage;
+            });
+        }
         private void LoadSortJobs()
         {
             SortJobs.Clear();

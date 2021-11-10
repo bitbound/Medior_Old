@@ -26,7 +26,7 @@ namespace Medior.Core.Shared.Services
             get
             {
                 var chrono = _services.GetRequiredService<IChrono>();
-                return Path.Combine(Path.GetTempPath(), "Medior", $"Medior_{chrono.Now:yyyy-MM-dd}.log");
+                return Path.Combine(Path.GetTempPath(), "Medior", $"Medior_Logs_{chrono.Now:yyyy-MM-dd}.log");
             }
         }
 

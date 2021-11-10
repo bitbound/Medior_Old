@@ -27,6 +27,7 @@ namespace Medior.Services
             collection.AddSingleton<IJobWatcher, JobWatcher>();
             collection.AddSingleton<IAppModuleStore, AppModuleStore>();
             collection.AddSingleton<IChrono, Chrono>();
+            collection.AddSingleton<IDispatcherService, DispatcherService>();
             collection.AddSingleton<IAppSettings, AppSettings>();
             collection.AddSingleton<IConfigService, ConfigService>();
             collection.AddSingleton<ISorterState>(new SorterState()

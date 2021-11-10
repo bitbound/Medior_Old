@@ -3,16 +3,18 @@ using Medior.Core.PhotoSorter.Enums;
 using Medior.Core.PhotoSorter.Models;
 using System.Text.Json;
 using Medior.Core.Shared.Services;
+using System.ComponentModel;
 
 namespace Medior.Core.PhotoSorter.Services
 {
     public interface IJobRunner
     {
-        Task<JobReport> RunJob(SortJob job, bool dryRun, CancellationToken cancellationToken = default);
+        Task<JobReport> RunJob(SortJob job, bool dryRun, CancellationToken cancellationToken);
+        Task<JobReport> RunJob(string configPath, string jobName, bool dryRun, CancellationToken cancellationToken);
+        Task<List<JobReport>> RunJobs(string configPath, bool dryRun, CancellationToken cancellationToken);
 
-        Task<JobReport> RunJob(string configPath, string jobName, bool dryRun, CancellationToken cancellationToken = default);
-
-        Task<List<JobReport>> RunJobs(string configPath, bool dryRun, CancellationToken cancellationToken = default);
+        event ProgressChangedEventHandler ProgressChanged;
+        event EventHandler<string> CurrentTaskChanged;
     }
 
     public class JobRunner : IJobRunner
@@ -44,7 +46,10 @@ namespace Medior.Core.PhotoSorter.Services
             _logger = logger;
         }
 
-        public async Task<JobReport> RunJob(SortJob job, bool dryRun, CancellationToken cancellationToken = default)
+        public event ProgressChangedEventHandler? ProgressChanged;
+        public event EventHandler<string>? CurrentTaskChanged;
+
+        public async Task<JobReport> RunJob(SortJob job, bool dryRun, CancellationToken cancellationToken)
         {
             var jobReport = new JobReport()
             {
@@ -58,21 +63,40 @@ namespace Medior.Core.PhotoSorter.Services
                 await _runLock.WaitAsync();
 
                 _logger.LogInformation("Starting job run: {job}", JsonSerializer.Serialize(job));
-
-                foreach (var extension in job.IncludeExtensions)
+                
+                for (var extIndex = 0; extIndex < job.IncludeExtensions.Length; extIndex++)
                 {
-                    var files = Directory.GetFiles(job.SourceDirectory, $"*.{extension.Replace(".", "")}", _enumOptions)
-                        .Where(file => !job.ExcludeExtensions.Any(ext => ext.Equals(Path.GetExtension(file)[1..], StringComparison.OrdinalIgnoreCase)));
-
-                    foreach (var file in files)
+                    if (cancellationToken.IsCancellationRequested)
                     {
+                        _logger.LogInformation("Job run cancelled.");
+                        break;
+                    }
+
+                    var extension = job.IncludeExtensions[extIndex];
+
+                    var files = Directory.GetFiles(job.SourceDirectory, $"*.{extension.Replace(".", "")}", _enumOptions)
+                        .Where(file => !job.ExcludeExtensions.Any(ext => ext.Equals(Path.GetExtension(file)[1..], StringComparison.OrdinalIgnoreCase)))
+                        .ToArray();
+
+                    for (var fileIndex = 0; fileIndex < files.Length; fileIndex++)
+                    {
+                        var file = files[fileIndex];
+
+                        CurrentTaskChanged?.Invoke(this, $"Extension: {extension}. File: {Path.GetFileName(file)}");
+
                         if (cancellationToken.IsCancellationRequested)
                         {
                             _logger.LogInformation("Job run cancelled.");
                             break;
                         }
+
                         var result = await PerformFileOperation(job, dryRun, file);
                         jobReport.Results.Add(result);
+
+                        var progress = (extIndex / (double)job.IncludeExtensions.Length * 100) + 
+                            (1 / (double)job.IncludeExtensions.Length * (fileIndex + 1) / (double)files.Length * 100);
+
+                        ProgressChanged?.Invoke(this, new ProgressChangedEventArgs((int)progress, null));
                     }
                 }
             }

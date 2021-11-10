@@ -66,12 +66,12 @@ namespace Medior.Core.PhotoSorter.Services
                 if (!string.IsNullOrWhiteSpace(_globalState.JobName))
                 {
                     _appLifetime.StopApplication();
-                    var report = await _jobRunner.RunJob(configPath, _globalState.JobName, _globalState.DryRun);
+                    var report = await _jobRunner.RunJob(configPath, _globalState.JobName, _globalState.DryRun, CancellationToken.None);
                     await _reportWriter.WriteReport(report);
                     return;
                 }
 
-                var reports = await _jobRunner.RunJobs(configPath, _globalState.DryRun);
+                var reports = await _jobRunner.RunJobs(configPath, _globalState.DryRun, CancellationToken.None);
                 await _reportWriter.WriteReports(reports);
                 
                 if (_globalState.Once)

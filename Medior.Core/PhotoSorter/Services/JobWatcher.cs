@@ -125,7 +125,7 @@ namespace Medior.Core.PhotoSorter.Services
             {
                 try
                 {
-                    var report = await _jobRunner.RunJob(job, dryRun);
+                    var report = await _jobRunner.RunJob(job, dryRun, CancellationToken.None);
                     await _reportWriter.WriteReport(report);
                 }
                 finally

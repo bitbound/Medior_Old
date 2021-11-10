@@ -119,8 +119,23 @@
                       ColumnSpacing="20" 
                       ColumnDefinitions="*, Auto" 
                       VerticalAlignment="Bottom">
-                    
-                    <ProgressBar Grid.Column="0" Visibility="{x:Bind ViewModel.IsJobRunning}" />
+
+                    <Grid Grid.Column="0"
+                          RowDefinitions="*, *"
+                          Visibility="{x:Bind ViewModel.IsJobRunning, Mode=OneWay}">
+                        
+                        <TextBlock Text="{x:Bind ViewModel.CurrentJobRunnerTask, Mode=OneWay}" HorizontalAlignment="Center" />
+                        
+                        <ProgressBar Grid.Row="1"
+                                     Maximum="100"
+                                     Value="{x:Bind ViewModel.JobRunnerProgress, Mode=OneWay}" />
+                        
+                        <TextBlock Grid.Row="1"
+                                   FontWeight="Bold"
+                                   HorizontalAlignment="Center" 
+                                   Text="{x:Bind ViewModel.JobRunnerProgressPercent, Mode=OneWay}" />
+                    </Grid>
+
                     <StackPanel Grid.Column="1" Orientation="Horizontal">
                         <CheckBox Content="Dry Run" 
                                   IsChecked="{x:Bind ViewModel.IsDryRun, Mode=TwoWay}"

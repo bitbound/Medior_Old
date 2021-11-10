@@ -20,6 +20,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using WinRT.Interop;
@@ -42,6 +43,7 @@ namespace Medior.Pages
         private AsyncRelayCommand? _startJob;
         private RelayCommand? _cancelJob;
         private CancellationTokenSource? _jobCancelTokenSource;
+        private CancellationToken _jobCancelToken;
 
         public PhotoSorterPage()
         {
@@ -202,12 +204,13 @@ namespace Medior.Pages
                         {
                             ViewModel.SaveJob();
                             _jobCancelTokenSource = new CancellationTokenSource();
+                            _jobCancelToken = _jobCancelTokenSource.Token;
                             ViewModel.IsJobRunning = true;
                             UpdateCommandsCanExecute();
                             JobReport report;
                             try
                             {
-                                report = await ViewModel.StartJob(_jobCancelTokenSource.Token);
+                                report = await Task.Run(async () => await ViewModel.StartJob(_jobCancelToken));
                             }
                             finally
                             {
