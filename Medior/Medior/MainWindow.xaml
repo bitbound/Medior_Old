@@ -21,7 +21,6 @@
 
         <NavigationView Grid.Row="1" 
                         IsBackButtonVisible="Collapsed"
-                        SelectedItem="{x:Bind ViewModel.SelectedNavItem, Mode=TwoWay}"
                         MenuItemsSource="{x:Bind ViewModel.AppModulesMain}"
                         FooterMenuItemsSource="{x:Bind ViewModel.AppModulesFooter}"
                         SelectionChanged="NavigationView_SelectionChanged">

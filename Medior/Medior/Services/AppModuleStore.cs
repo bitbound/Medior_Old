@@ -60,7 +60,7 @@ namespace Medior.Services
                 Id = AppModuleIds.QrCodeCreator,
                 Label = "QR Code Creator",
                 Description = "Generate QR codes to scan with your phone",
-                PageName = "PhotoSorterPage",
+                PageName = "QrCodeCreatorPage",
                 FontIcon = "\xED14",
                 ModuleType = AppModuleType.Main
             },
@@ -77,7 +77,6 @@ namespace Medior.Services
             {
                 Id = AppModuleIds.About,
                 Label = "About",
-                Description = "Information about this app",
                 PageName = "AboutPage",
                 Icon = Symbol.Help,
                 ModuleType = AppModuleType.Footer

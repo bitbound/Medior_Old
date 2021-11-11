@@ -18,11 +18,10 @@ namespace Medior.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
-        private readonly IAppSettings _appSettings;
         private readonly IAppModuleStore _appModuleStore;
+        private readonly IAppSettings _appSettings;
         private readonly ILogger<MainWindowViewModel> _logger;
         private AppModule? _selectedModule;
-        private object? _selectedNavItem;
 
         public MainWindowViewModel(
             IAppSettings appSettings,
@@ -34,27 +33,9 @@ namespace Medior.ViewModels
             _logger = logger;
         }
 
-        public ObservableCollectionEx<AppModule> AppModulesMain { get; } = new();
         public ObservableCollectionEx<AppModule> AppModulesFooter { get; } = new();
+        public ObservableCollectionEx<AppModule> AppModulesMain { get; } = new();
         public string SearchText { get; set; } = string.Empty;
-
-        public AppModule SettingsAppModule { get; } = new()
-        {
-            Label = "Settings"
-        };
-
-        public object? SelectedNavItem
-        {
-            get => _selectedNavItem;
-            set
-            {
-                SetProperty(ref _selectedNavItem, value);
-                if (value is AppModule appModule)
-                {
-                    SelectedModule = appModule;
-                }
-            }
-        }
 
         public AppModule? SelectedModule
         {
@@ -62,6 +43,26 @@ namespace Medior.ViewModels
             set => SetProperty(ref _selectedModule, value);
         }
 
+        public AppModule SettingsAppModule { get; } = new()
+        {
+            Label = "Settings",
+            PageName = "Medior.Pages.SettingsPage"
+        };
+        public void FilterModules(string searchText)
+        {
+            try
+            {
+                foreach (var module in AppModulesMain)
+                {
+                    module.IsShown = module.Label.Contains(searchText.Trim(), StringComparison.OrdinalIgnoreCase);
+                    AppModulesMain.InvokeCollectionChanged();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error filtering modules.");
+            }
+        }
 
         public void LoadMenuItems()
         {
@@ -91,22 +92,6 @@ namespace Medior.ViewModels
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error loading menu items.");
-            }
-        }
-
-        public void FilterModules(string searchText)
-        {
-            try
-            {
-                foreach (var module in AppModulesMain)
-                {
-                    module.IsShown = module.Label.Contains(searchText.Trim(), StringComparison.OrdinalIgnoreCase);
-                    AppModulesMain.InvokeCollectionChanged();
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error filtering modules.");
             }
         }
     }

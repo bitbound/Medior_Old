@@ -36,8 +36,6 @@ namespace Medior
 {
     public sealed partial class MainWindow : Window
     {
-        public static MainWindow? Instance { get; private set; }
-
         public MainWindow()
         {
             Instance = this;
@@ -48,37 +46,17 @@ namespace Medior
 
             InitializeComponent();
 
+            LoadSelectedModule();
+
             //this.SetWindowSize(1000, 700);
         }
 
-        public MainWindowViewModel ViewModel { get; } = Ioc.Default.GetRequiredService<MainWindowViewModel>();
-
+        public static MainWindow? Instance { get; private set; }
         public UIElement CustomTitleBar => TitleBarElement;
-
-        private void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+        public MainWindowViewModel ViewModel { get; } = Ioc.Default.GetRequiredService<MainWindowViewModel>();
+        private void AppModuleSearch_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
-            
-            if (args.IsSettingsSelected)
-            {
-                ViewModel.SelectedModule = ViewModel.SettingsAppModule;
-                NavigationFrame.Navigate(typeof(SettingsPage));
-            }
-            else
-            {
-                var selectedItem = (AppModule)args.SelectedItem;
-
-                if (selectedItem is null)
-                {
-                    return;
-                }
-
-                var pageName = $"Medior.Pages.{selectedItem.PageName}";
-                Type? pageType = Type.GetType(pageName);
-                if (pageType is not null)
-                {
-                    NavigationFrame.Navigate(pageType);
-                }
-            }
+            ViewModel.FilterModules(sender.Text);
         }
 
         private void CtrlF_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
@@ -86,9 +64,33 @@ namespace Medior
             AppModuleSearch.Focus(FocusState.Programmatic);
         }
 
-        private void AppModuleSearch_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        private void LoadSelectedModule()
         {
-            ViewModel.FilterModules(sender.Text);
+            var pageName = $"Medior.Pages.{ViewModel.SelectedModule?.PageName}";
+            var pageType = Type.GetType(pageName);
+            if (pageType is not null)
+            {
+                NavigationFrame.Navigate(pageType);
+            }
+        }
+
+        private void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+        {
+            
+            if (args.IsSettingsSelected)
+            {
+                ViewModel.SelectedModule = ViewModel.SettingsAppModule;
+            }
+            else if (args.SelectedItem is AppModule appModule)
+            {
+                ViewModel.SelectedModule = appModule;
+            }
+            else
+            {
+                return;
+            }
+
+            LoadSelectedModule();
         }
     }
 }

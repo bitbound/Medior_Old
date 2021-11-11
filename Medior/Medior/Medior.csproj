@@ -13,7 +13,9 @@
     <PackageIcon>comet.png</PackageIcon>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Controls\GatedControl.xaml" />
     <None Remove="Pages\PhotoSorterPage.xaml" />
+    <None Remove="Pages\ScreenCapturePage.xaml" />
     <None Remove="Pages\SettingsPage.xaml" />
   </ItemGroup>
   <ItemGroup>
@@ -35,10 +37,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Update="Controls\GatedControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <None Update="Media\comet.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
+    <Page Update="Pages\ScreenCapturePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Pages\PhotoSorterPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
