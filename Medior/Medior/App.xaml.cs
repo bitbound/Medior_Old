@@ -3,6 +3,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
+using System;
+using System.Linq;
+
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -36,16 +39,23 @@ namespace Medior
 
             UnhandledException += App_UnhandledException;
 
+            var lastArg = Environment.CommandLine.Split(" ").Last();
+            if (Uri.TryCreate(lastArg, UriKind.Absolute, out var uri) && 
+                uri.Scheme == "medior")
+            {
+                // TODO: Handle Uri.
+            }
+
             _mainWindow = new MainWindow
             {
                 ExtendsContentIntoTitleBar = true
             };
 
             _mainWindow.SetTitleBar(_mainWindow.CustomTitleBar);
-
+            
             _mainWindow.Activate();
         }
-
+        
         private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
         {
             var logger = Ioc.Default.GetRequiredService<ILogger<App>>();
