@@ -6,6 +6,7 @@ using Medior.Enums;
 using Medior.Models;
 using Medior.Services;
 using Microsoft.Extensions.Logging;
+using Microsoft.Toolkit;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
@@ -19,13 +20,16 @@ namespace Medior.ViewModels
     public class MainWindowViewModel : ViewModelBase
     {
         private readonly IAppModuleStore _appModuleStore;
+
         private readonly IAppSettings _appSettings;
         private readonly ILogger<MainWindowViewModel> _logger;
         private AppModule? _selectedModule;
+        private SubscriptionLevel _subscriptionLevel;
 
         public MainWindowViewModel(
             IAppSettings appSettings,
             IAppModuleStore appModuleStore,
+            IAccountService accountService,
             ILogger<MainWindowViewModel> logger)
         {
             _appSettings = appSettings;
@@ -36,7 +40,6 @@ namespace Medior.ViewModels
         public ObservableCollectionEx<AppModule> AppModulesFooter { get; } = new();
         public ObservableCollectionEx<AppModule> AppModulesMain { get; } = new();
         public string SearchText { get; set; } = string.Empty;
-
         public AppModule? SelectedModule
         {
             get => _selectedModule;
@@ -48,6 +51,13 @@ namespace Medior.ViewModels
             Label = "Settings",
             PageName = "Medior.Pages.SettingsPage"
         };
+
+        public SubscriptionLevel SubscriptionLevel
+        {
+            get => _subscriptionLevel;
+            set => SetProperty(ref _subscriptionLevel, value);
+        }
+
         public void FilterModules(string searchText)
         {
             try

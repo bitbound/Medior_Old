@@ -14,7 +14,9 @@ namespace Medior.Services
 {
     public static class ServiceContainer
     {
-        public static void Build()
+        public static IServiceProvider Instance { get; } = Build();
+
+        private static IServiceProvider Build()
         {
             var collection = new ServiceCollection();
             collection.AddLogging();
@@ -30,6 +32,7 @@ namespace Medior.Services
             collection.AddSingleton<IDispatcherService, DispatcherService>();
             collection.AddSingleton<IAppSettings, AppSettings>();
             collection.AddSingleton<IConfigService, ConfigService>();
+            collection.AddSingleton<IAccountService, AccountService>();
             collection.AddSingleton<ISorterState>(new SorterState()
             {
                 ConfigPath = string.Empty,
@@ -42,14 +45,13 @@ namespace Medior.Services
             collection.AddSingleton<PhotoSorterViewModel>();
             collection.AddSingleton<SettingsViewModel>();
 
-            var serviceProvider = collection.BuildServiceProvider();
+            var instance = collection.BuildServiceProvider();
 
-            var services = serviceProvider.GetRequiredService<IServiceProvider>();
-            serviceProvider
+            instance
                 .GetRequiredService<ILoggerFactory>()
-                .AddProvider(new FileLoggerProvider(services));
+                .AddProvider(new FileLoggerProvider(instance));
 
-            Ioc.Default.ConfigureServices(serviceProvider);
+            return instance;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Medior.Services;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.UI.Dispatching;
@@ -33,10 +34,8 @@ namespace Medior
         /// will be used such as when the application is launched to open a specific file.
         /// </summary>
         /// <param name="args">Details about the launch request and process.</param>
-        protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
+        protected override async void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
-            ServiceContainer.Build();
-
             UnhandledException += App_UnhandledException;
 
             var lastArg = Environment.CommandLine.Split(" ").Last();
@@ -46,10 +45,15 @@ namespace Medior
                 // TODO: Handle Uri.
             }
 
+            var accountService = ServiceContainer.Instance.GetRequiredService<IAccountService>();
+            var subResult = await accountService.GetSubscriptionLevel();
+
             _mainWindow = new MainWindow
             {
                 ExtendsContentIntoTitleBar = true
             };
+
+            _mainWindow.ViewModel.SubscriptionLevel = subResult.Value;
 
             _mainWindow.SetTitleBar(_mainWindow.CustomTitleBar);
             
@@ -58,7 +62,7 @@ namespace Medior
         
         private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
         {
-            var logger = Ioc.Default.GetRequiredService<ILogger<App>>();
+            var logger = ServiceContainer.Instance.GetRequiredService<ILogger<App>>();
             logger.LogError(e.Exception, "An unhandled exception occurred.");
         }
     }

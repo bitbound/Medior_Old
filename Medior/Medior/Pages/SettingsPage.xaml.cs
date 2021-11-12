@@ -1,4 +1,6 @@
-﻿using Medior.ViewModels;
+﻿using Medior.Services;
+using Medior.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -30,6 +32,6 @@ namespace Medior.Pages
             this.InitializeComponent();
         }
 
-        public SettingsViewModel ViewModel { get; } = Ioc.Default.GetRequiredService<SettingsViewModel>();
+        public SettingsViewModel ViewModel { get; } = ServiceContainer.Instance.GetRequiredService<SettingsViewModel>();
     }
 }

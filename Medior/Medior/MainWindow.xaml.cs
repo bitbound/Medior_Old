@@ -5,6 +5,7 @@ using Medior.Models;
 using Medior.Pages;
 using Medior.Services;
 using Medior.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -53,7 +54,8 @@ namespace Medior
 
         public static MainWindow? Instance { get; private set; }
         public UIElement CustomTitleBar => TitleBarElement;
-        public MainWindowViewModel ViewModel { get; } = Ioc.Default.GetRequiredService<MainWindowViewModel>();
+        public MainWindowViewModel ViewModel { get; } = ServiceContainer.Instance.GetRequiredService<MainWindowViewModel>();
+
         private void AppModuleSearch_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
             ViewModel.FilterModules(sender.Text);
