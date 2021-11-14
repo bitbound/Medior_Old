@@ -1,13 +1,9 @@
 ﻿using Medior.Core.Shared.BaseTypes;
-using Medior.Core.Shared.Models;
 using Medior.Enums;
 using Medior.Models;
 using Microsoft.UI.Xaml.Controls;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Medior.Services
 {

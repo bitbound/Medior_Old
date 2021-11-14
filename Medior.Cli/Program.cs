@@ -5,8 +5,6 @@ using Medior.Core.Shared.Services;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
-using System.IO;
-using System.Threading.Tasks;
 using Medior.Core.PhotoSorter.Services;
 
 namespace Medior.Cli

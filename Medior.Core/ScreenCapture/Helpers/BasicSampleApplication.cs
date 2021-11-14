@@ -22,7 +22,6 @@
 //  THE SOFTWARE.
 //  ---------------------------------------------------------------------------------
 
-using System;
 using System.Numerics;
 using Windows.Graphics.Capture;
 using Windows.Graphics.DirectX.Direct3D11;

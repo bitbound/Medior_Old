@@ -3,9 +3,8 @@ using Medior.Utilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Client;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Medior.Services
@@ -13,8 +12,8 @@ namespace Medior.Services
     public interface IAuthService
     {
         Task<Result<AuthenticationResult>> GetTokenSilently(IntPtr windowHandle);
-
         Task<Result<AuthenticationResult>> SignInInteractive(IntPtr windowHandle);
+        Task<Result<AuthenticationResult>> EditProfile(IntPtr windowHandle);
     }
 
     public class AuthService : IAuthService
@@ -24,14 +23,14 @@ namespace Medior.Services
         private static readonly string _redirectUri = $"https://{_tenantName}.b2clogin.com/oauth2/nativeclient";
         private static readonly string _tenant = $"{_tenantName}.onmicrosoft.com";
         private static readonly string _tenantName = "mediorapp";
-        private static string[] _apiScopes = { $"https://{_tenant}/medior-api/app.user" };
-        private static string _authorityBase = $"https://{_azureAdB2CHostname}/tfp/{_tenant}/";
-        private static string _authorityEditProfile = $"{_authorityBase}{_policyEditProfile}";
-        private static string _authorityResetPassword = $"{_authorityBase}{_policyResetPassword}";
-        private static string _authoritySignUpSignIn = $"{_authorityBase}{_policySignUpSignIn}";
-        private static string _policyEditProfile = "b2c_1_edit_profile";
-        private static string _policyResetPassword = "b2c_1_reset_password";
-        private static string _policySignUpSignIn = "b2c_1_signup_signin";
+        private static readonly string[] _apiScopes = { $"https://{_tenant}/medior-api/app.user" };
+        private static readonly string _authorityBase = $"https://{_azureAdB2CHostname}/tfp/{_tenant}/";
+        private static readonly string _authorityEditProfile = $"{_authorityBase}{_policyEditProfile}";
+        private static readonly string _authorityResetPassword = $"{_authorityBase}{_policyResetPassword}";
+        private static readonly string _authoritySignUpSignIn = $"{_authorityBase}{_policySignUpSignIn}";
+        private static readonly string _policyEditProfile = "b2c_1_edit_profile";
+        private static readonly string _policyResetPassword = "b2c_1_reset_password";
+        private static readonly string _policySignUpSignIn = "b2c_1_signup_signin";
         private readonly ILogger<AuthService> _logger;
 
         private readonly IPublicClientApplication _publicClientApp;
@@ -55,12 +54,11 @@ namespace Medior.Services
 
         public async Task<Result<AuthenticationResult>> GetTokenSilently(IntPtr windowHandle)
         {
-            AuthenticationResult? authResult = null;
             var accounts = await _publicClientApp.GetAccountsAsync(_policySignUpSignIn);
 
             try
             {
-                authResult = await _publicClientApp
+                var authResult = await _publicClientApp
                     .AcquireTokenSilent(_apiScopes, accounts.FirstOrDefault())
                     .ExecuteAsync();
 
@@ -79,6 +77,24 @@ namespace Medior.Services
             return Result.Fail<AuthenticationResult>("Failed to acquire token silently.");
         }
 
+        public async Task<Result<AuthenticationResult>> EditProfile(IntPtr windowHandle)
+        {
+            try
+            {
+                var authResult = await _publicClientApp.AcquireTokenInteractive(_apiScopes)
+                    .WithParentActivityOrWindow(windowHandle)
+                    .WithB2CAuthority(_authorityEditProfile)
+                    .WithPrompt(Prompt.NoPrompt)
+                    .ExecuteAsync(CancellationToken.None);
+
+                return Result.Ok(authResult);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error editing profile.");
+                return Result.Fail<AuthenticationResult>("An error occurred while editing profile.");
+            }
+        }
         public async Task<Result<AuthenticationResult>> SignInInteractive(IntPtr windowHandle)
         {
             AuthenticationResult? authResult = null;
@@ -127,6 +143,7 @@ namespace Medior.Services
                 return;
             }
 
+#pragma warning disable CA2254 // Template should be a static expression
             switch (level)
             {
                 case Microsoft.Identity.Client.LogLevel.Error:
@@ -144,6 +161,7 @@ namespace Medior.Services
                 default:
                     break;
             }
+#pragma warning restore CA2254 // Template should be a static expression
         }
     }
 }

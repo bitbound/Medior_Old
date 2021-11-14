@@ -1,19 +1,10 @@
 ﻿using Medior.Core.Shared.BaseTypes;
-using Medior.Core.Shared.Models;
-using Medior.Core.Shared.Services;
-using Medior.Core.Shared.Utilities;
 using Medior.Enums;
 using Medior.Models;
 using Medior.Services;
 using Microsoft.Extensions.Logging;
-using Microsoft.Toolkit;
-using Microsoft.Toolkit.Mvvm.ComponentModel;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Medior.ViewModels
 {
@@ -62,11 +53,11 @@ namespace Medior.ViewModels
         {
             try
             {
-                foreach (var module in AppModulesMain)
+                foreach (var module in AppModulesMain.Where(x => x.IsEnabled))
                 {
                     module.IsShown = module.Label.Contains(searchText.Trim(), StringComparison.OrdinalIgnoreCase);
-                    AppModulesMain.InvokeCollectionChanged();
                 }
+                AppModulesMain.InvokeCollectionChanged();
             }
             catch (Exception ex)
             {
@@ -94,7 +85,7 @@ namespace Medior.ViewModels
                 var favModules = AppModulesMain.Where(x => _appSettings.FavoriteModules.Contains(x.Id));
                 foreach (var module in favModules)
                 {
-                    module.IsFavorited = true;
+                    module.IsEnabled = true;
                 }
 
                 SelectedModule = AppModulesMain.FirstOrDefault();

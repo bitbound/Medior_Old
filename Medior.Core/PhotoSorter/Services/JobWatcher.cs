@@ -1,13 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using Medior.Core.PhotoSorter.Models;
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.IO;
 using System.Runtime.Serialization;
 using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
 using Medior.Core.Shared.Models;
 using Medior.Core.Shared.Utilities;
 using Medior.Core.Shared.Services;

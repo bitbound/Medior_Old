@@ -22,7 +22,6 @@
 //  THE SOFTWARE.
 //  ---------------------------------------------------------------------------------
 
-using System;
 using System.Runtime.InteropServices;
 
 namespace Medior.Core.ScreenCapture.Helpers

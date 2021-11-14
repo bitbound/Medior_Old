@@ -3,14 +3,12 @@ using Medior.Core.PhotoSorter.Models;
 using Medior.Core.PhotoSorter.Services;
 using System;
 using System.Linq;
-using Medior.Core.Shared.Extensions;
 using Microsoft.Extensions.Logging;
 using Medior.Services;
 using Medior.Core.PhotoSorter.Enums;
 using System.Threading.Tasks;
 using CommunityToolkit.Diagnostics;
 using System.Threading;
-using Microsoft.UI.Dispatching;
 
 namespace Medior.ViewModels
 {
