@@ -55,14 +55,6 @@
                 </Hyperlink>
             </TextBlock>
             <TextBlock>
-                <Hyperlink NavigateUri="https://github.com/dotnet/pinvoke">
-                    dotnet/pinvoke
-                </Hyperlink>
-                <Hyperlink FontSize="10" NavigateUri="https://github.com/dotnet/pinvoke/blob/master/LICENSE">
-                    (License)
-                </Hyperlink>
-            </TextBlock>
-            <TextBlock>
                 <Hyperlink NavigateUri="https://github.com/codebude/QRCoder/">
                     QRCoder
                 </Hyperlink>

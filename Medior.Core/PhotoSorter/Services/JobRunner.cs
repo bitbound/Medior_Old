@@ -10,8 +10,6 @@ namespace Medior.Core.PhotoSorter.Services
     public interface IJobRunner
     {
         Task<JobReport> RunJob(SortJob job, bool dryRun, CancellationToken cancellationToken);
-        Task<JobReport> RunJob(string configPath, string jobName, bool dryRun, CancellationToken cancellationToken);
-        Task<List<JobReport>> RunJobs(string configPath, bool dryRun, CancellationToken cancellationToken);
 
         event ProgressChangedEventHandler ProgressChanged;
         event EventHandler<string> CurrentTaskChanged;
@@ -31,18 +29,15 @@ namespace Medior.Core.PhotoSorter.Services
         private readonly ILogger<JobRunner> _logger;
         private readonly IMetadataReader _metaDataReader;
         private readonly IPathTransformer _pathTransformer;
-        private readonly IConfigService _configService;
 
         public JobRunner(IFileSystem fileSystem,
             IMetadataReader metaDataReader, 
             IPathTransformer pathTransformer,
-            IConfigService configService,
             ILogger<JobRunner> logger)
         {
             _fileSystem = fileSystem;
             _metaDataReader = metaDataReader;
             _pathTransformer = pathTransformer;
-            _configService = configService;
             _logger = logger;
         }
 
@@ -112,38 +107,6 @@ namespace Medior.Core.PhotoSorter.Services
             return jobReport;
         }
 
-        public async Task<JobReport> RunJob(string configPath, string jobName, bool dryRun, CancellationToken cancellationToken = default)
-        {
-            var config = _configService.GetConfig(configPath);
-            var job = config.SortJobs?.FirstOrDefault(x =>
-                x.Name?.Equals(jobName, StringComparison.OrdinalIgnoreCase) ?? false);
-
-            if (job is null)
-            {
-                _logger.LogError("Job name {jobName} not found in config.", jobName);
-                return new JobReport()
-                {
-                    DryRun = dryRun,
-                    JobName = jobName
-                };
-            }
-
-            return await RunJob(job, dryRun, cancellationToken);
-        }
-
-        public async Task<List<JobReport>> RunJobs(string configPath, bool dryRun, CancellationToken cancellationToken = default)
-        {
-            var config = _configService.GetConfig(configPath);
-            var reports = new List<JobReport>();
-
-            foreach (var job in config.SortJobs)
-            {
-                var report = await RunJob(job, dryRun, cancellationToken);
-                reports.Add(report);
-            }
-
-            return reports;
-        }
 
         private Task<OperationResult> PerformFileOperation(SortJob job, bool dryRun, string file)
         {

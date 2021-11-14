@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Medior.Cli\Medior.Cli.csproj" />
+    <ProjectReference Include="..\Medior.Core\Medior.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -14,7 +14,9 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Controls\GatedControl.xaml" />
+    <None Remove="Pages\DashboardPage.xaml" />
     <None Remove="Pages\PhotoSorterPage.xaml" />
+    <None Remove="Pages\RemoteHelpPage.xaml" />
     <None Remove="Pages\ScreenCapturePage.xaml" />
     <None Remove="Pages\SettingsPage.xaml" />
   </ItemGroup>
@@ -28,7 +30,6 @@
     <PackageReference Include="Microsoft.Toolkit" Version="7.1.1" />
     <PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.1.1" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.0.0-preview3" />
-    <PackageReference Include="PInvoke.User32" Version="0.7.104" />
 
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
@@ -45,6 +46,12 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
+    <Page Update="Pages\RemoteHelpPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Pages\DashboardPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Pages\ScreenCapturePage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

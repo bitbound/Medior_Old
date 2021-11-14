@@ -21,12 +21,11 @@ namespace Medior.Services
             collection.AddScoped<IFileSystem, FileSystem>();
             collection.AddScoped<IReportWriter, ReportWriter>();
             collection.AddScoped<IProcessEx, ProcessEx>();
-            collection.AddSingleton<IJobWatcher, JobWatcher>();
             collection.AddSingleton<IAppModuleStore, AppModuleStore>();
             collection.AddSingleton<IChrono, Chrono>();
             collection.AddSingleton<IDispatcherService, DispatcherService>();
             collection.AddSingleton<IAppSettings, AppSettings>();
-            collection.AddSingleton<IConfigService, ConfigService>();
+            collection.AddSingleton<IAuthService, AuthService>();
             collection.AddSingleton<IAccountService, AccountService>();
             collection.AddSingleton<ISorterState>(new SorterState()
             {
@@ -38,6 +37,8 @@ namespace Medior.Services
 
             collection.AddSingleton<MainWindowViewModel>();
             collection.AddSingleton<PhotoSorterViewModel>();
+            collection.AddSingleton<RemoteHelpViewModel>();
+            collection.AddSingleton<ScreenCaptureViewModel>();
             collection.AddSingleton<SettingsViewModel>();
 
             var instance = collection.BuildServiceProvider();

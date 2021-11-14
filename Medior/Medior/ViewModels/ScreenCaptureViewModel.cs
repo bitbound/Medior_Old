@@ -1,4 +1,5 @@
 ﻿using Medior.Core.Shared.Services;
+using System.Diagnostics;
 
 namespace Medior.ViewModels
 {
@@ -13,7 +14,11 @@ namespace Medior.ViewModels
 
         public void StartScreenClip()
         {
-            _processEx.Start("ms-screenclip:");
+            _processEx.Start(new ProcessStartInfo()
+            {
+                FileName = "ms-screenclip:",
+                UseShellExecute = true
+            });
         }
     }
 }

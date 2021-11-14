@@ -18,19 +18,19 @@ namespace Medior.Services
 
     public class AuthService : IAuthService
     {
-        private static readonly string _azureAdB2CHostname = $"{_tenantName}.b2clogin.com";
         private static readonly string _clientId = "1d50d95c-e211-4499-9248-fa4e5dbff323";
+        private static readonly string _tenantName = "mediorapp";
+        private static readonly string _policyEditProfile = "b2c_1_edit_profile";
+        private static readonly string _policyResetPassword = "b2c_1_reset_password";
+        private static readonly string _policySignUpSignIn = "b2c_1_signup_signin";
+        private static readonly string _azureAdB2CHostname = $"{_tenantName}.b2clogin.com";
         private static readonly string _redirectUri = $"https://{_tenantName}.b2clogin.com/oauth2/nativeclient";
         private static readonly string _tenant = $"{_tenantName}.onmicrosoft.com";
-        private static readonly string _tenantName = "mediorapp";
         private static readonly string[] _apiScopes = { $"https://{_tenant}/medior-api/app.user" };
         private static readonly string _authorityBase = $"https://{_azureAdB2CHostname}/tfp/{_tenant}/";
         private static readonly string _authorityEditProfile = $"{_authorityBase}{_policyEditProfile}";
         private static readonly string _authorityResetPassword = $"{_authorityBase}{_policyResetPassword}";
         private static readonly string _authoritySignUpSignIn = $"{_authorityBase}{_policySignUpSignIn}";
-        private static readonly string _policyEditProfile = "b2c_1_edit_profile";
-        private static readonly string _policyResetPassword = "b2c_1_reset_password";
-        private static readonly string _policySignUpSignIn = "b2c_1_signup_signin";
         private readonly ILogger<AuthService> _logger;
 
         private readonly IPublicClientApplication _publicClientApp;
@@ -100,7 +100,8 @@ namespace Medior.Services
             AuthenticationResult? authResult = null;
             try
             {
-                authResult = await _publicClientApp.AcquireTokenInteractive(_apiScopes)
+                authResult = await _publicClientApp
+                    .AcquireTokenInteractive(_apiScopes)
                     .WithParentActivityOrWindow(windowHandle)
                     .ExecuteAsync();
             }

@@ -1,4 +1,5 @@
 ﻿using Medior.Core.PhotoSorter.Models;
+using Medior.Models;
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
@@ -9,56 +10,34 @@ namespace Medior.Services
     public interface IAppSettings
     {
         IList<SortJob> SortJobs { get; set; }
-        IList<Guid> FavoriteModules { get; set; }
     }
 
     public class AppSettings : IAppSettings
     {
-        private const string SortJobsKey = "SortJobs";
-        private const string FavoriteModulesKey = "FavoriteModules";
+        private const string MediorConfigKey = "MediorConfig";
+
+        public MediorConfig Config { get; } = GetJsonObject<MediorConfig>(MediorConfigKey);
 
         public IList<SortJob> SortJobs
         {
             get
             {
-                return GetJsonObjectRoaming<List<SortJob>>(SortJobsKey);
+                return Config.SortJobs;
             }
             set
             {
-                
-                if (value is null)
-                {
-                    ApplicationData.Current.RoamingSettings.Values[SortJobsKey] = value;
-                    return;
-                }
-                
-                ApplicationData.Current.RoamingSettings.Values[SortJobsKey] = JsonSerializer.Serialize(value);
+
+                Config.SortJobs = value ?? new List<SortJob>();
+                ApplicationData.Current.LocalSettings.Values[MediorConfigKey] = JsonSerializer.Serialize(Config);
             }
         }
 
-        public IList<Guid> FavoriteModules
-        {
-            get
-            {
-                var favorites = ApplicationData.Current.RoamingSettings.Values[FavoriteModulesKey];
-                if (favorites is IList<Guid> favoritesList)
-                {
-                    return favoritesList;
-                }
-                return new List<Guid>();
-            }
-            set
-            {
-                ApplicationData.Current.RoamingSettings.Values[FavoriteModulesKey] = JsonSerializer.Serialize(value);
-            }
-        }
-
-        private T GetJsonObjectRoaming<T>(string key)
+        private static T GetJsonObject<T>(string key)
             where T: new()
         {
             try
             {
-                var serialized = ApplicationData.Current.RoamingSettings.Values[key]?.ToString();
+                var serialized = ApplicationData.Current.LocalSettings.Values[key]?.ToString();
 
                 if (serialized is null)
                 {

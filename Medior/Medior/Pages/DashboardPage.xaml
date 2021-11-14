@@ -1,5 +1,5 @@
 ﻿<Page
-    x:Class="Medior.Pages.ScreenCapturePage"
+    x:Class="Medior.Pages.DashboardPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Medior.Pages"
@@ -9,9 +9,6 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <Button Content="Capture"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Command="{x:Bind CaptureScreenShot, Mode=OneTime}" />
+
     </Grid>
 </Page>

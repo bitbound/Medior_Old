@@ -1,5 +1,6 @@
 ﻿using Medior.Core.Shared.Services;
 using System;
+using System.Diagnostics;
 using System.IO;
 
 namespace Medior.ViewModels
@@ -16,7 +17,13 @@ namespace Medior.ViewModels
 
         public void StartQuickAssist()
         {
-            //Get-WindowsCapability -Online -Name App.Support.QuickAssist
+            _processEx.Start(new ProcessStartInfo()
+            {
+                FileName = _quickAssistPath,
+                UseShellExecute = true
+            });
+            // Get-WindowsCapability -Online -Name App.Support.QuickAssist
+            // HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System PromptOnSecureDesktop 0
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using Medior.Core.PhotoSorter.Models;
 using Medior.Extensions;
+using Medior.Services;
 using Medior.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Input;
 using Microsoft.UI.Xaml.Controls;
@@ -32,10 +34,10 @@ namespace Medior.Pages
 
         public PhotoSorterPage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
-        public PhotoSorterViewModel ViewModel { get; } = Ioc.Default.GetRequiredService<PhotoSorterViewModel>();
+        public PhotoSorterViewModel ViewModel { get; } = ServiceContainer.Instance.GetRequiredService<PhotoSorterViewModel>();
 
         public RelayCommand CancelJob
         {

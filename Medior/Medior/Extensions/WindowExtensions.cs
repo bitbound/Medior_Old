@@ -9,25 +9,15 @@ namespace Medior.Extensions
 {
     public static class WindowExtensions
     {
-        public static void SetWindowSize(this Window self, int width, int height)
+        public static void CoreInitialize(this Window self, object target)
         {
             var hwnd = WindowNative.GetWindowHandle(self);
-
-            var dpi = PInvoke.User32.GetDpiForWindow(hwnd);
-            float scalingFactor = (float)dpi / 96;
-            width = (int)(width * scalingFactor);
-            height = (int)(height * scalingFactor);
-
-            PInvoke.User32.SetWindowPos(hwnd, PInvoke.User32.SpecialWindowHandles.HWND_TOP,
-                                        0, 0, width, height,
-                                        PInvoke.User32.SetWindowPosFlags.SWP_NOMOVE);
+            InitializeWithWindow.Initialize(target, hwnd);
         }
 
-        public static void SetStoreContext(this Window self)
+        public static IntPtr GetWindowHandle(this Window self)
         {
-            var hwnd = WindowNative.GetWindowHandle(self);
-            var context = StoreContext.GetDefault();
-            InitializeWithWindow.Initialize(context, hwnd);
+            return WindowNative.GetWindowHandle(self);
         }
 
         public static async Task<GraphicsCaptureItem> InvokeGraphicsCapturePicker(this Window self)
@@ -38,10 +28,11 @@ namespace Medior.Extensions
             return await picker.PickSingleItemAsync();
         }
 
-        public static void CoreInitialize(this Window self, object target)
+        public static void SetStoreContext(this Window self)
         {
             var hwnd = WindowNative.GetWindowHandle(self);
-            InitializeWithWindow.Initialize(target, hwnd);
+            var context = StoreContext.GetDefault();
+            InitializeWithWindow.Initialize(context, hwnd);
         }
     }
 }

@@ -38,8 +38,6 @@ namespace Medior.Models
             get => _isEnabled;
             set => SetProperty(ref _isEnabled, value);
         }
-        public bool IsLoginRequired { get; set; }
-        public bool IsProOnly { get; set; }
         public bool IsShown
         {
             get => _isShown;
