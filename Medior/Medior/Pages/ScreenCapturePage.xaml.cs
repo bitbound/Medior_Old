@@ -3,6 +3,7 @@ using Medior.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Input;
 using Microsoft.UI.Xaml.Controls;
+using System;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -22,5 +23,7 @@ namespace Medior.Pages
         public ScreenCaptureViewModel ViewModel { get; } = ServiceContainer.Instance.GetRequiredService<ScreenCaptureViewModel>();
 
         public RelayCommand CaptureScreenShot => new(() => ViewModel.StartScreenClip());
+
+        public RelayCommand CaptureVideo => new(() => ViewModel.StartVideoCapture());
     }
 }

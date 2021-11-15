@@ -51,8 +51,6 @@ namespace Medior.ViewModels
 
         public bool IsMainNavigationVisible => IsSignedIn || IsGuestMode;
 
-        public bool IsSignInGridVisible => !IsMainNavigationVisible;
-
         public bool IsSignedIn
         {
             get => _isSignedIn;
@@ -64,14 +62,9 @@ namespace Medior.ViewModels
             }
         }
 
-        public async Task<Result<AuthenticationResult>> SignUpSignIn(IntPtr windowHandle)
-        {
-            var result = await _authService.SignInInteractive(windowHandle);
-            IsSignedIn = result.IsSuccess;
-            return result;
-        }
-
+        public bool IsSignInGridVisible => !IsMainNavigationVisible;
         public string SearchText { get; set; } = string.Empty;
+
         public AppModule? SelectedModule
         {
             get => _selectedModule;
@@ -90,13 +83,6 @@ namespace Medior.ViewModels
             set => SetProperty(ref _subscriptionLevel, value);
         }
 
-        public async Task LoadAuthState(IntPtr windowHandle)
-        {
-            var result = await _authService.GetTokenSilently(windowHandle);
-            IsSignedIn = result.IsSuccess;
-            // TODO: Use messaging service to broadcast sign-in state changes.
-        }
-        
         public void FilterModules(string searchText)
         {
             try
@@ -111,6 +97,13 @@ namespace Medior.ViewModels
             {
                 _logger.LogError(ex, "Error filtering modules.");
             }
+        }
+
+        public async Task LoadAuthState(IntPtr windowHandle)
+        {
+            var result = await _authService.GetTokenSilently(windowHandle, false);
+            IsSignedIn = result.IsSuccess;
+            // TODO: Use messaging service to broadcast sign-in state changes.
         }
 
         public void LoadMenuItems()
@@ -136,6 +129,13 @@ namespace Medior.ViewModels
             {
                 _logger.LogError(ex, "Error loading menu items.");
             }
+        }
+
+        public async Task<Result<AuthenticationResult>> SignUpSignIn(IntPtr windowHandle)
+        {
+            var result = await _authService.SignInInteractive(windowHandle);
+            IsSignedIn = result.IsSuccess;
+            return result;
         }
     }
 }

@@ -27,6 +27,7 @@ namespace Medior.Services
             collection.AddSingleton<IAppSettings, AppSettings>();
             collection.AddSingleton<IAuthService, AuthService>();
             collection.AddSingleton<IAccountService, AccountService>();
+            collection.AddSingleton<IEnvironmentService, EnvironmentService>();
             collection.AddSingleton<ISorterState>(new SorterState()
             {
                 ConfigPath = string.Empty,

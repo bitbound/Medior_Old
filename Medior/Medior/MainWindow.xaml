@@ -119,7 +119,7 @@
             </NavigationView.Header>
  
 
-            <Frame x:Name="NavigationFrame"></Frame>
+            <Frame x:Name="NavigationFrame" IsNavigationStackEnabled="False"></Frame>
         </NavigationView>
     </Grid>
 </Window>

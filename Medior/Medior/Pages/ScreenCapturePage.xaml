@@ -6,12 +6,24 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+    x:DefaultBindMode="OneWay"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
-        <Button Content="Capture"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Command="{x:Bind CaptureScreenShot, Mode=OneTime}" />
+    <Grid RowDefinitions="Auto, *">
+        <CommandBar Grid.Row="0"
+                    DefaultLabelPosition="Right"
+                    HorizontalAlignment="Left">
+            
+            <AppBarButton Icon="Camera"
+                          Label="Capture Image"
+                          Command="{x:Bind CaptureScreenShot, Mode=OneTime}" />
+
+            <AppBarButton Icon="Video"
+                          Label="Capture Video"
+                          Command="{x:Bind CaptureVideo, Mode=OneTime}" />
+        </CommandBar>
+
+        <Image Grid.Row="1"
+               Source="{x:Bind ViewModel.CurrentImage}" />
     </Grid>
 </Page>
