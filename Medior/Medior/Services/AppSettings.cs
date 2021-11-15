@@ -1,5 +1,4 @@
 ﻿using Medior.Core.PhotoSorter.Models;
-using Medior.Models;
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
@@ -14,30 +13,27 @@ namespace Medior.Services
 
     public class AppSettings : IAppSettings
     {
-        private const string MediorConfigKey = "MediorConfig";
-
-        public MediorConfig Config { get; } = GetJsonObject<MediorConfig>(MediorConfigKey);
+        private const string SortJobsKey = "SortJobs";
 
         public IList<SortJob> SortJobs
         {
             get
             {
-                return Config.SortJobs;
+                return GetJsonObject<List<SortJob>>(SortJobsKey);
             }
             set
             {
 
-                Config.SortJobs = value ?? new List<SortJob>();
-                ApplicationData.Current.LocalSettings.Values[MediorConfigKey] = JsonSerializer.Serialize(Config);
+                SetJsonObject(SortJobsKey, value);
             }
         }
 
-        private static T GetJsonObject<T>(string key)
-            where T: new()
+        private T GetJsonObject<T>(string key)
+            where T : new()
         {
             try
             {
-                var serialized = ApplicationData.Current.LocalSettings.Values[key]?.ToString();
+                var serialized = ApplicationData.Current.RoamingSettings.Values[key]?.ToString();
 
                 if (serialized is null)
                 {
@@ -50,6 +46,17 @@ namespace Medior.Services
             {
                 return new();
             }
+        }
+
+        private void SetJsonObject<T>(string key, T value)
+        {
+            if (value is null)
+            {
+                ApplicationData.Current.RoamingSettings.Values[key] = value;
+                return;
+            }
+
+            ApplicationData.Current.RoamingSettings.Values[key] = JsonSerializer.Serialize(value);
         }
     }
 }

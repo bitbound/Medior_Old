@@ -36,7 +36,6 @@
             </TextBlock>
 
             
-            
             <TextBlock Text="Dependencies and Libraries" Style="{StaticResource HeaderStyle}" />
             <TextBlock>
                 <Hyperlink NavigateUri="https://github.com/CommunityToolkit/WindowsCommunityToolkit">
@@ -62,6 +61,9 @@
                     (License)
                 </Hyperlink>
             </TextBlock>
+
+            <TextBlock Text="Disclaimer" Style="{StaticResource HeaderStyle}" />
+            <TextBlock TextWrapping="Wrap" Text="THIS APPLICATION IS PROVIDED 'AS IS' WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED." />
         </StackPanel>
     </Grid>
 </Page>

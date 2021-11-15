@@ -90,6 +90,13 @@ namespace Medior.ViewModels
             set => SetProperty(ref _subscriptionLevel, value);
         }
 
+        public async Task LoadAuthState(IntPtr windowHandle)
+        {
+            var result = await _authService.GetTokenSilently(windowHandle);
+            IsSignedIn = result.IsSuccess;
+            // TODO: Use messaging service to broadcast sign-in state changes.
+        }
+        
         public void FilterModules(string searchText)
         {
             try

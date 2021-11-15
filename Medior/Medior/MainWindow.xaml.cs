@@ -24,15 +24,23 @@ namespace Medior
             Title = "Medior";
             this.SetStoreContext();
 
-            ViewModel.LoadMenuItems();
-
-            InitializeComponent();
-
-            LoadSelectedModule();
+            InitializeComponent();            
         }
 
         public static MainWindow? Instance { get; private set; }
         public UIElement CustomTitleBar => TitleBarElement;
+        
+        public RelayCommand SignInAsGuest => new(() => ViewModel.IsGuestMode = true);
+
+        public RelayCommand SignUpSignIn => new(async () =>
+            {
+                var result = await ViewModel.SignUpSignIn(this.GetWindowHandle());
+                if (!result.IsSuccess)
+                {
+                    await RootGrid.Alert("Authentication Failed", "Sign in process failed.");
+                }
+            });
+
         public MainWindowViewModel ViewModel { get; } = ServiceContainer.Instance.GetRequiredService<MainWindowViewModel>();
 
         private void AppModuleSearch_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
@@ -44,18 +52,6 @@ namespace Medior
         {
             AppModuleSearch.Focus(FocusState.Programmatic);
         }
-
-        public RelayCommand SignInAsGuest => new(() => ViewModel.IsGuestMode = true);
-
-        public RelayCommand SignUpSignIn => new(async () =>
-        {
-            var result = await ViewModel.SignUpSignIn(this.GetWindowHandle());
-            if (!result.IsSuccess)
-            {
-                await RootGrid.Alert("Authentication Failed", "Sign in process failed.");
-            }
-        });
-
         private void LoadSelectedModule()
         {
             var pageName = $"Medior.Pages.{ViewModel.SelectedModule?.PageName}";
@@ -83,6 +79,14 @@ namespace Medior
             }
 
             LoadSelectedModule();
+        }
+
+        private async void RootGrid_Loaded(object sender, RoutedEventArgs e)
+        {
+            ViewModel.LoadMenuItems();
+            LoadSelectedModule();
+            await ViewModel.LoadAuthState(this.GetWindowHandle());
+            // TODO: Loading screen that ends here.
         }
     }
 }

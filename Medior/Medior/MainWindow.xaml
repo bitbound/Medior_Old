@@ -9,7 +9,7 @@
     x:DefaultBindMode="OneWay"
     mc:Ignorable="d">
 
-    <Grid x:Name="RootGrid" x:FieldModifier="Public">
+    <Grid x:Name="RootGrid" x:FieldModifier="Public" Loaded="RootGrid_Loaded">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
