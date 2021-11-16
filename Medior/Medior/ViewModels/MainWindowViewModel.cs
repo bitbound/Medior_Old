@@ -21,7 +21,7 @@ namespace Medior.ViewModels
         private bool _isSignedIn;
         private AppModule? _selectedModule;
         private SubscriptionLevel _subscriptionLevel;
-        private bool _isLoading;
+        private bool _isLoading = true;
 
         public MainWindowViewModel(
             IAppSettings appSettings,

@@ -11,8 +11,10 @@ namespace Medior.Services
 {
     public interface IAuthService
     {
-        Task<Result<AuthenticationResult>> EditProfile(IntPtr windowHandle);
+        bool IsSignedIn { get; }
+        string Username { get; }
 
+        Task<Result<AuthenticationResult>> EditProfile(IntPtr windowHandle);
         Task<Result<AuthenticationResult>> GetTokenSilently(IntPtr windowHandle, bool fallbackToInteractive);
         Task<Result<AuthenticationResult>> SignInInteractive(IntPtr windowHandle);
         Task<Result> SignOut();
@@ -25,11 +27,14 @@ namespace Medior.Services
         private static readonly string _policyResetPassword = "b2c_1_reset_password";
         private static readonly string _policySignUpSignIn = "b2c_1_signup_signin";
         private static readonly string _tenantName = "mediorapp";
+        private readonly IChrono _chrono;
         private readonly ILogger<AuthService> _logger;
         private readonly IPublicClientApplication _publicClientApp;
+        private AuthenticationResult? _lastAuthResult;
 
-        public AuthService(ILogger<AuthService> logger)
+        public AuthService(IChrono chrono, ILogger<AuthService> logger)
         {
+            _chrono = chrono;
             _logger = logger;
 
             _publicClientApp = PublicClientApplicationBuilder.Create(_clientId)
@@ -44,6 +49,12 @@ namespace Medior.Services
 
             TokenCacheHelper.Bind(_publicClientApp.UserTokenCache);
         }
+
+        public bool IsSignedIn => 
+            _lastAuthResult?.AccessToken is not null &&
+            _lastAuthResult.ExpiresOn > _chrono.Now;
+
+        public string Username => _lastAuthResult?.Account?.Username ?? string.Empty;
 
         private string[] ApiScopes => new[] { $"https://{Tenant}/medior-api/app.user" };
         private string AuthorityBase => $"https://{AzureAdB2CHostname}/tfp/{Tenant}/";
@@ -79,11 +90,11 @@ namespace Medior.Services
 
             try
             {
-                var authResult = await _publicClientApp
+                _lastAuthResult = await _publicClientApp
                     .AcquireTokenSilent(ApiScopes, accounts.FirstOrDefault())
                     .ExecuteAsync();
 
-                return Result.Ok(authResult);
+                return Result.Ok(_lastAuthResult);
             }
             catch (MsalUiRequiredException ex)
             {
@@ -103,10 +114,9 @@ namespace Medior.Services
 
         public async Task<Result<AuthenticationResult>> SignInInteractive(IntPtr windowHandle)
         {
-            AuthenticationResult? authResult = null;
             try
             {
-                authResult = await _publicClientApp
+                _lastAuthResult = await _publicClientApp
                     .AcquireTokenInteractive(ApiScopes)
                     .WithParentActivityOrWindow(windowHandle)
                     .ExecuteAsync();
@@ -119,7 +129,7 @@ namespace Medior.Services
 
                     if (ex.Message.Contains("AADB2C90118"))
                     {
-                        authResult = await _publicClientApp.AcquireTokenInteractive(ApiScopes)
+                        _lastAuthResult = await _publicClientApp.AcquireTokenInteractive(ApiScopes)
                             .WithParentActivityOrWindow(windowHandle)
                             .WithPrompt(Prompt.SelectAccount)
                             .WithB2CAuthority(AuthorityResetPassword)
@@ -136,12 +146,12 @@ namespace Medior.Services
                 _logger.LogError(ex, "Error acquiring token.");
             }
 
-            if (authResult is null)
+            if (_lastAuthResult is null)
             {
                 return Result.Fail<AuthenticationResult>("Failed to acquire auth token.");
             }
 
-            return Result.Ok(authResult);
+            return Result.Ok(_lastAuthResult);
         }
 
         public async Task<Result> SignOut()
@@ -153,7 +163,7 @@ namespace Medior.Services
                 {
                     await _publicClientApp.RemoveAsync(account);
                 }
-
+                _lastAuthResult = null;
                 return Result.Ok();
             }
             catch (Exception ex)

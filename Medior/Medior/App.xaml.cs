@@ -97,6 +97,7 @@ namespace Medior
             });
 
             collection.AddSingleton<MainWindowViewModel>();
+            collection.AddSingleton<DashboardViewModel>();
             collection.AddSingleton<PhotoSorterViewModel>();
             collection.AddSingleton<RemoteHelpViewModel>();
             collection.AddSingleton<ScreenCaptureViewModel>();

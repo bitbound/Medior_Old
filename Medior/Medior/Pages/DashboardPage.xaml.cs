@@ -1,4 +1,9 @@
-﻿using Microsoft.UI.Xaml.Controls;
+﻿using CommunityToolkit.Diagnostics;
+using Medior.Extensions;
+using Medior.ViewModels;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
+using Microsoft.Toolkit.Mvvm.Input;
+using Microsoft.UI.Xaml.Controls;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -14,5 +19,18 @@ namespace Medior.Pages
         {
             this.InitializeComponent();
         }
+
+        public DashboardViewModel ViewModel { get; } = Ioc.Default.GetRequiredService<DashboardViewModel>();
+
+        public AsyncRelayCommand LogIn => new(async () =>
+        {
+            Guard.IsNotNull(MainWindow.Instance, nameof(MainWindow.Instance));
+            await ViewModel.LogIn(MainWindow.Instance.GetWindowHandle());
+        });
+
+        public AsyncRelayCommand LogOut => new(async () =>
+        {
+            await ViewModel.LogOut();
+        });
     }
 }
