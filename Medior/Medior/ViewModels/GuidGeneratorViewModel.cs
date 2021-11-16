@@ -1,4 +1,4 @@
-﻿using Medior.Core.Shared.BaseTypes;
+﻿using Medior.BaseTypes;
 
 namespace Medior.ViewModels
 {

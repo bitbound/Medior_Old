@@ -1,13 +1,15 @@
-﻿using Medior.Core.PhotoSorter.Services;
-using Medior.Core.Shared.Services;
+﻿global using System;
+global using System.Collections.Generic;
+global using System.IO;
+global using System.Linq;
+global using System.Threading;
+using Medior.PhotoSorter.Services;
 using Medior.Services;
 using Medior.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.UI.Xaml;
-using System;
-using System.Linq;
 
 
 // To learn more about WinUI, the WinUI project structure,

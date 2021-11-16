@@ -1,4 +1,4 @@
-﻿using Medior.Core.Shared.Utilities;
+﻿using Medior.Utilities;
 using Medior.ViewModels;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Input;

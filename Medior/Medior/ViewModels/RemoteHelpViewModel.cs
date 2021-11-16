@@ -1,4 +1,4 @@
-﻿using Medior.Core.Shared.Services;
+﻿using Medior.Services;
 using System;
 using System.Diagnostics;
 using System.IO;

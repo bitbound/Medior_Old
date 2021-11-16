@@ -5,8 +5,6 @@ VisualStudioVersion = 17.0.31815.197
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Medior.Tests", "Medior.Tests\Medior.Tests.csproj", "{235241DE-029A-4A6F-9A61-0659B643485A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Medior.Core", "Medior.Core\Medior.Core.csproj", "{981D5E86-BF53-4A58-B062-D6AA5FC9781E}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{921C6985-505C-4F62-B1EA-4A5A07DA5883}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
@@ -30,8 +28,8 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{235241DE-029A-4A6F-9A61-0659B643485A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{235241DE-029A-4A6F-9A61-0659B643485A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{235241DE-029A-4A6F-9A61-0659B643485A}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{235241DE-029A-4A6F-9A61-0659B643485A}.Debug|Any CPU.Build.0 = Debug|x64
 		{235241DE-029A-4A6F-9A61-0659B643485A}.Debug|arm64.ActiveCfg = Debug|Any CPU
 		{235241DE-029A-4A6F-9A61-0659B643485A}.Debug|arm64.Build.0 = Debug|Any CPU
 		{235241DE-029A-4A6F-9A61-0659B643485A}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -46,22 +44,6 @@ Global
 		{235241DE-029A-4A6F-9A61-0659B643485A}.Release|x64.Build.0 = Release|Any CPU
 		{235241DE-029A-4A6F-9A61-0659B643485A}.Release|x86.ActiveCfg = Release|Any CPU
 		{235241DE-029A-4A6F-9A61-0659B643485A}.Release|x86.Build.0 = Release|Any CPU
-		{981D5E86-BF53-4A58-B062-D6AA5FC9781E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{981D5E86-BF53-4A58-B062-D6AA5FC9781E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{981D5E86-BF53-4A58-B062-D6AA5FC9781E}.Debug|arm64.ActiveCfg = Debug|Any CPU
-		{981D5E86-BF53-4A58-B062-D6AA5FC9781E}.Debug|arm64.Build.0 = Debug|Any CPU
-		{981D5E86-BF53-4A58-B062-D6AA5FC9781E}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{981D5E86-BF53-4A58-B062-D6AA5FC9781E}.Debug|x64.Build.0 = Debug|Any CPU
-		{981D5E86-BF53-4A58-B062-D6AA5FC9781E}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{981D5E86-BF53-4A58-B062-D6AA5FC9781E}.Debug|x86.Build.0 = Debug|Any CPU
-		{981D5E86-BF53-4A58-B062-D6AA5FC9781E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{981D5E86-BF53-4A58-B062-D6AA5FC9781E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{981D5E86-BF53-4A58-B062-D6AA5FC9781E}.Release|arm64.ActiveCfg = Release|Any CPU
-		{981D5E86-BF53-4A58-B062-D6AA5FC9781E}.Release|arm64.Build.0 = Release|Any CPU
-		{981D5E86-BF53-4A58-B062-D6AA5FC9781E}.Release|x64.ActiveCfg = Release|Any CPU
-		{981D5E86-BF53-4A58-B062-D6AA5FC9781E}.Release|x64.Build.0 = Release|Any CPU
-		{981D5E86-BF53-4A58-B062-D6AA5FC9781E}.Release|x86.ActiveCfg = Release|Any CPU
-		{981D5E86-BF53-4A58-B062-D6AA5FC9781E}.Release|x86.Build.0 = Release|Any CPU
 		{BFA93DFC-7361-4E41-B548-62858E4D7239}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{BFA93DFC-7361-4E41-B548-62858E4D7239}.Debug|Any CPU.Build.0 = Debug|x64
 		{BFA93DFC-7361-4E41-B548-62858E4D7239}.Debug|Any CPU.Deploy.0 = Debug|x64

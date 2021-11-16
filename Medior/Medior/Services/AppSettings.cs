@@ -1,4 +1,4 @@
-﻿using Medior.Core.PhotoSorter.Models;
+﻿using Medior.PhotoSorter.Models;
 using System.Collections.Generic;
 using System.Text.Json;
 using Windows.Storage;

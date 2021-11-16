@@ -1,14 +1,14 @@
-﻿using Medior.Core.Shared.BaseTypes;
-using Medior.Core.PhotoSorter.Models;
-using Medior.Core.PhotoSorter.Services;
-using System;
+﻿using System;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Medior.Services;
-using Medior.Core.PhotoSorter.Enums;
 using System.Threading.Tasks;
 using CommunityToolkit.Diagnostics;
 using System.Threading;
+using Medior.PhotoSorter.Enums;
+using Medior.PhotoSorter.Models;
+using Medior.BaseTypes;
+using Medior.PhotoSorter.Services;
 
 namespace Medior.ViewModels
 {

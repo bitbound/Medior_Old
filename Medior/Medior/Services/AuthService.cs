@@ -1,4 +1,4 @@
-﻿using Medior.Core.Shared.BaseTypes;
+﻿using Medior.BaseTypes;
 using Medior.Utilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Client;

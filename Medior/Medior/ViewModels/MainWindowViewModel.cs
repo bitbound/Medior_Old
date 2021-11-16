@@ -1,4 +1,4 @@
-﻿using Medior.Core.Shared.BaseTypes;
+﻿using Medior.BaseTypes;
 using Medior.Enums;
 using Medior.Models;
 using Medior.Services;
@@ -26,7 +26,6 @@ namespace Medior.ViewModels
         public MainWindowViewModel(
             IAppSettings appSettings,
             IAppModuleStore appModuleStore,
-            IAccountService accountService,
             IAuthService authService,
             ILogger<MainWindowViewModel> logger)
         {

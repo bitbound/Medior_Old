@@ -1,4 +1,4 @@
-﻿using Medior.Core.Shared.BaseTypes;
+﻿using Medior.BaseTypes;
 using Medior.Enums;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;

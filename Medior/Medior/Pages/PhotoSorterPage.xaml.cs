@@ -1,6 +1,6 @@
-﻿using Medior.Core.PhotoSorter.Models;
-using Medior.Core.Shared.Utilities;
-using Medior.Extensions;
+﻿using Medior.Extensions;
+using Medior.PhotoSorter.Models;
+using Medior.Utilities;
 using Medior.ViewModels;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Input;

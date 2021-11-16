@@ -1,5 +1,5 @@
-﻿using Medior.Core.Shared.BaseTypes;
-using Medior.Core.Shared.Services;
+﻿using Medior.BaseTypes;
+using Medior.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System;
