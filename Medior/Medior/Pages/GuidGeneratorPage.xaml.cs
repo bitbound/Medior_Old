@@ -1,8 +1,4 @@
-﻿using Medior.Services;
-using Medior.ViewModels;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Toolkit.Mvvm.Input;
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Data;
@@ -25,15 +21,11 @@ namespace Medior.Pages
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class RemoteHelpPage : Page
+    public sealed partial class GuidGeneratorPage : Page
     {
-        public RemoteHelpPage()
+        public GuidGeneratorPage()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
-
-        public RemoteHelpViewModel ViewModel { get; } = ServiceContainer.Instance.GetRequiredService<RemoteHelpViewModel>();
-
-        public RelayCommand StartQuickAssist => new(() => ViewModel.StartQuickAssist());
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Medior.Core.PhotoSorter.Models;
+using Medior.Core.Shared.Utilities;
 using Medior.Extensions;
 using Medior.Services;
 using Medior.ViewModels;
@@ -154,6 +155,15 @@ namespace Medior.Pages
                             ViewModel.SaveJob();
                             SavedTip.IsOpen = true;
                             UpdateCommandsCanExecute();
+
+                            Debouncer.Debounce(TimeSpan.FromSeconds(2), () =>
+                            {
+                                DispatcherQueue.TryEnqueue(() =>
+                                {
+                                    SavedTip.IsOpen = false;
+                                });
+                            });
+                          
                         },
                         () => ViewModel.SelectedJob is not null
                     );

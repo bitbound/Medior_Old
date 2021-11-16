@@ -24,15 +24,15 @@ namespace Medior.Services
 
         public AppModule[] AllModules { get; } = new AppModule[]
         {
-            //new()
-            //{
-            //    Id = AppModuleIds.Dashboard,
-            //    Label = "Dashboard",
-            //    Description = "Overview of your Medior account",
-            //    PageName = "DashboardPage",
-            //    Icon = Symbol.Account,
-            //    ModuleType = AppModuleType.Main
-            //},
+            new()
+            {
+                Id = AppModuleIds.Dashboard,
+                Label = "Dashboard",
+                Description = "Overview of your Medior account",
+                PageName = "DashboardPage",
+                Icon = Symbol.Account,
+                ModuleType = AppModuleType.Main
+            },
             new()
             {
                 Id = AppModuleIds.ScreenCapture,

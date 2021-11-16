@@ -28,6 +28,7 @@
                 <AppBarButton Label="Delete" Icon="Delete" Command="{x:Bind DeleteJob }" />
             </CommandBar>
 
+            
             <TeachingTip x:Name="SavedTip" 
                          Title="Sort job saved."
                          IsLightDismissEnabled="True">
@@ -42,7 +43,7 @@
                   ColumnSpacing="10"
                   Grid.ColumnDefinitions="Auto, *" 
                   Grid.RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, *">
-                
+
 
                 <TextBlock Grid.Row="0" Text="Source Directory" VerticalAlignment="Center" />
                 <TextBox Grid.Row="0" Grid.Column="1" 
@@ -60,7 +61,7 @@
                             Command="{x:Bind ShowDestinationTransform}">
                         <SymbolIcon Symbol="Accept" />
                     </Button>
-                    
+
                     <Button Grid.Column="2" ToolTipService.ToolTip="Variable help">
                         <SymbolIcon Symbol="Help" />
 
@@ -83,7 +84,7 @@
                         </Button.Flyout>
                     </Button>
                 </Grid>
-                
+
                 <TextBlock Grid.Row="2" Text="Sort Operation" VerticalAlignment="Center" />
                 <ComboBox Grid.Row="2" 
                           Grid.Column="1"
@@ -123,13 +124,13 @@
                     <Grid Grid.Column="0"
                           RowDefinitions="*, *"
                           Visibility="{x:Bind ViewModel.IsJobRunning, Mode=OneWay}">
-                        
+
                         <TextBlock Text="{x:Bind ViewModel.CurrentJobRunnerTask, Mode=OneWay}" HorizontalAlignment="Center" />
-                        
+
                         <ProgressBar Grid.Row="1"
                                      Maximum="100"
                                      Value="{x:Bind ViewModel.JobRunnerProgress, Mode=OneWay}" />
-                        
+
                         <TextBlock Grid.Row="1"
                                    FontWeight="Bold"
                                    HorizontalAlignment="Center" 
@@ -140,7 +141,7 @@
                         <CheckBox Content="Dry Run" 
                                   IsChecked="{x:Bind ViewModel.IsDryRun, Mode=TwoWay}"
                                   ToolTipService.ToolTip="Simulate running this job and get a report of what will happen, without actually making changes."/>
-                        
+
                         <Button Content="Cancel" Command="{x:Bind CancelJob}" />
                         <Button Content="Start" Command="{x:Bind StartJob}" Margin="10,0,0,0" />
                     </StackPanel>
