@@ -1,16 +1,11 @@
 ﻿using CommunityToolkit.Diagnostics;
 using Medior.Extensions;
-using Medior.Services;
 using Medior.ViewModels;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Input;
 using Microsoft.UI.Xaml.Controls;
-using PInvoke;
-using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.

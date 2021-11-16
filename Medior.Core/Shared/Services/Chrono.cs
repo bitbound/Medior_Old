@@ -1,6 +1,4 @@
-﻿using CommunityToolkit.Diagnostics;
-
-namespace Medior.Core.Shared.Services
+﻿namespace Medior.Core.Shared.Services
 {
     public interface IChrono
     {
