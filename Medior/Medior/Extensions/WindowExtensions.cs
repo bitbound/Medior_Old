@@ -1,4 +1,5 @@
 ﻿using Microsoft.UI.Xaml;
+using PInvoke;
 using System;
 using System.Threading.Tasks;
 using Windows.Graphics.Capture;
@@ -26,6 +27,16 @@ namespace Medior.Extensions
             var picker = new GraphicsCapturePicker();
             InitializeWithWindow.Initialize(picker, hwnd);
             return await picker.PickSingleItemAsync();
+        }
+
+        public static void Minimize(this Window self)
+        {
+            User32.ShowWindow(self.GetWindowHandle(), User32.WindowShowStyle.SW_MINIMIZE);
+        }
+
+        public static void Restore(this Window self)
+        {
+            User32.ShowWindow(self.GetWindowHandle(), User32.WindowShowStyle.SW_RESTORE);
         }
 
         public static void SetStoreContext(this Window self)

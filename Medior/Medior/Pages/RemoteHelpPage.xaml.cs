@@ -1,6 +1,7 @@
 ﻿using Medior.Services;
 using Medior.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -32,7 +33,7 @@ namespace Medior.Pages
             InitializeComponent();
         }
 
-        public RemoteHelpViewModel ViewModel { get; } = ServiceContainer.Instance.GetRequiredService<RemoteHelpViewModel>();
+        public RemoteHelpViewModel ViewModel { get; } = Ioc.Default.GetRequiredService<RemoteHelpViewModel>();
 
         public RelayCommand StartQuickAssist => new(() => ViewModel.StartQuickAssist());
     }

@@ -1,9 +1,16 @@
-﻿using Medior.Services;
+﻿using CommunityToolkit.Diagnostics;
+using Medior.Extensions;
+using Medior.Services;
 using Medior.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Input;
 using Microsoft.UI.Xaml.Controls;
+using PInvoke;
 using System;
+using System.Diagnostics;
+using System.Linq;
+using System.Runtime.InteropServices;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -18,12 +25,32 @@ namespace Medior.Pages
         public ScreenCapturePage()
         {
             InitializeComponent();
+            ViewModel.RegisterSubscriptions();
         }
 
-        public ScreenCaptureViewModel ViewModel { get; } = ServiceContainer.Instance.GetRequiredService<ScreenCaptureViewModel>();
+        public ScreenCaptureViewModel ViewModel { get; } = Ioc.Default.GetRequiredService<ScreenCaptureViewModel>();
 
-        public RelayCommand CaptureScreenShot => new(() => ViewModel.StartScreenClip());
+        public AsyncRelayCommand CaptureScreenShot => new(async () => {
+            Guard.IsNotNull(MainWindow.Instance, nameof(MainWindow.Instance));
+
+            MainWindow.Instance.Minimize();
+
+            ViewModel.StartScreenClip();
+
+            var clipProc = Process.GetProcessesByName("ScreenClippingHost").FirstOrDefault();
+            if (clipProc is not null)
+            {
+                await clipProc.WaitForExitAsync();
+            }
+
+            MainWindow.Instance.Restore();
+        });
 
         public RelayCommand CaptureVideo => new(() => ViewModel.StartVideoCapture());
+
+        private void Page_Unloaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        {
+            ViewModel.UnregisterSubscriptions();
+        }
     }
 }

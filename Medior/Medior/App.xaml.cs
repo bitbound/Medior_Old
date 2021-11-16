@@ -1,6 +1,10 @@
-﻿using Medior.Services;
+﻿using Medior.Core.PhotoSorter.Services;
+using Medior.Core.Shared.Services;
+using Medior.Services;
+using Medior.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.UI.Xaml;
 using System;
 using System.Linq;
@@ -24,6 +28,7 @@ namespace Medior
         /// </summary>
         public App()
         {
+            RegisterServices();
             InitializeComponent();
         }
 
@@ -43,7 +48,7 @@ namespace Medior
                 // TODO: Handle Uri.
             }
 
-            var accountService = ServiceContainer.Instance.GetRequiredService<IAccountService>();
+            var accountService = Ioc.Default.GetRequiredService<IAccountService>();
             var subResult = await accountService.GetSubscriptionLevel();
 
             _mainWindow = new MainWindow
@@ -60,8 +65,49 @@ namespace Medior
         
         private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
         {
-            var logger = ServiceContainer.Instance.GetRequiredService<ILogger<App>>();
+            var logger = Ioc.Default.GetRequiredService<ILogger<App>>();
             logger.LogError(e.Exception, "An unhandled exception occurred.");
+        }
+
+        private void RegisterServices()
+        {
+            var collection = new ServiceCollection();
+            collection.AddLogging();
+            collection.AddScoped<IMetadataReader, MetadataReader>();
+            collection.AddScoped<IJobRunner, JobRunner>();
+            collection.AddScoped<IPathTransformer, PathTransformer>();
+            collection.AddScoped<IFileSystem, FileSystem>();
+            collection.AddScoped<IReportWriter, ReportWriter>();
+            collection.AddScoped<IProcessEx, ProcessEx>();
+            collection.AddSingleton<IAppModuleStore, AppModuleStore>();
+            collection.AddSingleton<IChrono, Chrono>();
+            collection.AddSingleton<IDispatcherService, DispatcherService>();
+            collection.AddSingleton<IAppSettings, AppSettings>();
+            collection.AddSingleton<IAuthService, AuthService>();
+            collection.AddSingleton<IAccountService, AccountService>();
+            collection.AddSingleton<IEnvironmentService, EnvironmentService>();
+            collection.AddSingleton<ISorterState>(new SorterState()
+            {
+                ConfigPath = string.Empty,
+                DryRun = false,
+                JobName = string.Empty,
+                Once = true
+            });
+
+            collection.AddSingleton<MainWindowViewModel>();
+            collection.AddSingleton<PhotoSorterViewModel>();
+            collection.AddSingleton<RemoteHelpViewModel>();
+            collection.AddSingleton<ScreenCaptureViewModel>();
+            collection.AddSingleton<SettingsViewModel>();
+            collection.AddSingleton<GuidGeneratorViewModel>();
+
+            var instance = collection.BuildServiceProvider();
+
+            instance
+                .GetRequiredService<ILoggerFactory>()
+                .AddProvider(new FileLoggerProvider(instance));
+
+            Ioc.Default.ConfigureServices(instance);
         }
     }
 }

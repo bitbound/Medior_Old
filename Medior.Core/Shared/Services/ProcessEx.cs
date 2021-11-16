@@ -1,23 +1,25 @@
-﻿using System.Diagnostics;
+﻿using CommunityToolkit.Diagnostics;
+using System.Diagnostics;
 
 namespace Medior.Core.Shared.Services
 {
     public interface IProcessEx
     {
-        void Start(string fileName);
-        void Start(ProcessStartInfo startInfo);
+        Process Start(string fileName);
+        Process? Start(ProcessStartInfo startInfo);
     }
 
     public class ProcessEx : IProcessEx
     {
-        public void Start(string fileName)
+        public Process Start(string fileName)
         {
-            Process.Start("explorer.exe");
+            return Process.Start("explorer.exe");
         }
 
-        public void Start(ProcessStartInfo startInfo)
+        public Process? Start(ProcessStartInfo startInfo)
         {
-            Process.Start(startInfo);
+            Guard.IsNotNull(startInfo, nameof(startInfo));
+            return Process.Start(startInfo);
         }
     }
 }

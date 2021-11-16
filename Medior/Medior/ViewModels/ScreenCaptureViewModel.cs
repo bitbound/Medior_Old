@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Graphics.Imaging;
 
@@ -24,10 +25,6 @@ namespace Medior.ViewModels
             _processEx = processEx;
             _environmentService = environmentService;
             _logger = logger;
-
-            // No need to unsubscribe because view models are singletons.
-            Clipboard.ContentChanged += Clipboard_ContentChanged;
-            
         }
 
         public BitmapImage? CurrentImage
@@ -36,6 +33,10 @@ namespace Medior.ViewModels
             set => SetProperty(ref _currentImage, value);
         }
 
+        public void RegisterSubscriptions()
+        {
+            Clipboard.ContentChanged += Clipboard_ContentChanged;
+        }
         public void StartScreenClip()
         {
             _processEx.Start(new ProcessStartInfo()
@@ -48,6 +49,11 @@ namespace Medior.ViewModels
         public void StartVideoCapture()
         {
             // TODO
+        }
+
+        public void UnregisterSubscriptions()
+        {
+            Clipboard.ContentChanged -= Clipboard_ContentChanged;
         }
 
         private async void Clipboard_ContentChanged(object? sender, object e)

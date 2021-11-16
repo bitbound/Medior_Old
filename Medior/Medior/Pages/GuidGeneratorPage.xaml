@@ -6,9 +6,33 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+    x:DefaultBindMode="OneWay"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
+        <Grid RowDefinitions="Auto, Auto"
+              HorizontalAlignment="Center"
+              VerticalAlignment="Center">
 
+            <TextBox x:Name="CurrentGuidTextBox"
+                     Grid.Row="0"
+                     Width="400"
+                     IsReadOnly="True" 
+                     Text="{x:Bind ViewModel.CurrentGuid}" />
+
+            <CommandBar Grid.Row="1" DefaultLabelPosition="Right">
+                <AppBarButton Icon="Copy" Label="Copy" Command="{x:Bind Copy, Mode=OneTime}" />
+                <AppBarButton Icon="Refresh" Label="New" Command="{x:Bind Refresh, Mode=OneTime}" />
+            </CommandBar>
+        </Grid>
+        
+        <TeachingTip x:Name="CopiedTip" 
+                         Title="Copied to clipboard."
+                         Target="{x:Bind CurrentGuidTextBox, Mode=OneTime}"
+                         IsLightDismissEnabled="True">
+            <TeachingTip.IconSource>
+                <SymbolIconSource Symbol="Accept"></SymbolIconSource>
+            </TeachingTip.IconSource>
+        </TeachingTip>
     </Grid>
 </Page>

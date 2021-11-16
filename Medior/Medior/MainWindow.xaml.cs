@@ -3,6 +3,7 @@ using Medior.Models;
 using Medior.Services;
 using Medior.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -41,7 +42,7 @@ namespace Medior
                 }
             });
 
-        public MainWindowViewModel ViewModel { get; } = ServiceContainer.Instance.GetRequiredService<MainWindowViewModel>();
+        public MainWindowViewModel ViewModel { get; } = Ioc.Default.GetRequiredService<MainWindowViewModel>();
 
         private void AppModuleSearch_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
@@ -86,7 +87,7 @@ namespace Medior
             ViewModel.LoadMenuItems();
             LoadSelectedModule();
             await ViewModel.LoadAuthState(this.GetWindowHandle());
-            // TODO: Loading screen that ends here.
+            ViewModel.IsLoading = false;
         }
     }
 }

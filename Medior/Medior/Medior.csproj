@@ -28,10 +28,12 @@
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Diagnostics" Version="7.1.1-preview3.1" />
     <PackageReference Include="CommunityToolkit.WinUI.UI.Controls.Core" Version="7.1.1-preview3.1" />
+    <PackageReference Include="CommunityToolkit.WinUI.UI.Media" Version="7.1.1-preview3.1" />
     <PackageReference Include="Microsoft.Identity.Client" Version="4.37.0" />
     <PackageReference Include="Microsoft.Toolkit" Version="7.1.1" />
     <PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.1.1" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.0.0-preview3" />
+    <PackageReference Include="PInvoke.User32" Version="0.7.104" />
 
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>

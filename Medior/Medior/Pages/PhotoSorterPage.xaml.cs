@@ -38,7 +38,7 @@ namespace Medior.Pages
             InitializeComponent();
         }
 
-        public PhotoSorterViewModel ViewModel { get; } = ServiceContainer.Instance.GetRequiredService<PhotoSorterViewModel>();
+        public PhotoSorterViewModel ViewModel { get; } = Ioc.Default.GetRequiredService<PhotoSorterViewModel>();
 
         public RelayCommand CancelJob
         {

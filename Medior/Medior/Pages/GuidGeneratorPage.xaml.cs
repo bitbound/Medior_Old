@@ -1,4 +1,10 @@
-﻿using Microsoft.UI.Xaml;
+﻿using Medior.Core.Shared.Utilities;
+using Medior.Services;
+using Medior.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
+using Microsoft.Toolkit.Mvvm.Input;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Data;
@@ -10,6 +16,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 
@@ -27,5 +34,24 @@ namespace Medior.Pages
         {
             this.InitializeComponent();
         }
+
+        public GuidGeneratorViewModel ViewModel { get; } = Ioc.Default.GetRequiredService<GuidGeneratorViewModel>();
+
+        public RelayCommand Copy => new(() =>
+        {
+            var dataPackage = new DataPackage();
+            dataPackage.SetText(ViewModel.CurrentGuid);
+            Clipboard.SetContent(dataPackage);
+            CopiedTip.IsOpen = true;
+            Debouncer.Debounce(TimeSpan.FromSeconds(1.5), () =>
+            {
+                DispatcherQueue.TryEnqueue(() => CopiedTip.IsOpen = false);
+            });
+        });
+
+        public RelayCommand Refresh => new(() =>
+        {
+            ViewModel.CurrentGuid = Guid.NewGuid().ToString();
+        });
     }
 }
