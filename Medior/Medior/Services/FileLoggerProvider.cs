@@ -1,5 +1,4 @@
-﻿using Medior.Core.Shared.Services;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 
 namespace Medior.Services
 {

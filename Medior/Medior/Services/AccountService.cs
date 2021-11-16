@@ -16,8 +16,7 @@ namespace Medior.Services
 
     public class AccountService : IAccountService
     {
-        private readonly string _pro1Sku = "";
-        private readonly string[] _durableProductKind = new[] { "Durable" };
+        private readonly string _pro1Sku = "Pro1";
         private readonly ILogger<AccountService> _logger;
 
         public AccountService(ILogger<AccountService> logger)

@@ -9,7 +9,7 @@ namespace Medior.Tests
     [TestClass]
     public class PathTransformerTests
     {
-        private static FileSystem _fileSystemImpl = new FileSystem();
+        private static readonly FileSystem _fileSystemImpl = new();
 
         private readonly DateTime _dateTaken = new(2021, 9, 27, 7, 22, 00);
         private readonly string _exampleDestination = @"D:\Photos\Sorted\{year}\{month}\{day}\{camera}\{hour}_{minute} - {filename}.{extension}";
