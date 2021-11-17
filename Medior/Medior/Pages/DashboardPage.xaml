@@ -3,28 +3,23 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Medior.Pages"
-    xmlns:converters="using:Medior.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     x:DefaultBindMode="OneWay"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Page.Resources>
-        <converters:OppositeBoolToVisibilityConverter x:Key="OppositeBoolConverter" />
-    </Page.Resources>
-
     <Grid RowDefinitions="Auto, *">
         <Grid Grid.Row="0" Margin="5">
             <DropDownButton HorizontalAlignment="Right" Content="{x:Bind ViewModel.AccountButtonContent}">
                 <DropDownButton.Flyout>
                     <MenuFlyout>
-                        <MenuFlyoutItem Text="Log In" 
-                                        Command="{x:Bind SignIn}"
-                                        Visibility="{x:Bind ViewModel.IsSignedIn, Converter={StaticResource OppositeBoolConverter}}" />
-                        
-                        <MenuFlyoutItem Text="Log Out" 
-                                        Command="{x:Bind SignOut}"
+                        <MenuFlyoutItem Text="Sign In" 
+                                        Command="{x:Bind SignIn, Mode=OneTime}"
+                                        Visibility="{x:Bind ViewModel.IsSignedIn, Converter={StaticResource OppositeBoolToVisibilityConverter}}" />
+
+                        <MenuFlyoutItem Text="Sign Out" 
+                                        Command="{x:Bind SignOut, Mode=OneTime}"
                                         Visibility="{x:Bind ViewModel.IsSignedIn }" />
                     </MenuFlyout>
                 </DropDownButton.Flyout>

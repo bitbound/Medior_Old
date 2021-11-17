@@ -24,7 +24,10 @@
                           Command="{x:Bind CaptureVideo, Mode=OneTime}" />
         </CommandBar>
 
-        <Image Grid.Row="1"
-               Source="{x:Bind ViewModel.CurrentImage}" />
+        <Grid Grid.Row="1" Margin="5">
+            <Image Grid.Row="1"
+               Source="{x:Bind ViewModel.CurrentImage}"
+               Visibility="{x:Bind ViewModel.CurrentImage, Converter={StaticResource ObjectNullToVisibilityConverter}}"/>
+        </Grid>
     </Grid>
 </Page>

@@ -27,26 +27,12 @@ namespace Medior.ViewModels
 
         public string AccountButtonContent
         {
-            get => IsSignedIn ? Email : "Logged Out";
+            get => IsSignedIn ? Email : "Signed Out";
         }
 
         public string Email => _authService.Email;
 
-        public async Task SignIn(IntPtr windowHandle)
-        {
-            await _authService.SignInInteractive(windowHandle);
-        }
-
-        public void SignOut()
-        {
-            _authService.SignOut();
-        }
-
-        public double StoragePercent
-        {
-            get => _storagePercent;
-            set => SetProperty(ref _storagePercent, value);
-        }
+        public string FormattedStoragePercent => $"{Math.Round(StoragePercent * 100)}%";
 
         public Brush StorageColor
         {
@@ -56,7 +42,7 @@ namespace Medior.ViewModels
                 {
                     return new SolidColorBrush(Colors.SpringGreen);
                 }
-                
+
                 if (_storagePercent <= .75)
                 {
                     return new SolidColorBrush(Colors.Yellow);
@@ -71,8 +57,21 @@ namespace Medior.ViewModels
             }
         }
 
-        public string FormattedStoragePercent => $"{Math.Round(StoragePercent * 100)}%";
+        public double StoragePercent
+        {
+            get => _storagePercent;
+            set => SetProperty(ref _storagePercent, value);
+        }
 
+        public async Task SignIn(IntPtr windowHandle)
+        {
+            await _authService.SignInInteractive(windowHandle);
+        }
+
+        public void SignOut()
+        {
+            _authService.SignOut();
+        }
         private void RegisterMessageHandlers()
         {
             _messagePublisher.Messenger.Register<SignInStateMessage>(this, 

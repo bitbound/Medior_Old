@@ -11,17 +11,16 @@ namespace Medior.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
-        private readonly IAppModuleStore _appModuleStore;
         private readonly IApiService _apiService;
-        private readonly IMessagePublisher _messagePublisher;
+        private readonly IAppModuleStore _appModuleStore;
         private readonly IAuthService _authService;
         private readonly ILogger<MainWindowViewModel> _logger;
+        private readonly IMessagePublisher _messagePublisher;
         private bool _isGuestMode;
+        private bool _isLoading = true;
         private bool _isSignedIn;
         private AppModule? _selectedModule;
         private SubscriptionLevel _subscriptionLevel;
-        private bool _isLoading = true;
-
         public MainWindowViewModel(
             IAppModuleStore appModuleStore,
             IAuthService authService,
@@ -36,12 +35,6 @@ namespace Medior.ViewModels
             _logger = logger;
 
             RegisterMessageHandlers();
-        }
-
-        private void RegisterMessageHandlers()
-        {
-            _messagePublisher.Messenger.Register<SignInStateMessage>(this, 
-                (r,m) => IsSignedIn = m.Value);
         }
 
         public ObservableCollectionEx<AppModule> AppModulesFooter { get; } = new();
@@ -59,6 +52,12 @@ namespace Medior.ViewModels
             }
         }
 
+        public bool IsLoading
+        {
+            get => _isLoading;
+            set => SetProperty(ref _isLoading, value);
+        }
+
         public bool IsMainNavigationVisible => IsSignedIn || IsGuestMode;
 
         public override bool IsSignedIn
@@ -73,6 +72,7 @@ namespace Medior.ViewModels
         }
 
         public bool IsSignInGridVisible => !IsMainNavigationVisible;
+
         public string SearchText { get; set; } = string.Empty;
 
         public AppModule? SelectedModule
@@ -91,11 +91,6 @@ namespace Medior.ViewModels
         {
             get => _subscriptionLevel;
             set => SetProperty(ref _subscriptionLevel, value);
-        }
-        public bool IsLoading
-        {
-            get => _isLoading;
-            set => SetProperty(ref _isLoading, value);
         }
 
         public void FilterModules(string searchText)
@@ -120,7 +115,7 @@ namespace Medior.ViewModels
             if (result.IsSuccess)
             {
                 var authResult = await _apiService.TestAuth();
-                if (!authResult.IsSuccess || 
+                if (!authResult.IsSuccess ||
                     authResult.Value != System.Net.HttpStatusCode.OK)
                 {
                     _authService.SignOut();
@@ -155,9 +150,22 @@ namespace Medior.ViewModels
 
         public async Task<Result<AuthenticationResult>> SignUpSignIn(IntPtr windowHandle)
         {
-            var result = await _authService.SignInInteractive(windowHandle);
-            IsSignedIn = result.IsSuccess;
-            return result;
+            try
+            {
+                IsLoading = true;
+                var result = await _authService.SignInInteractive(windowHandle);
+                return result;
+            }
+            finally
+            {
+                IsLoading = false;
+            }
+        }
+
+        private void RegisterMessageHandlers()
+        {
+            _messagePublisher.Messenger.Register<SignInStateMessage>(this, 
+                (r,m) => IsSignedIn = m.Value);
         }
     }
 }
