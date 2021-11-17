@@ -3,6 +3,7 @@ global using System.Collections.Generic;
 global using System.IO;
 global using System.Linq;
 global using System.Threading;
+global using Microsoft.Toolkit.Mvvm.Messaging;
 using Medior.PhotoSorter.Services;
 using Medior.Services;
 using Medior.ViewModels;
@@ -75,12 +76,15 @@ namespace Medior
         {
             var collection = new ServiceCollection();
             collection.AddLogging();
+            collection.AddHttpClient();
             collection.AddScoped<IMetadataReader, MetadataReader>();
             collection.AddScoped<IJobRunner, JobRunner>();
             collection.AddScoped<IPathTransformer, PathTransformer>();
             collection.AddScoped<IFileSystem, FileSystem>();
             collection.AddScoped<IReportWriter, ReportWriter>();
             collection.AddScoped<IProcessEx, ProcessEx>();
+            collection.AddScoped<IMessagePublisher, MessagePublisher>();
+            collection.AddScoped<IApiService, ApiService>();
             collection.AddSingleton<IAppModuleStore, AppModuleStore>();
             collection.AddSingleton<IChrono, Chrono>();
             collection.AddSingleton<IDispatcherService, DispatcherService>();

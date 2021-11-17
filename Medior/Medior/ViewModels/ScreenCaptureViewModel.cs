@@ -2,9 +2,7 @@
 using Medior.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml.Media.Imaging;
-using System;
 using System.Diagnostics;
-using System.Linq;
 using Windows.ApplicationModel.DataTransfer;
 
 namespace Medior.ViewModels

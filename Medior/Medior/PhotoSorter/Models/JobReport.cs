@@ -1,5 +1,4 @@
 ﻿using Medior.PhotoSorter.Enums;
-using System.Collections.Generic;
 
 namespace Medior.PhotoSorter.Models
 {

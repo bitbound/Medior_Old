@@ -1,11 +1,10 @@
 ﻿using Medior.BaseTypes;
 using Medior.Enums;
 using Medior.Models;
+using Medior.Models.Messages;
 using Medior.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Client;
-using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Medior.ViewModels
@@ -13,8 +12,8 @@ namespace Medior.ViewModels
     public class MainWindowViewModel : ViewModelBase
     {
         private readonly IAppModuleStore _appModuleStore;
-
-        private readonly IAppSettings _appSettings;
+        private readonly IApiService _apiService;
+        private readonly IMessagePublisher _messagePublisher;
         private readonly IAuthService _authService;
         private readonly ILogger<MainWindowViewModel> _logger;
         private bool _isGuestMode;
@@ -24,15 +23,25 @@ namespace Medior.ViewModels
         private bool _isLoading = true;
 
         public MainWindowViewModel(
-            IAppSettings appSettings,
             IAppModuleStore appModuleStore,
             IAuthService authService,
+            IApiService apiService,
+            IMessagePublisher messagePublisher,
             ILogger<MainWindowViewModel> logger)
         {
-            _appSettings = appSettings;
             _authService = authService;
             _appModuleStore = appModuleStore;
+            _apiService = apiService;
+            _messagePublisher = messagePublisher;
             _logger = logger;
+
+            RegisterMessageHandlers();
+        }
+
+        private void RegisterMessageHandlers()
+        {
+            _messagePublisher.Messenger.Register<SignInStateMessage>(this, 
+                (r,m) => IsSignedIn = m.Value);
         }
 
         public ObservableCollectionEx<AppModule> AppModulesFooter { get; } = new();
@@ -52,7 +61,7 @@ namespace Medior.ViewModels
 
         public bool IsMainNavigationVisible => IsSignedIn || IsGuestMode;
 
-        public bool IsSignedIn
+        public override bool IsSignedIn
         {
             get => _isSignedIn;
             set
@@ -108,8 +117,15 @@ namespace Medior.ViewModels
         public async Task LoadAuthState(IntPtr windowHandle)
         {
             var result = await _authService.GetTokenSilently(windowHandle, false);
-            IsSignedIn = result.IsSuccess;
-            // TODO: Use messaging service to broadcast sign-in state changes.
+            if (result.IsSuccess)
+            {
+                var authResult = await _apiService.TestAuth();
+                if (!authResult.IsSuccess || 
+                    authResult.Value != System.Net.HttpStatusCode.OK)
+                {
+                    _authService.SignOut();
+                }
+            }
         }
 
         public void LoadMenuItems()

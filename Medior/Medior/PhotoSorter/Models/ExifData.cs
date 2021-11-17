@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Medior.PhotoSorter.Models
+﻿namespace Medior.PhotoSorter.Models
 {
     public class ExifData
     {

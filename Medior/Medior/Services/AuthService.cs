@@ -1,23 +1,20 @@
 ﻿using Medior.BaseTypes;
+using Medior.Models.Messages;
 using Medior.Utilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Client;
-using System;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Medior.Services
 {
     public interface IAuthService
     {
+        string Email { get; }
         bool IsSignedIn { get; }
-        string Username { get; }
-
         Task<Result<AuthenticationResult>> EditProfile(IntPtr windowHandle);
         Task<Result<AuthenticationResult>> GetTokenSilently(IntPtr windowHandle, bool fallbackToInteractive);
         Task<Result<AuthenticationResult>> SignInInteractive(IntPtr windowHandle);
-        Task<Result> SignOut();
+        void SignOut();
     }
 
     public class AuthService : IAuthService
@@ -28,12 +25,17 @@ namespace Medior.Services
         private static readonly string _policySignUpSignIn = "b2c_1_signup_signin";
         private static readonly string _tenantName = "mediorapp";
         private readonly IChrono _chrono;
+        private readonly IMessagePublisher _messagePublisher;
         private readonly ILogger<AuthService> _logger;
         private readonly IPublicClientApplication _publicClientApp;
         private AuthenticationResult? _lastAuthResult;
 
-        public AuthService(IChrono chrono, ILogger<AuthService> logger)
+        public AuthService(
+            IMessagePublisher messagePublisher,
+            IChrono chrono, 
+            ILogger<AuthService> logger)
         {
+            _messagePublisher = messagePublisher;
             _chrono = chrono;
             _logger = logger;
 
@@ -50,12 +52,15 @@ namespace Medior.Services
             TokenCacheHelper.Bind(_publicClientApp.UserTokenCache);
         }
 
-        public bool IsSignedIn => 
-            _lastAuthResult?.AccessToken is not null &&
+        public string Email => _lastAuthResult
+            ?.ClaimsPrincipal
+            ?.Claims
+            ?.FirstOrDefault(x => x.Type == "emails")
+            ?.Value ?? string.Empty;
+
+        public bool IsSignedIn =>
+                    _lastAuthResult?.AccessToken is not null &&
             _lastAuthResult.ExpiresOn > _chrono.Now;
-
-        public string Username => _lastAuthResult?.Account?.Username ?? string.Empty;
-
         private string[] ApiScopes => new[] { $"https://{Tenant}/medior-api/app.user" };
         private string AuthorityBase => $"https://{AzureAdB2CHostname}/tfp/{Tenant}/";
         private string AuthorityEditProfile => $"{AuthorityBase}{_policyEditProfile}";
@@ -75,18 +80,20 @@ namespace Medior.Services
                     .WithPrompt(Prompt.NoPrompt)
                     .ExecuteAsync(CancellationToken.None);
 
+                UpdateSignInState(true);
                 return Result.Ok(authResult);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error editing profile.");
+                UpdateSignInState(false);
                 return Result.Fail<AuthenticationResult>("An error occurred while editing profile.");
             }
         }
 
         public async Task<Result<AuthenticationResult>> GetTokenSilently(IntPtr windowHandle, bool fallbackToInteractive)
         {
-            var accounts = await _publicClientApp.GetAccountsAsync(_policySignUpSignIn);
+            var accounts = await _publicClientApp.GetAccountsAsync();
 
             try
             {
@@ -94,6 +101,7 @@ namespace Medior.Services
                     .AcquireTokenSilent(ApiScopes, accounts.FirstOrDefault())
                     .ExecuteAsync();
 
+                UpdateSignInState(true);
                 return Result.Ok(_lastAuthResult);
             }
             catch (MsalUiRequiredException ex)
@@ -109,6 +117,7 @@ namespace Medior.Services
                 _logger.LogError(ex, "Failed to acquire token silently.");
             }
 
+            UpdateSignInState(false);
             return Result.Fail<AuthenticationResult>("Failed to acquire token silently.");
         }
 
@@ -148,30 +157,20 @@ namespace Medior.Services
 
             if (_lastAuthResult is null)
             {
+                UpdateSignInState(false);
                 return Result.Fail<AuthenticationResult>("Failed to acquire auth token.");
             }
 
+            UpdateSignInState(true);
             return Result.Ok(_lastAuthResult);
         }
 
-        public async Task<Result> SignOut()
+        public void SignOut()
         {
-            try
-            {
-                var accounts = await _publicClientApp.GetAccountsAsync(_policySignUpSignIn);
-                foreach (var account in accounts)
-                {
-                    await _publicClientApp.RemoveAsync(account);
-                }
-                _lastAuthResult = null;
-                return Result.Ok();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error while signing out.");
-                return Result.Fail("Error while signing out.");
-            }
+            _lastAuthResult = null;
+            _messagePublisher.Messenger.Send(new SignInStateMessage(false));
         }
+
         private void Log(Microsoft.Identity.Client.LogLevel level, string message, bool containsPii)
         {
             if (message is null)
@@ -198,6 +197,11 @@ namespace Medior.Services
                     break;
             }
 #pragma warning restore CA2254 // Template should be a static expression
+        }
+
+        private void UpdateSignInState(bool isSignedIn)
+        {
+            _messagePublisher.Messenger.Send(new SignInStateMessage(isSignedIn));
         }
     }
 }

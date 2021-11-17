@@ -1,8 +1,6 @@
 ﻿using MetadataExtractor;
 using MetadataExtractor.Formats.Exif;
 using MetadataExtractor.Formats.QuickTime;
-using System;
-using System.Linq;
 using Medior.Services;
 using Medior.Extensions;
 using Medior.PhotoSorter.Models;

@@ -1,7 +1,6 @@
 ﻿using Medior.BaseTypes;
 using Medior.Enums;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Threading.Tasks;
 using Windows.Services.Store;
 using Windows.System;

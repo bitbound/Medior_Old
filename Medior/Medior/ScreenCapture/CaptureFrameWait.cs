@@ -21,8 +21,6 @@
 //SOFTWARE.
 
 using CommunityToolkit.Diagnostics;
-using System;
-using System.Threading;
 using Windows.Graphics;
 using Windows.Graphics.Capture;
 using Windows.Graphics.DirectX;
@@ -98,8 +96,10 @@ namespace CaptureEncoder
             Guard.IsNotNull(_multithread, nameof(_multithread));
             Guard.IsNotNull(_d3dDevice, nameof(_d3dDevice));
 
-            var result = new SurfaceWithInfo();
-            result.SystemRelativeTime = _currentFrame.SystemRelativeTime;
+            var result = new SurfaceWithInfo
+            {
+                SystemRelativeTime = _currentFrame.SystemRelativeTime
+            };
             using (var multithreadLock = new MultithreadLock(_multithread))
             using (var sourceTexture = Direct3D11Helpers.CreateSharpDXTexture2D(_currentFrame.Surface))
             {
@@ -116,11 +116,9 @@ namespace CaptureEncoder
                 description.CpuAccessFlags = SharpDX.Direct3D11.CpuAccessFlags.None;
                 description.OptionFlags = SharpDX.Direct3D11.ResourceOptionFlags.None;
 
-                using (var copyTexture = new SharpDX.Direct3D11.Texture2D(_d3dDevice, description))
-                {
-                    _d3dDevice.ImmediateContext.CopyResource(_composeTexture, copyTexture);
-                    result.Surface = Direct3D11Helpers.CreateDirect3DSurfaceFromSharpDXTexture(copyTexture);
-                }
+                using var copyTexture = new SharpDX.Direct3D11.Texture2D(_d3dDevice, description);
+                _d3dDevice.ImmediateContext.CopyResource(_composeTexture, copyTexture);
+                result.Surface = Direct3D11Helpers.CreateDirect3DSurfaceFromSharpDXTexture(copyTexture);
             }
 
             return result;

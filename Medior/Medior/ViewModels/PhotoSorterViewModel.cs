@@ -1,10 +1,7 @@
-﻿using System;
-using System.Linq;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Medior.Services;
 using System.Threading.Tasks;
 using CommunityToolkit.Diagnostics;
-using System.Threading;
 using Medior.PhotoSorter.Enums;
 using Medior.PhotoSorter.Models;
 using Medior.BaseTypes;

@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System.IO;
 using System.Security.Cryptography;
 using Microsoft.Identity.Client;
 
@@ -14,7 +13,7 @@ namespace Medior.Utilities
         /// </summary>
         public static readonly string CacheFilePath = System.Reflection.Assembly.GetExecutingAssembly().Location + ".msalcache.bin";
 
-        private static readonly object FileLock = new object();
+        private static readonly object FileLock = new();
 
         public static void BeforeAccessNotification(TokenCacheNotificationArgs args)
         {

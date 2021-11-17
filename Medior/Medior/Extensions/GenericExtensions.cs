@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Medior.Extensions
+﻿namespace Medior.Extensions
 {
     public static class GenericExtensions
     {

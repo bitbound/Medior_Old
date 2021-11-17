@@ -1,5 +1,4 @@
 ﻿using Medior.Services;
-using System;
 
 namespace Medior.PhotoSorter.Services
 {

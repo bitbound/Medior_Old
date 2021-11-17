@@ -2,7 +2,6 @@
 using Medior.Enums;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
-using System;
 
 namespace Medior.Models
 {

@@ -13,22 +13,73 @@
     <Page.Resources>
         <converters:OppositeBoolToVisibilityConverter x:Key="OppositeBoolConverter" />
     </Page.Resources>
-    
-    <StackPanel>
-        <Grid>
+
+    <Grid RowDefinitions="Auto, *">
+        <Grid Grid.Row="0" Margin="5">
             <DropDownButton HorizontalAlignment="Right" Content="{x:Bind ViewModel.AccountButtonContent}">
                 <DropDownButton.Flyout>
                     <MenuFlyout>
                         <MenuFlyoutItem Text="Log In" 
-                                        Command="{x:Bind LogIn}"
-                                        Visibility="{x:Bind ViewModel.IsLoggedIn, Converter={StaticResource OppositeBoolConverter}}" />
+                                        Command="{x:Bind SignIn}"
+                                        Visibility="{x:Bind ViewModel.IsSignedIn, Converter={StaticResource OppositeBoolConverter}}" />
                         
                         <MenuFlyoutItem Text="Log Out" 
-                                        Command="{x:Bind LogOut}"
-                                        Visibility="{x:Bind ViewModel.IsLoggedIn }" />
+                                        Command="{x:Bind SignOut}"
+                                        Visibility="{x:Bind ViewModel.IsSignedIn }" />
                     </MenuFlyout>
                 </DropDownButton.Flyout>
             </DropDownButton>
         </Grid>
-    </StackPanel>
+
+        <Grid Grid.Row="1"
+              ColumnDefinitions="*, *"
+              RowDefinitions="*, *"
+              RowSpacing="10"
+              ColumnSpacing="10">
+
+            <StackPanel Grid.Column="0"
+                        Grid.Row="0"
+                        HorizontalAlignment="Center">
+                <TextBlock Text="Messages" Style="{StaticResource HeaderTextBlockStyle}" />
+                <TextBlock Text="Coming in a future update." />
+            </StackPanel>
+
+
+            <StackPanel Grid.Column="1"
+                        Grid.Row="0"
+                        HorizontalAlignment="Center">
+                <TextBlock Text="Storage" Style="{StaticResource HeaderTextBlockStyle}" />
+
+                <Grid>
+                    <ProgressRing
+                        Value="{x:Bind ViewModel.StoragePercent}"
+                        Maximum="1"
+                        Width="150"
+                        Height="150"
+                        IsIndeterminate="False"
+                        Background="DimGray"
+                        Foreground="{x:Bind ViewModel.StorageColor}" />
+
+                    <TextBlock Text="{x:Bind ViewModel.FormattedStoragePercent}"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+                </Grid>
+
+            </StackPanel>
+
+            <StackPanel Grid.Column="0"
+                        Grid.Row="1"
+                        HorizontalAlignment="Center">
+                <TextBlock Text="Contacts" Style="{StaticResource HeaderTextBlockStyle}" />
+                <TextBlock Text="Coming in a future update." />
+            </StackPanel>
+
+            <StackPanel Grid.Column="1"
+                        Grid.Row="1"
+                        HorizontalAlignment="Center">
+                <TextBlock Text="Devices" Style="{StaticResource HeaderTextBlockStyle}" />
+                <TextBlock Text="Coming in a future update." />
+            </StackPanel>
+        </Grid>
+    </Grid>
 </Page>

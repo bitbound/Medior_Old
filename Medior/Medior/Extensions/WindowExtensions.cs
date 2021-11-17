@@ -1,6 +1,5 @@
 ﻿using Microsoft.UI.Xaml;
 using PInvoke;
-using System;
 using System.Threading.Tasks;
 using Windows.Graphics.Capture;
 using Windows.Services.Store;

@@ -21,7 +21,6 @@
 //SOFTWARE.
 
 using CommunityToolkit.Diagnostics;
-using System;
 using Windows.Graphics;
 using Windows.Graphics.Capture;
 using Windows.Graphics.DirectX;
@@ -156,13 +155,11 @@ namespace CaptureEncoder
                 }
 
 
-                using (var sourceTexture = Direct3D11Helpers.CreateSharpDXTexture2D(frame.Surface))
-                using (var backBuffer = _swapChain.GetBackBuffer<SharpDX.Direct3D11.Texture2D>(0))
-                using (var renderTargetView = new SharpDX.Direct3D11.RenderTargetView(_d3dDevice, backBuffer))
-                {
-                    _d3dDevice.ImmediateContext.ClearRenderTargetView(renderTargetView, new SharpDX.Mathematics.Interop.RawColor4(0, 0, 0, 1));
-                    _d3dDevice.ImmediateContext.CopyResource(sourceTexture, backBuffer);
-                }
+                using var sourceTexture = Direct3D11Helpers.CreateSharpDXTexture2D(frame.Surface);
+                using var backBuffer = _swapChain.GetBackBuffer<SharpDX.Direct3D11.Texture2D>(0);
+                using var renderTargetView = new SharpDX.Direct3D11.RenderTargetView(_d3dDevice, backBuffer);
+                _d3dDevice.ImmediateContext.ClearRenderTargetView(renderTargetView, new SharpDX.Mathematics.Interop.RawColor4(0, 0, 0, 1));
+                _d3dDevice.ImmediateContext.CopyResource(sourceTexture, backBuffer);
 
             } // retire the frame
 

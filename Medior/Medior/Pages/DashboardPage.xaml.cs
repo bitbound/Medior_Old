@@ -22,15 +22,15 @@ namespace Medior.Pages
 
         public DashboardViewModel ViewModel { get; } = Ioc.Default.GetRequiredService<DashboardViewModel>();
 
-        public AsyncRelayCommand LogIn => new(async () =>
+        public AsyncRelayCommand SignIn => new(async () =>
         {
             Guard.IsNotNull(MainWindow.Instance, nameof(MainWindow.Instance));
-            await ViewModel.LogIn(MainWindow.Instance.GetWindowHandle());
+            await ViewModel.SignIn(MainWindow.Instance.GetWindowHandle());
         });
 
-        public AsyncRelayCommand LogOut => new(async () =>
+        public RelayCommand SignOut => new(() =>
         {
-            await ViewModel.LogOut();
+            ViewModel.SignOut();
         });
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Medior.PhotoSorter.Models;
 using Medior.Services;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Medior.PhotoSorter.Services

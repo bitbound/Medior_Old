@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Medior.Interfaces
+﻿namespace Medior.Interfaces
 {
 #pragma warning disable IDE1006 // Naming Styles
     public interface IdModel

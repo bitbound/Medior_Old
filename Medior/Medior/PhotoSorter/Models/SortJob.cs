@@ -1,6 +1,5 @@
 ﻿using Medior.Interfaces;
 using Medior.PhotoSorter.Enums;
-using System;
 using System.Text.Json.Serialization;
 
 namespace Medior.PhotoSorter.Models

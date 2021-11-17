@@ -2,8 +2,6 @@
 using Medior.Enums;
 using Medior.Models;
 using Microsoft.UI.Xaml.Controls;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Medior.Services
 {

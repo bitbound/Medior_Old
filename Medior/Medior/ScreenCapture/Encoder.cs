@@ -21,11 +21,9 @@
 //SOFTWARE.
 
 using CommunityToolkit.Diagnostics;
-using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Windows.Foundation;
-using Windows.Graphics;
 using Windows.Graphics.Capture;
 using Windows.Graphics.DirectX.Direct3D11;
 using Windows.Media.Core;
@@ -157,14 +155,18 @@ namespace CaptureEncoder
             _videoDescriptor = new VideoStreamDescriptor(videoProperties);
 
             // Create our MediaStreamSource
-            _mediaStreamSource = new MediaStreamSource(_videoDescriptor);
-            _mediaStreamSource.BufferTime = TimeSpan.FromSeconds(0);
+            _mediaStreamSource = new MediaStreamSource(_videoDescriptor)
+            {
+                BufferTime = TimeSpan.FromSeconds(0)
+            };
             _mediaStreamSource.Starting += OnMediaStreamSourceStarting;
             _mediaStreamSource.SampleRequested += OnMediaStreamSourceSampleRequested;
 
             // Create our transcoder
-            _transcoder = new MediaTranscoder();
-            _transcoder.HardwareAccelerationEnabled = true;
+            _transcoder = new MediaTranscoder
+            {
+                HardwareAccelerationEnabled = true
+            };
         }
 
         private void DisposeInternal()
@@ -214,30 +216,28 @@ namespace CaptureEncoder
                 {
                     Guard.IsNotNull(_frameGenerator, nameof(_frameGenerator));
 
-                    using (var frame = _frameGenerator.WaitForNewFrame())
+                    using var frame = _frameGenerator.WaitForNewFrame();
+                    if (frame == null)
                     {
-                        if (frame == null)
-                        {
-                            args.Request.Sample = null;
-                            DisposeInternal();
-                            return;
-                        }
-
-                        if (_isPreviewing)
-                        {
-                            Guard.IsNotNull(_preview, nameof(_preview));
-                            Guard.IsNotNull(frame.Surface, nameof(frame.Surface));
-
-                            lock (_previewLock)
-                            {
-                                _preview.PresentSurface(frame.Surface);
-                            }
-                        }
-
-                        var timeStamp = frame.SystemRelativeTime;
-                        var sample = MediaStreamSample.CreateFromDirect3D11Surface(frame.Surface, timeStamp);
-                        args.Request.Sample = sample;
+                        args.Request.Sample = null;
+                        DisposeInternal();
+                        return;
                     }
+
+                    if (_isPreviewing)
+                    {
+                        Guard.IsNotNull(_preview, nameof(_preview));
+                        Guard.IsNotNull(frame.Surface, nameof(frame.Surface));
+
+                        lock (_previewLock)
+                        {
+                            _preview.PresentSurface(frame.Surface);
+                        }
+                    }
+
+                    var timeStamp = frame.SystemRelativeTime;
+                    var sample = MediaStreamSample.CreateFromDirect3D11Surface(frame.Surface, timeStamp);
+                    args.Request.Sample = sample;
                 }
                 catch (Exception e)
                 {
@@ -259,11 +259,9 @@ namespace CaptureEncoder
         {
             Guard.IsNotNull(_frameGenerator, nameof(_frameGenerator));
 
-            using (var frame = _frameGenerator.WaitForNewFrame())
-            {
-                Guard.IsNotNull(frame, nameof(frame));
-                args.Request.SetActualStartPosition(frame.SystemRelativeTime);
-            }
+            using var frame = _frameGenerator.WaitForNewFrame();
+            Guard.IsNotNull(frame, nameof(frame));
+            args.Request.SetActualStartPosition(frame.SystemRelativeTime);
         }
 
         private class EncoderPreview : IDisposable
@@ -338,12 +336,10 @@ namespace CaptureEncoder
                         _isSwapChainSized = true;
                     }
 
-                    using (var backBuffer = _swapChain.GetBackBuffer<SharpDX.Direct3D11.Texture2D>(0))
-                    using (var renderTargetView = new SharpDX.Direct3D11.RenderTargetView(_d3dDevice, backBuffer))
-                    {
-                        _d3dDevice.ImmediateContext.ClearRenderTargetView(renderTargetView, new SharpDX.Mathematics.Interop.RawColor4(0, 0, 0, 1));
-                        _d3dDevice.ImmediateContext.CopyResource(sourceTexture, backBuffer);
-                    }
+                    using var backBuffer = _swapChain.GetBackBuffer<SharpDX.Direct3D11.Texture2D>(0);
+                    using var renderTargetView = new SharpDX.Direct3D11.RenderTargetView(_d3dDevice, backBuffer);
+                    _d3dDevice.ImmediateContext.ClearRenderTargetView(renderTargetView, new SharpDX.Mathematics.Interop.RawColor4(0, 0, 0, 1));
+                    _d3dDevice.ImmediateContext.CopyResource(sourceTexture, backBuffer);
                 }
 
                 _swapChain.Present(1, SharpDX.DXGI.PresentFlags.None);

@@ -1,5 +1,4 @@
 ﻿using Medior.Interfaces;
-using System.Collections.Generic;
 
 namespace Medior.Extensions
 {

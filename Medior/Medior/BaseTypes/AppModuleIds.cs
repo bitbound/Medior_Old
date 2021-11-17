@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Medior.BaseTypes
+﻿namespace Medior.BaseTypes
 {
     public static class AppModuleIds
     {
