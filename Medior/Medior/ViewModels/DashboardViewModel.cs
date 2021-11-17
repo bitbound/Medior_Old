@@ -1,6 +1,7 @@
 ﻿using Medior.BaseTypes;
 using Medior.Models.Messages;
 using Medior.Services;
+using Microsoft.Identity.Client;
 using Microsoft.UI;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
@@ -11,14 +12,17 @@ namespace Medior.ViewModels
 {
     public class DashboardViewModel : ViewModelBase
     {
+        private readonly IApiService _apiService;
         private readonly IAuthService _authService;
         private readonly IMessagePublisher _messagePublisher;
         private double _storagePercent = .45;
 
         public DashboardViewModel(
-            IAuthService authService, 
+            IAuthService authService,
+            IApiService apiService,
             IMessagePublisher messagePublisher)
         {
+            _apiService = apiService;
             _authService = authService;
             _messagePublisher = messagePublisher;
 
@@ -63,9 +67,31 @@ namespace Medior.ViewModels
             set => SetProperty(ref _storagePercent, value);
         }
 
-        public async Task SignIn(IntPtr windowHandle)
+        public async Task<Result> SignIn(IntPtr windowHandle)
         {
-            await _authService.SignInInteractive(windowHandle);
+            var result = await _authService.SignInInteractive(windowHandle);
+            if (result.IsSuccess)
+            {
+                var authResult = await _apiService.TestAuth();
+                if (!authResult.IsSuccess)
+                {
+                    return Result.Fail("Auth token check failed.");
+                }
+
+                if (authResult.Value == System.Net.HttpStatusCode.OK)
+                {
+                    return Result.Ok();
+                }
+
+                if (authResult.Value == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    return Result.Fail("Not authorized.");
+                }
+
+                return Result.Fail($"Auth token check returned response code: {authResult.Value}");
+            }
+
+            return Result.Fail("Sign-in process failed.");
         }
 
         public void SignOut()

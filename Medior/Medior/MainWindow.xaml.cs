@@ -34,7 +34,7 @@ namespace Medior
                 var result = await ViewModel.SignUpSignIn(this.GetWindowHandle());
                 if (!result.IsSuccess)
                 {
-                    await RootGrid.Alert("Authentication Failed", "Sign in process failed.");
+                    await RootGrid.Alert("Authentication Failed", result.Error ?? "Sign-in process failed.");
                 }
             });
 

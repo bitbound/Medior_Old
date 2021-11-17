@@ -6,6 +6,7 @@ namespace Medior.Services
     public interface IProcessEx
     {
         Process Start(string fileName);
+        Process Start(string fileName, string arguments);
         Process? Start(ProcessStartInfo startInfo);
     }
 
@@ -14,6 +15,11 @@ namespace Medior.Services
         public Process Start(string fileName)
         {
             return Process.Start("explorer.exe");
+        }
+
+        public Process Start(string fileName, string arguments)
+        {
+            return Process.Start("explorer.exe", arguments);
         }
 
         public Process? Start(ProcessStartInfo startInfo)

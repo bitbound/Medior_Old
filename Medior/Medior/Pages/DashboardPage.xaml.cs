@@ -25,7 +25,11 @@ namespace Medior.Pages
         public AsyncRelayCommand SignIn => new(async () =>
         {
             Guard.IsNotNull(MainWindow.Instance, nameof(MainWindow.Instance));
-            await ViewModel.SignIn(MainWindow.Instance.GetWindowHandle());
+            var result = await ViewModel.SignIn(MainWindow.Instance.GetWindowHandle());
+            if (!result.IsSuccess)
+            {
+                await this.Alert("Authentication Failed", result.Error ?? "Sign-in process failed.");
+            }
         });
 
         public RelayCommand SignOut => new(() =>

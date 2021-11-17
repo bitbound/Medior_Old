@@ -1,0 +1,59 @@
+﻿<Page
+    x:Class="Medior.Pages.ElevatorPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Medior.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    x:DefaultBindMode="OneWay"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <Grid RowDefinitions="Auto, *">
+            <DropDownButton Content="Launch Shell"
+                            HorizontalAlignment="Left" 
+                            Margin="20">
+                <DropDownButton.Flyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Text="PowerShell" 
+                                        Command="{x:Bind LaunchShell}"
+                                        CommandParameter="powershell.exe" />
+                        <MenuFlyoutItem Text="PowerShell ISE"
+                                        Command="{x:Bind LaunchShell}"
+                                        CommandParameter="powershell_ise.exe" />
+                        <MenuFlyoutItem Text="Pwsh"
+                                        Command="{x:Bind LaunchShell}"
+                                        CommandParameter="pwsh.exe"/>
+                        <MenuFlyoutItem Text="Cmd"
+                                        Command="{x:Bind LaunchShell}"
+                                        CommandParameter="cmd.exe"/>
+                    </MenuFlyout>
+                </DropDownButton.Flyout>
+            </DropDownButton>
+            <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
+
+            </StackPanel>
+
+            <Grid Grid.Row="1" 
+                  ColumnDefinitions="*, Auto" 
+                  VerticalAlignment="Center"
+                  Margin="100, 0, 100, 0">
+                <TextBox Grid.Column="0"
+                         PlaceholderText="Command line (e.g. 'powershell_ise.exe &quot;%userprofile%\Documents\MyScript.ps1&quot;')"
+                         Text="{x:Bind ViewModel.CommandLine, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         TextChanged="TextBox_TextChanged"/>
+
+                <Button Grid.Column="1" 
+                        Margin="5,0,0,0"
+                        Command="{x:Bind LaunchAsSystem}">
+                        <StackPanel Orientation="Horizontal">
+                            <SymbolIcon Symbol="Play" Margin="0,0,5,0" />
+                            <TextBlock Text="Launch" />
+                        </StackPanel>
+                </Button>
+            </Grid>
+
+        </Grid>
+    </Grid>
+</Page>

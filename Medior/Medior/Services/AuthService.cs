@@ -32,7 +32,7 @@ namespace Medior.Services
 
         public AuthService(
             IMessagePublisher messagePublisher,
-            IChrono chrono, 
+            IChrono chrono,
             ILogger<AuthService> logger)
         {
             _messagePublisher = messagePublisher;
@@ -80,7 +80,6 @@ namespace Medior.Services
                     .WithPrompt(Prompt.NoPrompt)
                     .ExecuteAsync(CancellationToken.None);
 
-                UpdateSignInState(true);
                 return Result.Ok(authResult);
             }
             catch (Exception ex)
@@ -101,7 +100,6 @@ namespace Medior.Services
                     .AcquireTokenSilent(ApiScopes, accounts.FirstOrDefault())
                     .ExecuteAsync();
 
-                UpdateSignInState(true);
                 return Result.Ok(_lastAuthResult);
             }
             catch (MsalUiRequiredException ex)
@@ -161,14 +159,13 @@ namespace Medior.Services
                 return Result.Fail<AuthenticationResult>("Failed to acquire auth token.");
             }
 
-            UpdateSignInState(true);
             return Result.Ok(_lastAuthResult);
         }
 
         public void SignOut()
         {
             _lastAuthResult = null;
-            _messagePublisher.Messenger.Send(new SignInStateMessage(false));
+            UpdateSignInState(false);
         }
 
         private void Log(Microsoft.Identity.Client.LogLevel level, string message, bool containsPii)

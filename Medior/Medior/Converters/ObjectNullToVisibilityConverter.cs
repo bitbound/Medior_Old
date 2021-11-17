@@ -12,6 +12,12 @@ namespace Medior.Converters
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
+            if (value is string stringValue &&
+                string.IsNullOrWhiteSpace(stringValue))
+            {
+                return Visibility.Collapsed;
+            }
+
             if (value is null)
             {
                 return Visibility.Collapsed;

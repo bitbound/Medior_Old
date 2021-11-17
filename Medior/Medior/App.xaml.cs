@@ -85,6 +85,7 @@ namespace Medior
             collection.AddScoped<IProcessEx, ProcessEx>();
             collection.AddScoped<IMessagePublisher, MessagePublisher>();
             collection.AddScoped<IApiService, ApiService>();
+            collection.AddScoped<IResourceExtractor, ResourceExtractor>();
             collection.AddSingleton<IAppModuleStore, AppModuleStore>();
             collection.AddSingleton<IChrono, Chrono>();
             collection.AddSingleton<IDispatcherService, DispatcherService>();
@@ -107,6 +108,7 @@ namespace Medior
             collection.AddSingleton<ScreenCaptureViewModel>();
             collection.AddSingleton<SettingsViewModel>();
             collection.AddSingleton<GuidGeneratorViewModel>();
+            collection.AddSingleton<ElevatorViewModel>();
 
             var instance = collection.BuildServiceProvider();
 

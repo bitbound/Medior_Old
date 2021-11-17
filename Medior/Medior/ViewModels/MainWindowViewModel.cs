@@ -114,12 +114,7 @@ namespace Medior.ViewModels
             var result = await _authService.GetTokenSilently(windowHandle, false);
             if (result.IsSuccess)
             {
-                var authResult = await _apiService.TestAuth();
-                if (!authResult.IsSuccess ||
-                    authResult.Value != System.Net.HttpStatusCode.OK)
-                {
-                    _authService.SignOut();
-                }
+                await _apiService.TestAuth();
             }
         }
 
@@ -148,13 +143,34 @@ namespace Medior.ViewModels
             }
         }
 
-        public async Task<Result<AuthenticationResult>> SignUpSignIn(IntPtr windowHandle)
+        public async Task<Result> SignUpSignIn(IntPtr windowHandle)
         {
             try
             {
                 IsLoading = true;
                 var result = await _authService.SignInInteractive(windowHandle);
-                return result;
+                if (result.IsSuccess)
+                {
+                    var authResult = await _apiService.TestAuth();
+                    if (!authResult.IsSuccess)
+                    {
+                        return Result.Fail("Auth token check failed.");
+                    }
+
+                    if (authResult.Value == System.Net.HttpStatusCode.OK)
+                    {
+                        return Result.Ok();
+                    }
+
+                    if (authResult.Value == System.Net.HttpStatusCode.Unauthorized)
+                    {
+                        return Result.Fail("Not authorized.");
+                    }
+
+                    return Result.Fail($"Auth token check returned response code: {authResult.Value}");
+                }
+
+                return Result.Fail("Sign-in process failed.");
             }
             finally
             {

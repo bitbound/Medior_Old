@@ -70,6 +70,15 @@ namespace Medior.Services
             new()
             {
                 Id = AppModuleIds.GuidGenerator,
+                Label = "Process Elevator",
+                Description = "Launch processes as the SYSTEM account",
+                PageName = "ElevatorPage",
+                Icon = Symbol.Admin,
+                ModuleType = AppModuleType.Main
+            },
+            new()
+            {
+                Id = AppModuleIds.GuidGenerator,
                 Label = "GUID Generator",
                 Description = "Quickly generate GUIDs",
                 PageName = "GuidGeneratorPage",

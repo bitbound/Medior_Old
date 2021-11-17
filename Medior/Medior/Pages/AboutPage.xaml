@@ -70,10 +70,10 @@
                 </Hyperlink>
             </TextBlock>
             <TextBlock>
-                <Hyperlink NavigateUri="https://github.com/robmikh/SimpleRecorder/tree/master/CaptureEncoder">
-                    CaptureEncoder
+                <Hyperlink NavigateUri="https://www.poweradmin.com/paexec/">
+                    PaExec
                 </Hyperlink>
-                <Hyperlink FontSize="10" NavigateUri="https://github.com/robmikh/SimpleRecorder/blob/master/LICENSE">
+                <Hyperlink FontSize="10" NavigateUri="https://www.poweradmin.com/paexec/paexec_eula.txt">
                     (License)
                 </Hyperlink>
             </TextBlock>

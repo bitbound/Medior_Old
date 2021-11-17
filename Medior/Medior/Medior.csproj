@@ -15,14 +15,19 @@
   <ItemGroup>
     <None Remove="Controls\GatedControl.xaml" />
     <None Remove="Pages\DashboardPage.xaml" />
+    <None Remove="Pages\ElevatorPage.xaml" />
     <None Remove="Pages\GuidGeneratorPage.xaml" />
     <None Remove="Pages\PhotoSorterPage.xaml" />
     <None Remove="Pages\RemoteHelpPage.xaml" />
     <None Remove="Pages\ScreenCapturePage.xaml" />
     <None Remove="Pages\SettingsPage.xaml" />
+    <None Remove="Resources\paexec.exe" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Media\comet.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\paexec.exe" />
   </ItemGroup>
 
   <ItemGroup>
@@ -51,6 +56,9 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
+    <Page Update="Pages\ElevatorPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Pages\GuidGeneratorPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

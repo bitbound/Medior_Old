@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Diagnostics;
 using Medior.BaseTypes;
+using Medior.Models.Messages;
 using Microsoft.Extensions.Logging;
 using System.Net;
 using System.Net.Http;
@@ -16,17 +17,20 @@ namespace Medior.Services
     {
         private readonly ILogger<ApiService> _logger;
         private readonly IEnvironmentService _environment;
+        private readonly IMessagePublisher _messagePublisher;
         private readonly IAuthService _authService;
         private readonly IHttpClientFactory _httpFactory;
 
         public ApiService(
             IEnvironmentService environmentService,
             IAuthService authService,
+            IMessagePublisher messagePublisher,
             ILogger<ApiService> logger,
             IHttpClientFactory httpClientFactory)
         {
             _logger = logger;
             _environment = environmentService;
+            _messagePublisher = messagePublisher;
             _authService = authService;
             _httpFactory = httpClientFactory;
         }
@@ -62,8 +66,12 @@ namespace Medior.Services
                 if (httpResult.StatusCode != HttpStatusCode.OK)
                 {
                     _logger.LogWarning("Auth check failed. Sign in required.");
+                    _authService.SignOut();
+                    _messagePublisher.Messenger.Send(new SignInStateMessage(false));
+                    return Result.Fail<HttpStatusCode>("Auth check failed.  Sign-in required.");
                 }
 
+                _messagePublisher.Messenger.Send(new SignInStateMessage(true));
                 return Result.Ok(httpResult.StatusCode);
             }
             catch (Exception ex)

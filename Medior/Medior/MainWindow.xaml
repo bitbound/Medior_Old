@@ -31,11 +31,11 @@
                    HorizontalAlignment="Center"
                    Height="300"
                    Width="300"
-                   Opacity=".05" 
+                   Opacity=".1" 
                    Grid.ColumnSpan="3"/>
 
             <TextBlock Text="Medior"
-                       Opacity=".05"
+                       Opacity=".1"
                        FontSize="48"
                        FontWeight="Bold"
                        Grid.ColumnSpan="3"
