@@ -3,7 +3,7 @@ using Microsoft.UI.Xaml.Data;
 
 namespace Medior.Converters
 {
-    public class OppositeBoolToVisibilityConverter : IValueConverter
+    public class ReverseBoolToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {

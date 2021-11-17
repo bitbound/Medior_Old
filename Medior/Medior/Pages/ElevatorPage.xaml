@@ -28,6 +28,9 @@
                         <MenuFlyoutItem Text="Cmd"
                                         Command="{x:Bind LaunchShell}"
                                         CommandParameter="cmd.exe"/>
+                        <MenuFlyoutSeparator />
+                        <MenuFlyoutItem Text="Make sure the shell is in your %path% variable."
+                                        IsEnabled="False" />
                     </MenuFlyout>
                 </DropDownButton.Flyout>
             </DropDownButton>

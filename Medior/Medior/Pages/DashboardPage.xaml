@@ -16,7 +16,7 @@
                     <MenuFlyout>
                         <MenuFlyoutItem Text="Sign In" 
                                         Command="{x:Bind SignIn, Mode=OneTime}"
-                                        Visibility="{x:Bind ViewModel.IsSignedIn, Converter={StaticResource OppositeBoolToVisibilityConverter}}" />
+                                        Visibility="{x:Bind ViewModel.IsSignedIn, Converter={StaticResource ReverseBoolToVisibilityConverter}}" />
 
                         <MenuFlyoutItem Text="Sign Out" 
                                         Command="{x:Bind SignOut, Mode=OneTime}"

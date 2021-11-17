@@ -22,12 +22,24 @@
             <AppBarButton Icon="Video"
                           Label="Capture Video"
                           Command="{x:Bind CaptureVideo, Mode=OneTime}" />
+
+            <AppBarSeparator Visibility="{x:Bind ViewModel.CurrentImage, Converter={StaticResource ObjectNullToVisibilityConverter}}" />
+
+            <AppBarButton Icon="Share"
+                          Label="Share"
+                          Visibility="{x:Bind ViewModel.CurrentImage, Converter={StaticResource ObjectNullToVisibilityConverter}}"/>
         </CommandBar>
 
         <Grid Grid.Row="1" Margin="5">
-            <Image Grid.Row="1"
-               Source="{x:Bind ViewModel.CurrentImage}"
-               Visibility="{x:Bind ViewModel.CurrentImage, Converter={StaticResource ObjectNullToVisibilityConverter}}"/>
+            <TextBlock Text="Capture an image or video to get started"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Style="{ThemeResource HeaderTextBlockStyle}"
+                Visibility="{x:Bind ViewModel.CurrentImage, Converter={StaticResource ReverseObjectNullToVisibilityConverter}}"/>
+            
+            <Image
+                Source="{x:Bind ViewModel.CurrentImage}"
+                Visibility="{x:Bind ViewModel.CurrentImage, Converter={StaticResource ObjectNullToVisibilityConverter}}"/>
         </Grid>
     </Grid>
 </Page>

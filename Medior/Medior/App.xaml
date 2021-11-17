@@ -10,7 +10,8 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary>
                     <converters:ObjectNullToVisibilityConverter x:Key="ObjectNullToVisibilityConverter" />
-                    <converters:OppositeBoolToVisibilityConverter x:Key="OppositeBoolToVisibilityConverter" />
+                    <converters:ReverseBoolToVisibilityConverter x:Key="ReverseBoolToVisibilityConverter" />
+                    <converters:ReverseObjectNullToVisibilityConverter x:Key="ReverseObjectNullToVisibilityConverter" />
                 </ResourceDictionary>
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
                 <!-- Other merged dictionaries here -->
