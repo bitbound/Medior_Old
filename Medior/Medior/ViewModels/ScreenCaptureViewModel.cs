@@ -1,9 +1,13 @@
 ﻿using Medior.BaseTypes;
 using Medior.Services;
+using Medior.Utilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.Graphics.Capture;
+
 
 namespace Medior.ViewModels
 {
@@ -42,9 +46,24 @@ namespace Medior.ViewModels
             });
         }
 
-        public void StartVideoCapture()
+        public async Task<Result> StartVideoCapture(
+            GraphicsCaptureItem captureItem, 
+            string targetPath)
         {
-            // TODO
+            var result = await VideoEncoder.Encode(captureItem, targetPath);
+
+            if (!result.IsSuccess)
+            {
+                if (result.Exception is not null)
+                {
+                    _logger.LogError(result.Exception, "Error while capturing video.");
+                }
+                else
+                {
+                    _logger.LogError(result.Error);
+                }
+            }
+            return result;
         }
 
         public void UnregisterSubscriptions()

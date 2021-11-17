@@ -16,20 +16,22 @@
                             Margin="20">
                 <DropDownButton.Flyout>
                     <MenuFlyout>
+                        <MenuFlyoutItem Text="Cmd"
+                                        Command="{x:Bind LaunchShell}"
+                                        CommandParameter="cmd.exe"/>
                         <MenuFlyoutItem Text="PowerShell" 
                                         Command="{x:Bind LaunchShell}"
                                         CommandParameter="powershell.exe" />
                         <MenuFlyoutItem Text="PowerShell ISE"
                                         Command="{x:Bind LaunchShell}"
                                         CommandParameter="powershell_ise.exe" />
-                        <MenuFlyoutItem Text="Pwsh"
+                        <MenuFlyoutItem Text="PowerShell Core"
                                         Command="{x:Bind LaunchShell}"
                                         CommandParameter="pwsh.exe"/>
-                        <MenuFlyoutItem Text="Cmd"
-                                        Command="{x:Bind LaunchShell}"
-                                        CommandParameter="cmd.exe"/>
                         <MenuFlyoutSeparator />
-                        <MenuFlyoutItem Text="Make sure the shell is in your %path% variable."
+                        <MenuFlyoutItem Text="Only installed shells will work."
+                                        IsEnabled="False" />
+                        <MenuFlyoutItem Text="Shell locations must be in %path%."
                                         IsEnabled="False" />
                     </MenuFlyout>
                 </DropDownButton.Flyout>
