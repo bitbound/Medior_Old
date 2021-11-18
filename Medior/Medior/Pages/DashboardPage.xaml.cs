@@ -32,9 +32,9 @@ namespace Medior.Pages
             }
         });
 
-        public RelayCommand SignOut => new(() =>
+        public AsyncRelayCommand SignOut => new(async () =>
         {
-            ViewModel.SignOut();
+            await ViewModel.SignOut();
         });
     }
 }

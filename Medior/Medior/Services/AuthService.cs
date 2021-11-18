@@ -14,7 +14,7 @@ namespace Medior.Services
         Task<Result<AuthenticationResult>> EditProfile(IntPtr windowHandle);
         Task<Result<AuthenticationResult>> GetTokenSilently(IntPtr windowHandle, bool fallbackToInteractive);
         Task<Result<AuthenticationResult>> SignInInteractive(IntPtr windowHandle);
-        void SignOut();
+        Task SignOut();
     }
 
     public class AuthService : IAuthService
@@ -162,9 +162,13 @@ namespace Medior.Services
             return Result.Ok(_lastAuthResult);
         }
 
-        public void SignOut()
+        public async Task SignOut()
         {
             _lastAuthResult = null;
+            foreach (var account in await _publicClientApp.GetAccountsAsync())
+            {
+                await _publicClientApp.RemoveAsync(account);
+            }
             UpdateSignInState(false);
         }
 
