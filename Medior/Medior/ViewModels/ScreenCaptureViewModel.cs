@@ -50,7 +50,10 @@ namespace Medior.ViewModels
             GraphicsCaptureItem captureItem, 
             string targetPath)
         {
-            var result = await VideoEncoder.Encode(captureItem, targetPath);
+            var cts = new CancellationTokenSource();
+            cts.CancelAfter(10000);
+
+            var result = await VideoEncoder.Encode(captureItem, targetPath, cts.Token);
 
             if (!result.IsSuccess)
             {
