@@ -2,11 +2,11 @@
 using System.Text.Json;
 using System.ComponentModel;
 using System.Threading.Tasks;
-using Medior.PhotoSorter.Enums;
 using Medior.Services;
-using Medior.PhotoSorter.Models;
+using Medior.AppModules.PhotoSorter.Models;
+using Medior.AppModules.PhotoSorter.Enums;
 
-namespace Medior.PhotoSorter.Services
+namespace Medior.AppModules.PhotoSorter.Services
 {
     public interface IJobRunner
     {

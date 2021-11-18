@@ -1,4 +1,4 @@
-﻿namespace Medior.PhotoSorter.Enums
+﻿namespace Medior.AppModules.PhotoSorter.Enums
 {
     public enum OverwriteAction
     {

@@ -1,4 +1,4 @@
-﻿namespace Medior.PhotoSorter.Models
+﻿namespace Medior.AppModules.PhotoSorter.Models
 {
     public class OperationResult
     {

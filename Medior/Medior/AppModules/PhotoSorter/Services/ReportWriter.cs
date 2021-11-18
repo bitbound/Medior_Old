@@ -1,8 +1,8 @@
-﻿using Medior.PhotoSorter.Models;
+﻿using Medior.AppModules.PhotoSorter.Models;
 using Medior.Services;
 using System.Threading.Tasks;
 
-namespace Medior.PhotoSorter.Services
+namespace Medior.AppModules.PhotoSorter.Services
 {
     public interface IReportWriter
     {

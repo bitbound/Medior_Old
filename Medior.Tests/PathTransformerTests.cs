@@ -2,7 +2,7 @@
 using System;
 using System.IO;
 using Medior.Services;
-using Medior.PhotoSorter.Services;
+using Medior.AppModules.PhotoSorter.Services;
 
 namespace Medior.Tests
 {

@@ -1,6 +1,6 @@
 ﻿using Medior.Services;
 
-namespace Medior.PhotoSorter.Services
+namespace Medior.AppModules.PhotoSorter.Services
 {
     public interface IPathTransformer
     {

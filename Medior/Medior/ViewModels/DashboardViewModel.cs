@@ -94,9 +94,9 @@ namespace Medior.ViewModels
             return Result.Fail("Sign-in process failed.");
         }
 
-        public async Task SignOut()
+        public void SignOut()
         {
-            await _authService.SignOut();
+            _authService.SignOut();
         }
         private void RegisterMessageHandlers()
         {

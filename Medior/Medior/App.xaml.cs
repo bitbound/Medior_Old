@@ -4,7 +4,7 @@ global using System.IO;
 global using System.Linq;
 global using System.Threading;
 global using Microsoft.Toolkit.Mvvm.Messaging;
-using Medior.PhotoSorter.Services;
+using Medior.AppModules.PhotoSorter.Services;
 using Medior.Services;
 using Medior.ViewModels;
 using Microsoft.Extensions.DependencyInjection;

@@ -1,4 +1,4 @@
-using Medior.PhotoSorter.Services;
+using Medior.AppModules.PhotoSorter.Services;
 using Medior.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -9,7 +9,7 @@ namespace Medior.Tests
     [TestClass]
     public class MetadataReaderTests
     {
-        private static FileSystem _fileSystemImpl = new FileSystem();
+        private static readonly FileSystem _fileSystemImpl = new();
 
         private MetadataReader _metadataReader = new(_fileSystemImpl);
 

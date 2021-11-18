@@ -1,8 +1,8 @@
-﻿using Medior.Interfaces;
-using Medior.PhotoSorter.Enums;
+﻿using Medior.AppModules.PhotoSorter.Enums;
+using Medior.Interfaces;
 using System.Text.Json.Serialization;
 
-namespace Medior.PhotoSorter.Models
+namespace Medior.AppModules.PhotoSorter.Models
 {
     public class SortJob : IdModel
     {

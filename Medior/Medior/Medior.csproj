@@ -13,6 +13,12 @@
     <PackageIcon>comet.png</PackageIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Content Remove="Media\Screenshots\Dashboard.png" />
+    <Content Remove="Media\Screenshots\Login.png" />
+    <Content Remove="Media\Screenshots\MainWindow.png" />
+    <Content Remove="Media\Screenshots\ScreenCapture.png" />
+  </ItemGroup>
+  <ItemGroup>
     <None Remove="Controls\GatedControl.xaml" />
     <None Remove="Pages\DashboardPage.xaml" />
     <None Remove="Pages\ElevatorPage.xaml" />
@@ -41,7 +47,7 @@
     <PackageReference Include="Microsoft.Identity.Client" Version="4.37.0" />
     <PackageReference Include="Microsoft.Toolkit" Version="7.1.1" />
     <PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.1.1" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.0.0-preview3" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.0.0" />
     <PackageReference Include="PInvoke.User32" Version="0.7.104" />
     <PackageReference Include="SharpDX.Direct3D11" Version="4.2.0" />
 

@@ -1,6 +1,6 @@
-﻿using Medior.PhotoSorter.Enums;
+﻿using Medior.AppModules.PhotoSorter.Enums;
 
-namespace Medior.PhotoSorter.Models
+namespace Medior.AppModules.PhotoSorter.Models
 {
     public class JobReport
     {

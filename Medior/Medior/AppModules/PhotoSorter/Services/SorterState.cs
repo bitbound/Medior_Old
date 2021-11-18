@@ -1,4 +1,4 @@
-﻿namespace Medior.PhotoSorter.Services
+﻿namespace Medior.AppModules.PhotoSorter.Services
 {
     public interface ISorterState
     {

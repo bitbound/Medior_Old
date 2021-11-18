@@ -2,10 +2,10 @@
 using Medior.Services;
 using System.Threading.Tasks;
 using CommunityToolkit.Diagnostics;
-using Medior.PhotoSorter.Enums;
-using Medior.PhotoSorter.Models;
 using Medior.BaseTypes;
-using Medior.PhotoSorter.Services;
+using Medior.AppModules.PhotoSorter.Models;
+using Medior.AppModules.PhotoSorter.Services;
+using Medior.AppModules.PhotoSorter.Enums;
 
 namespace Medior.ViewModels
 {

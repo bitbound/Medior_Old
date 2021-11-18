@@ -3,10 +3,10 @@ using MetadataExtractor.Formats.Exif;
 using MetadataExtractor.Formats.QuickTime;
 using Medior.Services;
 using Medior.Extensions;
-using Medior.PhotoSorter.Models;
 using Medior.BaseTypes;
+using Medior.AppModules.PhotoSorter.Models;
 
-namespace Medior.PhotoSorter.Services
+namespace Medior.AppModules.PhotoSorter.Services
 {
     public interface IMetadataReader
     {
