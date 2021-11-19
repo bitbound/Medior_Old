@@ -5,6 +5,7 @@ using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Input;
 using Microsoft.UI.Xaml.Controls;
 using System.Diagnostics;
+using System.IO;
 using Windows.Graphics.Capture;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -54,6 +55,7 @@ namespace Medior.Pages
 
             
             var filename = $"{DateTime.Now:yyyyMMdd-HHmm-ss}.mp4";
+            // TODO: Put paths as static somewhere.
             var filePath = Path.Combine(Path.GetTempPath(), "Medior", "Recordings", filename);
 
             var result = await ViewModel.StartVideoCapture(captureItem, filePath);

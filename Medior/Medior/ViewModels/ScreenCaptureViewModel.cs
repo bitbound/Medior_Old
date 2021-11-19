@@ -14,16 +14,19 @@ namespace Medior.ViewModels
     public class ScreenCaptureViewModel : ViewModelBase
     {
         private readonly IEnvironmentService _environmentService;
+        private readonly IScreenGrabber _screenGrabber;
         private readonly ILogger<ScreenCaptureViewModel> _logger;
         private readonly IProcessEx _processEx;
         private BitmapImage? _currentImage;
 
         public ScreenCaptureViewModel(IProcessEx processEx, 
             IEnvironmentService environmentService,
+            IScreenGrabber screenGrabber,
             ILogger<ScreenCaptureViewModel> logger)
         {
             _processEx = processEx;
             _environmentService = environmentService;
+            _screenGrabber = screenGrabber;
             _logger = logger;
         }
 
@@ -53,7 +56,7 @@ namespace Medior.ViewModels
             var cts = new CancellationTokenSource();
             cts.CancelAfter(10000);
 
-            var result = await VideoEncoder.Encode(captureItem, targetPath, cts.Token);
+            var result = await _screenGrabber.EncodeVideo(captureItem, targetPath, cts.Token);
 
             if (!result.IsSuccess)
             {
