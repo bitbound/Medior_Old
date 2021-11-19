@@ -1,5 +1,6 @@
 ﻿using Medior.Services;
 using System.Diagnostics;
+using System.IO;
 
 namespace Medior.ViewModels
 {

@@ -1,5 +1,6 @@
 ﻿using Medior.AppModules.PhotoSorter.Models;
 using Medior.Services;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace Medior.AppModules.PhotoSorter.Services
@@ -13,21 +14,25 @@ namespace Medior.AppModules.PhotoSorter.Services
     public class ReportWriter : IReportWriter
     {
         private readonly IChrono _chrono;
+        private readonly IEnvironmentService _environmentService;
         private readonly IFileSystem _fileSystem;
-
-        private string LogPath => Path.Combine(Path.GetTempPath(),
-            "Medior",
-            $"PhotoSorter_Report_{_chrono.Now:yyyy-MM-dd HH.mm.ss.fff}.log");
-
-        public ReportWriter(IChrono chrono, IFileSystem fileSystem)
+        public ReportWriter(IChrono chrono, IFileSystem fileSystem, IEnvironmentService environmentService)
         {
             _chrono = chrono;
             _fileSystem = fileSystem;
+            _environmentService = environmentService;
+        }
+
+        public async Task<string> WriteReport(JobReport report)
+        {
+            var logPath = GetLogPath();
+            await WriteReportInternal(report, logPath);
+            return logPath;
         }
 
         public async Task<string> WriteReports(IEnumerable<JobReport> reports)
         {
-            var logPath = LogPath;
+            var logPath = GetLogPath();
             foreach (var report in reports)
             {
                 await WriteReportInternal(report, logPath);
@@ -35,12 +40,9 @@ namespace Medior.AppModules.PhotoSorter.Services
             return logPath;
         }
 
-        public async Task<string> WriteReport(JobReport report)
-        {
-            var logPath = LogPath;
-            await WriteReportInternal(report, logPath);
-            return logPath;
-        }
+        private string GetLogPath() => Path.Combine(
+            _environmentService.PhotoSorterLogsPath,
+            $"PhotoSorter_Report_{_chrono.Now:yyyy-MM-dd HH.mm.ss.fff}.log");
 
         private async Task WriteReportInternal(JobReport report, string logPath)
         {

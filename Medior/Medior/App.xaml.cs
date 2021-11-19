@@ -85,6 +85,7 @@ namespace Medior
             collection.AddScoped<IMessagePublisher, MessagePublisher>();
             collection.AddScoped<IApiService, ApiService>();
             collection.AddScoped<IResourceExtractor, ResourceExtractor>();
+            collection.AddScoped<IScreenGrabber, ScreenGrabber>();
             collection.AddSingleton<IAppModuleStore, AppModuleStore>();
             collection.AddSingleton<IChrono, Chrono>();
             collection.AddSingleton<IDispatcherService, DispatcherService>();

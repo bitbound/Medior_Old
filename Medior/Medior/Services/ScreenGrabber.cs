@@ -92,11 +92,17 @@ namespace Medior.Services
                         return;
                     }
 
-                    graphics.CopyFromScreen(Point.Empty, Point.Empty, new Size(bounds.Width, bounds.Height));
+                    var result = GetDirectXGrabFromDisplay(Screen.PrimaryScreen.DeviceName);
 
-                    var bd = bitmap.LockBits(new Rectangle(0, 0, bounds.Width, bounds.Height), ImageLockMode.ReadOnly, bitmap.PixelFormat);
+                    if (!result.IsSuccess || result.Value is null)
+                    {
+                        return;
+                    }
+                    
+                    using var screenGrab = result.Value;
+                    var bd = screenGrab.LockBits(new Rectangle(0, 0, bounds.Width, bounds.Height), ImageLockMode.ReadOnly, bitmap.PixelFormat);
+
                     Marshal.Copy(bd.Scan0, tempArray, 0, size);
-                    bitmap.UnlockBits(bd);
 
                     args.Request.Sample = MediaStreamSample.CreateFromBuffer(tempArray.AsBuffer(), stopwatch.Elapsed);
                 };
@@ -167,9 +173,9 @@ namespace Medior.Services
                 }
 
 
-                var output1 = output.QueryInterface<Output1>();
+                using var output1 = output.QueryInterface<Output1>();
 
-                var device = new SharpDX.Direct3D11.Device(adapter);
+                using var device = new SharpDX.Direct3D11.Device(adapter);
                 
                 var bounds = output1.Description.DesktopBounds;
                 var width = bounds.Right - bounds.Left;
@@ -195,7 +201,7 @@ namespace Medior.Services
                 using var duplication = output1.DuplicateOutput(device);
 
                 // Try to get duplicated frame within given time is ms
-                var result = duplication.TryAcquireNextFrame(1000,
+                var result = duplication.TryAcquireNextFrame(5000,
                     out var duplicateFrameInformation,
                     out var screenResource);
 
