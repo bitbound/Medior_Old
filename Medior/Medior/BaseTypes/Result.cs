@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-
-namespace Medior.BaseTypes
+﻿namespace Medior.BaseTypes
 {
     public class Result
     {

@@ -4,30 +4,29 @@ using Medior.Utilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System.Diagnostics;
-using System.Drawing;
+using System.IO;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Graphics.Capture;
 
 
 namespace Medior.ViewModels
 {
     public class ScreenCaptureViewModel : ViewModelBase
     {
-        private readonly IEnvironmentService _environmentService;
-        private readonly IScreenGrabber _screenGrabber;
         private readonly ILogger<ScreenCaptureViewModel> _logger;
+        private readonly IScreenRecorder _screenRecorder;
         private readonly IProcessEx _processEx;
+        private readonly IFileSystem _fileSystem;
         private BitmapImage? _currentImage;
 
         public ScreenCaptureViewModel(IProcessEx processEx, 
-            IEnvironmentService environmentService,
-            IScreenGrabber screenGrabber,
+            IFileSystem fileSystem,
+            IScreenRecorder screenRecorder,
             ILogger<ScreenCaptureViewModel> logger)
         {
+            _screenRecorder = screenRecorder;
             _processEx = processEx;
-            _environmentService = environmentService;
-            _screenGrabber = screenGrabber;
+            _fileSystem = fileSystem;
             _logger = logger;
         }
 
@@ -52,11 +51,14 @@ namespace Medior.ViewModels
 
         public async Task<Result> StartVideoCapture(string targetPath)
         {
-            var captureArea = _screenGrabber.GetDisplays().First().Bounds;
             var cts = new CancellationTokenSource();
             cts.CancelAfter(10000);
 
-            var result = await _screenGrabber.CaptureVideo(captureArea, targetPath, cts.Token);
+            _fileSystem.CreateDirectory(Path.GetDirectoryName(targetPath) ?? "");
+            using var destStream = _fileSystem.CreateFile(targetPath);
+
+
+            var result = await _screenRecorder.CaptureVideo(0, 0, destStream, cts.Token);
 
             if (!result.IsSuccess)
             {
@@ -99,7 +101,7 @@ namespace Medior.ViewModels
             }
             catch (Exception ex) 
             { 
-                if (_environmentService.IsDebug)
+                if (EnvironmentHelper.IsDebug)
                 {
                     _logger.LogError(ex, "Error while getting clipboard content.");
                 }

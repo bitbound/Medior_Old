@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Diagnostics;
 using Medior.BaseTypes;
 using Medior.Models.Messages;
+using Medior.Utilities;
 using Microsoft.Extensions.Logging;
 using System.Net;
 using System.Net.Http;
@@ -16,20 +17,17 @@ namespace Medior.Services
     public class ApiService : IApiService
     {
         private readonly ILogger<ApiService> _logger;
-        private readonly IEnvironmentService _environment;
         private readonly IMessagePublisher _messagePublisher;
         private readonly IAuthService _authService;
         private readonly IHttpClientFactory _httpFactory;
 
         public ApiService(
-            IEnvironmentService environmentService,
             IAuthService authService,
             IMessagePublisher messagePublisher,
             ILogger<ApiService> logger,
             IHttpClientFactory httpClientFactory)
         {
             _logger = logger;
-            _environment = environmentService;
             _messagePublisher = messagePublisher;
             _authService = authService;
             _httpFactory = httpClientFactory;
@@ -39,7 +37,7 @@ namespace Medior.Services
         {
             get
             {
-                if (_environment.IsDebug)
+                if (EnvironmentHelper.IsDebug)
                 {
                     return "https://localhost:7282";
                 }

@@ -1,12 +1,9 @@
 ﻿using Medior.BaseTypes;
 using Medior.Models.Messages;
 using Medior.Services;
-using Microsoft.Identity.Client;
 using Microsoft.UI;
-using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using System.Threading.Tasks;
-using Windows.UI;
 
 namespace Medior.ViewModels
 {

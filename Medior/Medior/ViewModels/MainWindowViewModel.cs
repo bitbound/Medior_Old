@@ -4,7 +4,6 @@ using Medior.Models;
 using Medior.Models.Messages;
 using Medior.Services;
 using Microsoft.Extensions.Logging;
-using Microsoft.Identity.Client;
 using System.Threading.Tasks;
 
 namespace Medior.ViewModels

@@ -1,14 +1,10 @@
 ﻿using CommunityToolkit.Diagnostics;
 using Medior.BaseTypes;
 using Medior.Services;
+using Medior.Utilities;
 using Microsoft.Extensions.Logging;
-using Microsoft.Toolkit.Mvvm.Input;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Medior.ViewModels
@@ -18,7 +14,6 @@ namespace Medior.ViewModels
         private string? _commandLine;
         private readonly IProcessEx _processEx;
         private readonly IResourceExtractor _resourceExtractor;
-        private readonly IEnvironmentService _environmentService;
         private readonly ILogger<ElevatorViewModel> _logger;
 
         public string? CommandLine
@@ -29,12 +24,10 @@ namespace Medior.ViewModels
 
         public ElevatorViewModel(IProcessEx processEx, 
             IResourceExtractor resourceExtractor,
-            IEnvironmentService environmentService,
             ILogger<ElevatorViewModel> logger)
         {
             _processEx = processEx;
             _resourceExtractor = resourceExtractor;
-            _environmentService = environmentService;
             _logger = logger;
         }
 
@@ -44,7 +37,7 @@ namespace Medior.ViewModels
             {
                 Guard.IsNotNullOrWhiteSpace(commandLine, nameof(commandLine));
 
-                var targetPath = Path.Combine(_environmentService.TempPath, "bin", "paexec.exe");
+                var targetPath = Path.Combine(AppFolders.TempPath, "bin", "paexec.exe");
                 var result = await _resourceExtractor.ExtractPaExec(targetPath);
 
                 if (!result.IsSuccess)

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Medior.Utilities;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 using System.IO;
@@ -26,8 +27,7 @@ namespace Medior.Services
             get
             {
                 var chrono = _services.GetRequiredService<IChrono>();
-                var environment = _services.GetRequiredService<IEnvironmentService>();
-                return Path.Combine(environment.LogsPath, $"{chrono.Now:yyyy-MM-dd}.log");
+                return Path.Combine(AppFolders.LogsPath, $"{chrono.Now:yyyy-MM-dd}.log");
             }
         }
 

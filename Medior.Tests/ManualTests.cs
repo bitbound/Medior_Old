@@ -22,10 +22,9 @@ namespace Medior.Tests
         {
             // Do some manual tests here.
 
-            var fileSystem = new Mock<IFileSystem>();
             var logger = new Mock<ILogger<ScreenGrabber>>();
 
-            var screenGrabber = new ScreenGrabber(fileSystem.Object, logger.Object);
+            var screenGrabber = new ScreenGrabber(logger.Object);
             var captureArea = Screen.PrimaryScreen.Bounds;
 
             var sw = Stopwatch.StartNew();

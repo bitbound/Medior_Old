@@ -1,5 +1,6 @@
 ﻿using Medior.AppModules.PhotoSorter.Models;
 using Medior.Services;
+using Medior.Utilities;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -14,13 +15,11 @@ namespace Medior.AppModules.PhotoSorter.Services
     public class ReportWriter : IReportWriter
     {
         private readonly IChrono _chrono;
-        private readonly IEnvironmentService _environmentService;
         private readonly IFileSystem _fileSystem;
-        public ReportWriter(IChrono chrono, IFileSystem fileSystem, IEnvironmentService environmentService)
+        public ReportWriter(IChrono chrono, IFileSystem fileSystem)
         {
             _chrono = chrono;
             _fileSystem = fileSystem;
-            _environmentService = environmentService;
         }
 
         public async Task<string> WriteReport(JobReport report)
@@ -41,7 +40,7 @@ namespace Medior.AppModules.PhotoSorter.Services
         }
 
         private string GetLogPath() => Path.Combine(
-            _environmentService.PhotoSorterLogsPath,
+            AppFolders.PhotoSorterLogsPath,
             $"PhotoSorter_Report_{_chrono.Now:yyyy-MM-dd HH.mm.ss.fff}.log");
 
         private async Task WriteReportInternal(JobReport report, string logPath)
