@@ -51,6 +51,12 @@ namespace Medior.Pages
 
             var result = await ViewModel.StartVideoCapture(filePath);
 
+            Process.Start(new ProcessStartInfo()
+            {
+                FileName = filePath,
+                UseShellExecute = true,
+            });
+
             if (!result.IsSuccess)
             {
                 await this.Alert("Capture Error", "An error occurred while capturing the video.");

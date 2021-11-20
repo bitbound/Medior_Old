@@ -11,6 +11,7 @@
     <UseWinUI>true</UseWinUI>
     <ApplicationIcon>Media\comet.ico</ApplicationIcon>
     <PackageIcon>comet.png</PackageIcon>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Content Remove="Media\Screenshots\Dashboard.png" />
