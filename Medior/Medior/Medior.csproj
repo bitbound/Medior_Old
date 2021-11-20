@@ -50,6 +50,7 @@
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.0.0" />
     <PackageReference Include="PInvoke.Gdi32" Version="0.7.104" />
     <PackageReference Include="PInvoke.User32" Version="0.7.104" />
+    <PackageReference Include="ScreenCapturer" Version="3.0.0" />
     <PackageReference Include="SharpDX.Direct3D11" Version="4.2.0" />
 
     <Manifest Include="$(ApplicationManifest)" />

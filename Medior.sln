@@ -16,7 +16,7 @@ Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "Medior (Package)", "Medior\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Medior", "Medior\Medior\Medior.csproj", "{B5320F9D-89B8-4867-803C-D3E61260BDF2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Medior.Service", "Medior.Service\Medior.Service.csproj", "{66EFC1E8-59A6-478B-8E20-0F6FFA8DBB91}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Medior.Service", "Medior.Service\Medior.Service.csproj", "{66EFC1E8-59A6-478B-8E20-0F6FFA8DBB91}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

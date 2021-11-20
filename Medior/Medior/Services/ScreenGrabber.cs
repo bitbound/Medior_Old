@@ -2,10 +2,12 @@
 using Medior.Models;
 using Microsoft.Extensions.Logging;
 using PInvoke;
+using ScreenCapturerNS;
 using SharpDX;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -34,10 +36,13 @@ namespace Medior.Services
 
     public interface IScreenGrabber
     {
-        Task<Result> EncodeVideo(GraphicsCaptureItem captureItem, string targetFilePath, CancellationToken cancellationToken);
+        Task<Result> CaptureVideo(Rectangle captureArea, string targetFilePath, CancellationToken cancellationToken);
 
-        Result<Bitmap> GetScreenGrab(string targetName, ScreenGrabTarget targetType, bool useDirectX);
+        Result<Bitmap> GetWinFormsGrab(Rectangle captureArea);
+        Result<Bitmap> GetBitBltGrab(Rectangle captureArea);
+
         IEnumerable<DisplayInfo> GetDisplays();
+
     }
 
 
@@ -53,8 +58,8 @@ namespace Medior.Services
             _logger = logger;
         }
 
-        public async Task<Result> EncodeVideo(
-            GraphicsCaptureItem captureItem,
+        public async Task<Result> CaptureVideo(
+            Rectangle captureArea,
             string targetPath,
             CancellationToken cancellationToken)
         {
@@ -63,13 +68,12 @@ namespace Medior.Services
                 _fileSystem.CreateDirectory(Path.GetDirectoryName(targetPath) ?? "");
                 using var destStream = _fileSystem.CreateFile(targetPath);
 
-                var bounds = new Rectangle(0, 0, captureItem.Size.Width, captureItem.Size.Height);
                 var stopwatch = Stopwatch.StartNew();
 
 
-                using var bitmap = new Bitmap(bounds.Width, bounds.Height);
+                using var bitmap = new Bitmap(captureArea.Width, captureArea.Height);
                 using var graphics = Graphics.FromImage(bitmap);
-                var size = bounds.Width * Image.GetPixelFormatSize(bitmap.PixelFormat) / 8 * bounds.Height;
+                var size = captureArea.Width * Image.GetPixelFormatSize(bitmap.PixelFormat) / 8 * captureArea.Height;
                 var tempArray = new byte[size];
 
                 var transcoder = new MediaTranscoder
@@ -79,11 +83,24 @@ namespace Medior.Services
 
                 var videoProperties = VideoEncodingProperties.CreateUncompressed(
                     MediaEncodingSubtypes.Argb32,
-                    (uint)bounds.Width,
-                    (uint)bounds.Height);
+                    (uint)captureArea.Width,
+                    (uint)captureArea.Height);
 
                 var videoDescriptor = new VideoStreamDescriptor(videoProperties);
                 var mediaStream = new MediaStreamSource(videoDescriptor);
+
+                var screenGrab = new Bitmap(captureArea.Width, captureArea.Height);
+                var grabs = new ConcurrentQueue<Bitmap>();
+                
+                ScreenCapturer.OnScreenUpdated += (sender, args) =>
+                {
+                    while (grabs.Count > 1)
+                    {
+                        grabs.TryDequeue(out var staleBitmap);
+                        staleBitmap?.Dispose();
+                    }
+                    grabs.Enqueue(args.Bitmap);
+                };
 
                 mediaStream.SampleRequested += (sender, args) =>
                 {
@@ -93,27 +110,21 @@ namespace Medior.Services
                         return;
                     }
 
-                    var result = GetDirectXGrab(Screen.PrimaryScreen.DeviceName);
+                    // TODO: Make copy.
+                    Bitmap? latestGrab;
 
-                    if (!result.IsSuccess || result.Value is null)
+                    while (!grabs.TryDequeue(out latestGrab))
                     {
-                        result = GetBitBltGrab(Screen.PrimaryScreen.DeviceName);
-
-                        if (!result.IsSuccess || result.Value is null)
-                        {
-                            return;
-                        }
+                        Thread.Sleep(1);
                     }
 
-                    using var screenGrab = result.Value;
 
-                    var bd = screenGrab.LockBits(bounds, ImageLockMode.ReadOnly, screenGrab.PixelFormat);
+                    var bd = latestGrab.LockBits(new Rectangle(Point.Empty, captureArea.Size), ImageLockMode.ReadOnly, latestGrab.PixelFormat);
 
                     Marshal.Copy(bd.Scan0, tempArray, 0, size);
 
-                    screenGrab.UnlockBits(bd);
+                    latestGrab.UnlockBits(bd);
 
-                    
                     args.Request.Sample = MediaStreamSample.CreateFromBuffer(tempArray.AsBuffer(), stopwatch.Elapsed);
                 };
 
@@ -124,6 +135,7 @@ namespace Medior.Services
                     destStream.AsRandomAccessStream(),
                     mp4Profile);
 
+                ScreenCapturer.StartCapture();
                 await prepareResult.TranscodeAsync();
 
                 return Result.Ok();
@@ -131,6 +143,10 @@ namespace Medior.Services
             catch (Exception ex)
             {
                 return Result.Fail(ex);
+            }
+            finally
+            {
+                ScreenCapturer.StopCapture();
             }
         }
 
@@ -146,20 +162,13 @@ namespace Medior.Services
             });
         }
 
-        public Result<Bitmap> GetScreenGrab(string targetName, ScreenGrabTarget targetType, bool useDirectX)
-        {
-            // TODO
-            return Result.Ok<Bitmap>(null);
-        }
-        private Result<Bitmap> GetBitBltGrab(string displayName)
+        public Result<Bitmap> GetWinFormsGrab(Rectangle captureArea)
         {
             try
             {
-                var screen = Screen.AllScreens.First(x => x.DeviceName == displayName);
-                
-                var bitmap = new Bitmap(screen.Bounds.Width, screen.Bounds.Height);
+                var bitmap = new Bitmap(captureArea.Width, captureArea.Height);
                 using var graphics = Graphics.FromImage(bitmap);
-                graphics.CopyFromScreen(Point.Empty, Point.Empty, screen.Bounds.Size);
+                graphics.CopyFromScreen(captureArea.Location, Point.Empty, captureArea.Size);
                 return Result.Ok(bitmap);
             }
             catch (Exception ex)
@@ -170,23 +179,22 @@ namespace Medior.Services
         }
 
 
-        private Result<Bitmap> GetBitBltGrab2(string displayName)
+        public Result<Bitmap> GetBitBltGrab(Rectangle captureArea)
         {
             IntPtr hwnd = IntPtr.Zero;
             User32.SafeDCHandle screenDc = new User32.SafeDCHandle();
-            IntPtr targetDc = IntPtr.Zero;
             try
             {
-                var screen = Screen.AllScreens.First(x => x.DeviceName == displayName);
                 hwnd = User32.GetDesktopWindow();
                 screenDc = User32.GetWindowDC(hwnd);
-                var bitmap = new Bitmap(screen.Bounds.Width, screen.Bounds.Height);
+                var bitmap = new Bitmap(captureArea.Width, captureArea.Height);
                 using var graphics = Graphics.FromImage(bitmap);
-                targetDc = graphics.GetHdc();
-                Gdi32.BitBlt(targetDc, 0, 0, screen.Bounds.Width, screen.Bounds.Height,
+                var targetDc = graphics.GetHdc();
+                Gdi32.BitBlt(targetDc, 0, 0, captureArea.Width, captureArea.Height,
                     screenDc.DangerousGetHandle(), 0, 0, unchecked((int)CopyPixelOperation.SourceCopy));
 
                 graphics.ReleaseHdc(targetDc);
+
                 return Result.Ok(bitmap);
             }
             catch (Exception ex)
@@ -198,155 +206,6 @@ namespace Medior.Services
             {
                 User32.ReleaseDC(hwnd, screenDc.HWnd);
             }
-        }
-
-        private Result<Bitmap> GetPrintWindowGrab(string displayName)
-        {
-            var hwnd = IntPtr.Zero;
-            try
-            {
-                var screen = Screen.AllScreens.First(x => x.DeviceName == displayName);
-                hwnd = User32.GetDesktopWindow();
-                
-                var bitmap = new Bitmap(screen.Bounds.Width, screen.Bounds.Height);
-                using var graphics = Graphics.FromImage(bitmap);
-                var targetDc = graphics.GetHdc();
-
-                User32.PrintWindow(hwnd, targetDc, User32.PrintWindowFlags.PW_FULLWINDOW);
-
-                graphics.ReleaseHdc(targetDc);
-
-                return Result.Ok(bitmap);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error grabbing with BitBlt.");
-                return Result.Fail<Bitmap>("Error grabbing with BitBlt.");
-            }
-        }
-
-
-        private Result<Bitmap> GetDirectXGrab(string displayName)
-        {
-            try
-            {
-                using var factory = new Factory1();
-
-                using var adapter = factory.Adapters1
-                    .Where(x => (x.Outputs?.Length ?? 0) > 0)
-                    .FirstOrDefault(x => x.Outputs.Any(o => o.Description.DeviceName == displayName));
-
-                if (adapter is null)
-                {
-                    return Result.Fail<Bitmap>("Could not find the display.");
-                }
-
-                using var output = adapter.Outputs
-                    .FirstOrDefault(x => x.Description.DeviceName == displayName);
-
-                if (output is null)
-                {
-                    return Result.Fail<Bitmap>("Could not find the display.");
-                }
-
-
-                using var output1 = output.QueryInterface<Output1>();
-
-                using var device = new SharpDX.Direct3D11.Device(adapter);
-                
-                var bounds = output1.Description.DesktopBounds;
-                var width = bounds.Right - bounds.Left;
-                var height = bounds.Bottom - bounds.Top;
-
-                // Create Staging texture CPU-accessible
-                var textureDesc = new Texture2DDescription
-                {
-                    CpuAccessFlags = CpuAccessFlags.Read,
-                    BindFlags = BindFlags.None,
-                    Format = Format.B8G8R8A8_UNorm,
-                    Width = width,
-                    Height = height,
-                    OptionFlags = ResourceOptionFlags.None,
-                    MipLevels = 1,
-                    ArraySize = 1,
-                    SampleDescription = { Count = 1, Quality = 0 },
-                    Usage = ResourceUsage.Staging
-                };
-
-                var texture2D = new Texture2D(device, textureDesc);
-
-                using var duplication = output1.DuplicateOutput(device);
-
-                // Try to get duplicated frame within given time is ms
-                var result = duplication.TryAcquireNextFrame(5000,
-                    out var duplicateFrameInformation,
-                    out var screenResource);
-
-                if (result.Failure)
-                {
-                    if (result.Code == SharpDX.DXGI.ResultCode.WaitTimeout.Code)
-                    {
-                        return Result.Fail<Bitmap>("Timeout.");
-                    }
-                    else
-                    {
-                        _logger.LogError("TryAcquireFrame error.  Code: {code}", result.Code);
-                        return Result.Fail<Bitmap>($"Error code {result.Code}.");
-                    }
-                }
-
-                if (duplicateFrameInformation.AccumulatedFrames == 0)
-                {
-                    try
-                    {
-                        duplication.ReleaseFrame();
-                    }
-                    catch { }
-                    return Result.Fail<Bitmap>("No new frames arrived.");
-                }
-
-                var screenGrab = new Bitmap(texture2D.Description.Width, texture2D.Description.Height, PixelFormat.Format32bppArgb);
-
-                using var screenTexture2D = screenResource.QueryInterface<Texture2D>();
-
-                device.ImmediateContext.CopyResource(screenTexture2D, texture2D);
-
-                var mapSource = device.ImmediateContext.MapSubresource(texture2D, 0, MapMode.Read, SharpDX.Direct3D11.MapFlags.None);
-
-                var boundsRect = new Rectangle(0, 0, texture2D.Description.Width, texture2D.Description.Height);
-
-                var mapDest = screenGrab.LockBits(boundsRect, ImageLockMode.WriteOnly, screenGrab.PixelFormat);
-                var sourcePtr = mapSource.DataPointer;
-                var destPtr = mapDest.Scan0;
-                for (int y = 0; y < texture2D.Description.Height; y++)
-                {
-                    SharpDX.Utilities.CopyMemory(destPtr, sourcePtr, texture2D.Description.Width * 4);
-
-                    sourcePtr = IntPtr.Add(sourcePtr, mapSource.RowPitch);
-                    destPtr = IntPtr.Add(destPtr, mapDest.Stride);
-                }
-
-                screenGrab.UnlockBits(mapDest);
-                device.ImmediateContext.UnmapSubresource(texture2D, 0);
-
-                screenResource.Dispose();
-                duplication.ReleaseFrame();
-
-                return Result.Ok(screenGrab);
-            }
-            catch (SharpDXException e)
-            {
-                if (e.ResultCode.Code == SharpDX.DXGI.ResultCode.WaitTimeout.Code)
-                {
-                    return Result.Fail<Bitmap>("Timed out.");
-                }
-                _logger.LogError(e, "SharpDXException error.");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error while grabbing screen.");
-            }
-            return Result.Fail<Bitmap>("Failed to grab screen.");
         }
     }
 }

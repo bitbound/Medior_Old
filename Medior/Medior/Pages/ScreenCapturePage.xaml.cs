@@ -46,19 +46,11 @@ namespace Medior.Pages
         {
             Guard.IsNotNull(MainWindow.Instance, nameof(MainWindow.Instance));
             
-            var captureItem = await MainWindow.Instance.InvokeGraphicsCapturePicker();
-            
-            if (captureItem is null)
-            {
-                return;
-            }
-
-            
             var filename = $"{DateTime.Now:yyyyMMdd-HHmm-ss}.mp4";
             // TODO: Put paths as static somewhere.
             var filePath = Path.Combine(Path.GetTempPath(), "Medior", "Recordings", filename);
 
-            var result = await ViewModel.StartVideoCapture(captureItem, filePath);
+            var result = await ViewModel.StartVideoCapture(filePath);
 
             if (!result.IsSuccess)
             {

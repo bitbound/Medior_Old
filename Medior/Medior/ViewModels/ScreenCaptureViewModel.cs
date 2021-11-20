@@ -4,6 +4,7 @@ using Medior.Utilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System.Diagnostics;
+using System.Drawing;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Graphics.Capture;
@@ -49,14 +50,13 @@ namespace Medior.ViewModels
             });
         }
 
-        public async Task<Result> StartVideoCapture(
-            GraphicsCaptureItem captureItem, 
-            string targetPath)
+        public async Task<Result> StartVideoCapture(string targetPath)
         {
+            var captureArea = _screenGrabber.GetDisplays().First().Bounds;
             var cts = new CancellationTokenSource();
             cts.CancelAfter(10000);
 
-            var result = await _screenGrabber.EncodeVideo(captureItem, targetPath, cts.Token);
+            var result = await _screenGrabber.CaptureVideo(captureArea, targetPath, cts.Token);
 
             if (!result.IsSuccess)
             {
