@@ -70,15 +70,13 @@ namespace Medior.Services
 
                 var stopwatch = Stopwatch.StartNew();
 
-
-                using var bitmap = new Bitmap(captureArea.Width, captureArea.Height);
-                using var graphics = Graphics.FromImage(bitmap);
-                var size = captureArea.Width * Image.GetPixelFormatSize(bitmap.PixelFormat) / 8 * captureArea.Height;
-                var tempArray = new byte[size];
+                var size = captureArea.Width * 4 * captureArea.Height;
+                var tempBuffer = new byte[size];
 
                 var transcoder = new MediaTranscoder
                 {
-                    HardwareAccelerationEnabled = true
+                    HardwareAccelerationEnabled = true,
+                    AlwaysReencode = true
                 };
 
                 var videoProperties = VideoEncodingProperties.CreateUncompressed(
@@ -89,17 +87,23 @@ namespace Medior.Services
                 var videoDescriptor = new VideoStreamDescriptor(videoProperties);
                 var mediaStream = new MediaStreamSource(videoDescriptor);
 
-                var screenGrab = new Bitmap(captureArea.Width, captureArea.Height);
-                var grabs = new ConcurrentQueue<Bitmap>();
+                Bitmap? screenGrab = null;
+                var grabLock = new SemaphoreSlim(1, 1);
+                var grabSignal = new AutoResetEvent(false);
                 
                 ScreenCapturer.OnScreenUpdated += (sender, args) =>
                 {
-                    while (grabs.Count > 1)
+                    try
                     {
-                        grabs.TryDequeue(out var staleBitmap);
-                        staleBitmap?.Dispose();
+                        grabLock.Wait();
+                        screenGrab?.Dispose();
+                        screenGrab = (Bitmap)args.Bitmap.Clone();
+                        grabSignal.Set();
                     }
-                    grabs.Enqueue(args.Bitmap);
+                    finally
+                    {
+                        grabLock.Release();
+                    }
                 };
 
                 mediaStream.SampleRequested += (sender, args) =>
@@ -110,26 +114,33 @@ namespace Medior.Services
                         return;
                     }
 
-                    // TODO: Make copy.
-                    Bitmap? latestGrab;
-
-                    while (!grabs.TryDequeue(out latestGrab))
+                    try
                     {
-                        Thread.Sleep(1);
+                        grabSignal.WaitOne();
+                        grabLock.Wait();
+
+                        if (screenGrab is null)
+                        {
+                            return;
+                        }
+
+                        var bd = screenGrab.LockBits(new Rectangle(Point.Empty, captureArea.Size), ImageLockMode.ReadOnly, screenGrab.PixelFormat);
+
+                        Marshal.Copy(bd.Scan0, tempBuffer, 0, size);
+
+                        screenGrab.UnlockBits(bd);
+
+                        args.Request.Sample = MediaStreamSample.CreateFromBuffer(tempBuffer.AsBuffer(), stopwatch.Elapsed);
                     }
-
-
-                    var bd = latestGrab.LockBits(new Rectangle(Point.Empty, captureArea.Size), ImageLockMode.ReadOnly, latestGrab.PixelFormat);
-
-                    Marshal.Copy(bd.Scan0, tempArray, 0, size);
-
-                    latestGrab.UnlockBits(bd);
-
-                    args.Request.Sample = MediaStreamSample.CreateFromBuffer(tempArray.AsBuffer(), stopwatch.Elapsed);
+                    finally
+                    {
+                        grabLock.Release();
+                    }
                 };
 
                 var mp4Profile = MediaEncodingProfile.CreateMp4(VideoEncodingQuality.HD1080p);
-                
+                mp4Profile.Video.FrameRate.Numerator = 15;
+
                 var prepareResult = await transcoder.PrepareMediaStreamSourceTranscodeAsync(
                     mediaStream,
                     destStream.AsRandomAccessStream(),
@@ -181,8 +192,8 @@ namespace Medior.Services
 
         public Result<Bitmap> GetBitBltGrab(Rectangle captureArea)
         {
-            IntPtr hwnd = IntPtr.Zero;
-            User32.SafeDCHandle screenDc = new User32.SafeDCHandle();
+            var hwnd = IntPtr.Zero;
+            var screenDc = new User32.SafeDCHandle();
             try
             {
                 hwnd = User32.GetDesktopWindow();
