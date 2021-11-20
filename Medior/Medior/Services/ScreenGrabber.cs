@@ -1,6 +1,7 @@
 ﻿using Medior.BaseTypes;
 using Medior.Models;
 using Microsoft.Extensions.Logging;
+using PInvoke;
 using SharpDX;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
@@ -62,7 +63,7 @@ namespace Medior.Services
                 _fileSystem.CreateDirectory(Path.GetDirectoryName(targetPath) ?? "");
                 using var destStream = _fileSystem.CreateFile(targetPath);
 
-                var bounds = captureItem.Size;
+                var bounds = new Rectangle(0, 0, captureItem.Size.Width, captureItem.Size.Height);
                 var stopwatch = Stopwatch.StartNew();
 
 
@@ -92,23 +93,32 @@ namespace Medior.Services
                         return;
                     }
 
-                    var result = GetDirectXGrabFromDisplay(Screen.PrimaryScreen.DeviceName);
+                    var result = GetDirectXGrab(Screen.PrimaryScreen.DeviceName);
 
                     if (!result.IsSuccess || result.Value is null)
                     {
-                        return;
+                        result = GetBitBltGrab(Screen.PrimaryScreen.DeviceName);
+
+                        if (!result.IsSuccess || result.Value is null)
+                        {
+                            return;
+                        }
                     }
-                    
+
                     using var screenGrab = result.Value;
-                    var bd = screenGrab.LockBits(new Rectangle(0, 0, bounds.Width, bounds.Height), ImageLockMode.ReadOnly, bitmap.PixelFormat);
+
+                    var bd = screenGrab.LockBits(bounds, ImageLockMode.ReadOnly, screenGrab.PixelFormat);
 
                     Marshal.Copy(bd.Scan0, tempArray, 0, size);
 
+                    screenGrab.UnlockBits(bd);
+
+                    
                     args.Request.Sample = MediaStreamSample.CreateFromBuffer(tempArray.AsBuffer(), stopwatch.Elapsed);
                 };
 
                 var mp4Profile = MediaEncodingProfile.CreateMp4(VideoEncodingQuality.HD1080p);
-
+                
                 var prepareResult = await transcoder.PrepareMediaStreamSourceTranscodeAsync(
                     mediaStream,
                     destStream.AsRandomAccessStream(),
@@ -141,15 +151,82 @@ namespace Medior.Services
             // TODO
             return Result.Ok<Bitmap>(null);
         }
-        private void GetBitBltGrab(string displayName)
+        private Result<Bitmap> GetBitBltGrab(string displayName)
         {
-            var bounds = new Rectangle();
-            using var bitmap = new Bitmap(bounds.Width, bounds.Height);
-            using var graphics = Graphics.FromImage(bitmap);
-            // TODO
+            try
+            {
+                var screen = Screen.AllScreens.First(x => x.DeviceName == displayName);
+                
+                var bitmap = new Bitmap(screen.Bounds.Width, screen.Bounds.Height);
+                using var graphics = Graphics.FromImage(bitmap);
+                graphics.CopyFromScreen(Point.Empty, Point.Empty, screen.Bounds.Size);
+                return Result.Ok(bitmap);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error grabbing with BitBlt.");
+                return Result.Fail<Bitmap>("Error grabbing with BitBlt.");
+            }
         }
 
-        private Result<Bitmap> GetDirectXGrabFromDisplay(string displayName)
+
+        private Result<Bitmap> GetBitBltGrab2(string displayName)
+        {
+            IntPtr hwnd = IntPtr.Zero;
+            User32.SafeDCHandle screenDc = new User32.SafeDCHandle();
+            IntPtr targetDc = IntPtr.Zero;
+            try
+            {
+                var screen = Screen.AllScreens.First(x => x.DeviceName == displayName);
+                hwnd = User32.GetDesktopWindow();
+                screenDc = User32.GetWindowDC(hwnd);
+                var bitmap = new Bitmap(screen.Bounds.Width, screen.Bounds.Height);
+                using var graphics = Graphics.FromImage(bitmap);
+                targetDc = graphics.GetHdc();
+                Gdi32.BitBlt(targetDc, 0, 0, screen.Bounds.Width, screen.Bounds.Height,
+                    screenDc.DangerousGetHandle(), 0, 0, unchecked((int)CopyPixelOperation.SourceCopy));
+
+                graphics.ReleaseHdc(targetDc);
+                return Result.Ok(bitmap);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error grabbing with BitBlt.");
+                return Result.Fail<Bitmap>("Error grabbing with BitBlt.");
+            }
+            finally
+            {
+                User32.ReleaseDC(hwnd, screenDc.HWnd);
+            }
+        }
+
+        private Result<Bitmap> GetPrintWindowGrab(string displayName)
+        {
+            var hwnd = IntPtr.Zero;
+            try
+            {
+                var screen = Screen.AllScreens.First(x => x.DeviceName == displayName);
+                hwnd = User32.GetDesktopWindow();
+                
+                var bitmap = new Bitmap(screen.Bounds.Width, screen.Bounds.Height);
+                using var graphics = Graphics.FromImage(bitmap);
+                var targetDc = graphics.GetHdc();
+
+                User32.PrintWindow(hwnd, targetDc, User32.PrintWindowFlags.PW_FULLWINDOW);
+
+                graphics.ReleaseHdc(targetDc);
+
+                return Result.Ok(bitmap);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error grabbing with BitBlt.");
+                return Result.Fail<Bitmap>("Error grabbing with BitBlt.");
+            }
+        }
+
+
+        private Result<Bitmap> GetDirectXGrab(string displayName)
         {
             try
             {
