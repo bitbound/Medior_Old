@@ -61,7 +61,7 @@ namespace Medior.ViewModels
             _fileSystem.CreateDirectory(Path.GetDirectoryName(targetPath) ?? "");
             using var destStream = _fileSystem.CreateFile(targetPath);
 
-            var result = await _screenRecorder.CaptureVideo(display, destStream, cts.Token);
+            var result = await _screenRecorder.CaptureVideo(display, 15, destStream, cts.Token);
 
             if (!result.IsSuccess)
             {

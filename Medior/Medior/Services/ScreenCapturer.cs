@@ -25,9 +25,6 @@ namespace Medior.Services
     {
 
         private Thread? _captureThread;
-        private Thread? _callbackThread;
-        private Bitmap? _currentFrame;
-
 
         public event EventHandler<Bitmap>? OnFrameArrived;
         public event EventHandler<Exception>? OnException;
@@ -46,11 +43,11 @@ namespace Medior.Services
 
             IsCapturing = true;
 
-            _captureThread = new Thread(() => CaptureMain(display, cancellationToken));
-            _callbackThread = new Thread(() => CallbackMain());
-            _captureThread.Priority = ThreadPriority.Highest;
+            _captureThread = new Thread(() => CaptureInternal(display, cancellationToken))
+            {
+                Priority = ThreadPriority.Highest
+            };
             _captureThread.Start();
-            _callbackThread.Start();
         }
 
         public void StopCapture()
@@ -58,7 +55,7 @@ namespace Medior.Services
             IsCapturing = false;
         }
 
-        private void CaptureMain(DisplayInfo display, CancellationToken cancellationToken)
+        private void CaptureInternal(DisplayInfo display, CancellationToken cancellationToken)
         {
             Resource? screenResource = null;
             try
@@ -122,7 +119,7 @@ namespace Medior.Services
                         using Texture2D screenTexture2D = screenResource.QueryInterface<Texture2D>();
                         device.ImmediateContext.CopyResource(screenTexture2D, texture2D);
                         var dataBox = device.ImmediateContext.MapSubresource(texture2D, 0, MapMode.Read, MapFlags.None);
-                        var bitmap = new Bitmap(width, height, PixelFormat.Format32bppRgb);
+                        using var bitmap = new Bitmap(width, height, PixelFormat.Format32bppRgb);
                         var bitmapData = bitmap.LockBits(bounds, ImageLockMode.WriteOnly, bitmap.PixelFormat);
                         var dataBoxPointer = dataBox.DataPointer;
                         var bitmapDataPointer = bitmapData.Scan0;
@@ -134,7 +131,8 @@ namespace Medior.Services
                         }
                         bitmap.UnlockBits(bitmapData);
                         device.ImmediateContext.UnmapSubresource(texture2D, 0);
-                        using var previousFrame = Interlocked.Exchange(ref _currentFrame, bitmap);
+
+                        OnFrameArrived?.Invoke(this, bitmap);
                     }
                     catch (Exception ex)
                     {
@@ -158,42 +156,8 @@ namespace Medior.Services
             finally
             {
                 IsCapturing = false;
-                _callbackThread?.Join();
                 _captureThread = null;
-                _callbackThread = null;
-                _currentFrame?.Dispose();
             }
         }
-
-        private void CallbackMain()
-        {
-            try
-            {
-                while (IsCapturing)
-                {
-                    using var currentFrame = Interlocked.Exchange(ref _currentFrame, null);
-
-                    if (currentFrame is null)
-                    {
-                        continue;
-                    }
-
-                    try
-                    {
-                        OnFrameArrived?.Invoke(this, (Bitmap)currentFrame.Clone());
-                    }
-                    catch (Exception ex)
-                    {
-                        OnException?.Invoke(this, ex);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                OnException?.Invoke(this, ex);
-            }
-        }
-
     }
-
 }

@@ -21,6 +21,7 @@ namespace Medior.Services
     {
         Task<Result> CaptureVideo(
             DisplayInfo display,
+            int frameRate,
             Stream destinationStream, 
             CancellationToken cancellationToken);
     }
@@ -35,6 +36,7 @@ namespace Medior.Services
         }
         public async Task<Result> CaptureVideo(
             DisplayInfo display,
+            int frameRate,
             Stream destinationStream, 
             CancellationToken cancellationToken)
         {
@@ -63,14 +65,25 @@ namespace Medior.Services
                 var frameLock = new SemaphoreSlim(1, 1);
                 var frameSignal = new AutoResetEvent(false);
 
-                _screenCapturer.OnFrameArrived += (sender, frame) =>
+                _screenCapturer.OnFrameArrived += (sender, newFrame) =>
                 {
                     try
                     {
                         frameLock.Wait();
+
+                        newFrame.RotateFlip(RotateFlipType.RotateNoneFlipY);
+
+                        var diffResult = ImageHelper.HasDifferences(newFrame, currentFrame);
+                        if (diffResult.IsSuccess && !diffResult.Value)
+                        {
+                            newFrame.Dispose();
+                            return;
+                        }
+
                         currentFrame?.Dispose();
-                        frame.RotateFlip(RotateFlipType.RotateNoneFlipY);
-                        currentFrame = frame;
+                        // Screen capturer will dispose of the bitmap after invoking
+                        // handlers, so we need to clone it.
+                        currentFrame = (Bitmap)newFrame.Clone();
                         frameSignal.Set();
                     }
                     finally
@@ -127,11 +140,11 @@ namespace Medior.Services
                 };
 
                 var mp4Profile = MediaEncodingProfile.CreateMp4(VideoEncodingQuality.HD1080p);
+                mp4Profile.Video.FrameRate.Numerator = (uint)frameRate;
 
                 var transcoder = new MediaTranscoder
                 {
-                    HardwareAccelerationEnabled = true,
-                    AlwaysReencode = true
+                    HardwareAccelerationEnabled = true
                 };
 
                 var prepareResult = await transcoder.PrepareMediaStreamSourceTranscodeAsync(
