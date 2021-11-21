@@ -1,5 +1,6 @@
 ﻿using Medior.BaseTypes;
 using Medior.Extensions;
+using Medior.Models;
 using Medior.Utilities;
 using System.Diagnostics;
 using System.Drawing;
@@ -19,30 +20,34 @@ namespace Medior.Services
     public interface IScreenRecorder 
     {
         Task<Result> CaptureVideo(
-            int displayIndex,
-            int adapterIndex, 
+            DisplayInfo display,
             Stream destinationStream, 
             CancellationToken cancellationToken);
     }
 
     public class ScreenRecorder : IScreenRecorder
     {
+        private readonly IScreenCapturer _screenCapturer;
+
+        public ScreenRecorder(IScreenCapturer screenCapturer)
+        {
+            _screenCapturer = screenCapturer;
+        }
         public async Task<Result> CaptureVideo(
-            int displayIndex,
-            int adapterIndex,
-            Stream destinationStream,
+            DisplayInfo display,
+            Stream destinationStream, 
             CancellationToken cancellationToken)
         {
             try
             {
-                var capturer = new ScreenCapturer();
 
-                var captureArea = Screen.PrimaryScreen.Bounds;
+                var captureArea = new Rectangle(Point.Empty, display.Bounds.Size);
+
                 var size = captureArea.Width * 4 * captureArea.Height;
                 var tempBuffer = new byte[size];
 
                 var sourceVideoProperties = VideoEncodingProperties.CreateUncompressed(
-                    MediaEncodingSubtypes.Jpeg,
+                    MediaEncodingSubtypes.Argb32,
                     (uint)captureArea.Width,
                     (uint)captureArea.Height);
 
@@ -50,7 +55,7 @@ namespace Medior.Services
                 
                 var mediaStreamSource = new MediaStreamSource(videoDescriptor)
                 {
-                    BufferTime = TimeSpan.Zero,
+                    BufferTime = TimeSpan.Zero
                 };
 
 
@@ -58,7 +63,7 @@ namespace Medior.Services
                 var frameLock = new SemaphoreSlim(1, 1);
                 var frameSignal = new AutoResetEvent(false);
 
-                capturer.OnFrameArrived += (sender, frame) =>
+                _screenCapturer.OnFrameArrived += (sender, frame) =>
                 {
                     try
                     {
@@ -75,6 +80,7 @@ namespace Medior.Services
                 };
 
                 var stopwatch = Stopwatch.StartNew();
+                var frames = 0;
 
                 mediaStreamSource.Starting += (sender, args) =>
                 {
@@ -112,6 +118,7 @@ namespace Medior.Services
                         Marshal.Copy(bd.Scan0, tempBuffer, 0, size);
                         args.Request.Sample = MediaStreamSample.CreateFromBuffer(tempBuffer.AsBuffer(), stopwatch.Elapsed);
                         currentFrame.UnlockBits(bd);
+                        frames++;
                     }
                     finally
                     {
@@ -132,7 +139,7 @@ namespace Medior.Services
                     destinationStream.AsRandomAccessStream(),
                     mp4Profile);
 
-                capturer.StartCapture(0, 0, cancellationToken);
+                _screenCapturer.StartCapture(display, cancellationToken);
                 await prepareResult.TranscodeAsync();
                 
                 return Result.Ok();

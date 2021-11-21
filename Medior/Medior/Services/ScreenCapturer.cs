@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
+using Medior.Models;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 
@@ -16,7 +17,7 @@ namespace Medior.Services
         event EventHandler<Exception>? OnException;
         event EventHandler<Bitmap>? OnFrameArrived;
 
-        void StartCapture(int displayIndex = 0, int adapterIndex = 0, CancellationToken cancellationToken = default);
+        void StartCapture(DisplayInfo display, CancellationToken cancellationToken = default);
         void StopCapture();
     }
 
@@ -34,8 +35,7 @@ namespace Medior.Services
         public bool IsCapturing { get; private set; }
 
         public void StartCapture(
-            int displayIndex = 0,
-            int adapterIndex = 0,
+            DisplayInfo display,
             CancellationToken cancellationToken = default)
         {
 
@@ -46,7 +46,7 @@ namespace Medior.Services
 
             IsCapturing = true;
 
-            _captureThread = new Thread(() => CaptureMain(adapterIndex, displayIndex, cancellationToken));
+            _captureThread = new Thread(() => CaptureMain(display, cancellationToken));
             _callbackThread = new Thread(() => CallbackMain());
             _captureThread.Priority = ThreadPriority.Highest;
             _captureThread.Start();
@@ -58,15 +58,35 @@ namespace Medior.Services
             IsCapturing = false;
         }
 
-        private void CaptureMain(int adapterIndex, int displayIndex, CancellationToken cancellationToken)
+        private void CaptureMain(DisplayInfo display, CancellationToken cancellationToken)
         {
             Resource? screenResource = null;
             try
             {
+                int adapterIndex = -1;
+                int outputIndex = -1;
                 using var factory1 = new Factory1();
+
+                for (var ai = 0; ai < factory1.Adapters1.Length; ai++)
+                {
+                    for (var oi = 0; oi < factory1.Adapters1[ai].Outputs.Length; oi++)
+                    {
+                        if (factory1.Adapters1[ai].Outputs[oi].Description.DeviceName == display.Name)
+                        {
+                            adapterIndex = ai;
+                            outputIndex = oi;
+                        }
+                    }
+                }
+
+                if (outputIndex == -1)
+                {
+                    return;
+                }
+
                 using var adapter1 = factory1.GetAdapter1(adapterIndex);
                 using var device = new Device(adapter1);
-                using var output = adapter1.GetOutput(displayIndex);
+                using var output = adapter1.GetOutput(outputIndex);
                 using var output1 = output.QueryInterface<Output1>();
                 var width = output1.Description.DesktopBounds.Right - output1.Description.DesktopBounds.Left;
                 var height = output1.Description.DesktopBounds.Bottom - output1.Description.DesktopBounds.Top;

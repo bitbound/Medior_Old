@@ -20,6 +20,7 @@
     <Content Remove="Media\Screenshots\ScreenCapture.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Controls\DisplayPicker.xaml" />
     <None Remove="Controls\GatedControl.xaml" />
     <None Remove="Pages\DashboardPage.xaml" />
     <None Remove="Pages\ElevatorPage.xaml" />
@@ -58,6 +59,9 @@
 
   <ItemGroup>
     <Page Update="Controls\GatedControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Controls\DisplayPicker.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <None Update="Media\comet.png">

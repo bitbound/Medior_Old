@@ -1,9 +1,13 @@
-﻿using Medior.BaseTypes;
+﻿using CommunityToolkit.Diagnostics;
+using Medior.BaseTypes;
+using Medior.Extensions;
+using Medior.Models;
 using Medior.Services;
 using Medior.Utilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
@@ -49,7 +53,7 @@ namespace Medior.ViewModels
             });
         }
 
-        public async Task<Result> StartVideoCapture(string targetPath)
+        public async Task<Result> StartVideoCapture(DisplayInfo display, string targetPath)
         {
             var cts = new CancellationTokenSource();
             cts.CancelAfter(10000);
@@ -57,8 +61,7 @@ namespace Medior.ViewModels
             _fileSystem.CreateDirectory(Path.GetDirectoryName(targetPath) ?? "");
             using var destStream = _fileSystem.CreateFile(targetPath);
 
-
-            var result = await _screenRecorder.CaptureVideo(0, 0, destStream, cts.Token);
+            var result = await _screenRecorder.CaptureVideo(display, destStream, cts.Token);
 
             if (!result.IsSuccess)
             {

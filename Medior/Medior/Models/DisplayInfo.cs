@@ -7,6 +7,6 @@ namespace Medior.Models
         public int BitsPerPixel { get; set; }
         public Rectangle Bounds { get; set; }
         public string Name { get; set; } = String.Empty;
-        public bool Primary { get; set; }
+        public bool IsPrimary { get; set; }
     }
 }

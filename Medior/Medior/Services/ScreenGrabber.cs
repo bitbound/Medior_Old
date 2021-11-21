@@ -38,7 +38,7 @@ namespace Medior.Services
             {
                 Name = x.DeviceName,
                 Bounds = x.Bounds,
-                Primary = x.Primary,
+                IsPrimary = x.Primary,
                 BitsPerPixel = x.BitsPerPixel
             });
         }

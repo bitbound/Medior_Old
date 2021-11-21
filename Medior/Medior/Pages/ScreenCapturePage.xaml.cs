@@ -1,8 +1,11 @@
 ﻿using CommunityToolkit.Diagnostics;
+using Medior.Controls;
 using Medior.Extensions;
+using Medior.Utilities;
 using Medior.ViewModels;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Input;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System.Diagnostics;
 using System.IO;
@@ -44,12 +47,27 @@ namespace Medior.Pages
         public AsyncRelayCommand CaptureVideo => new(async () =>
         {
             Guard.IsNotNull(MainWindow.Instance, nameof(MainWindow.Instance));
+
+            var displayPicker = new DisplayPicker();
+
+            var dialogResult = await this.ShowDialog("Select a display to capture", displayPicker);
+            if (dialogResult != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            var selectedDisplay = displayPicker.SelectedDisplay;
+
+            if (selectedDisplay is null)
+            {
+                return;
+            }
             
             var filename = $"{DateTime.Now:yyyyMMdd-HHmm-ss}.mp4";
-            // TODO: Put paths as static somewhere.
-            var filePath = Path.Combine(Path.GetTempPath(), "Medior", "Recordings", filename);
+            
+            var filePath = Path.Combine(AppFolders.RecordingsPath, filename);
 
-            var result = await ViewModel.StartVideoCapture(filePath);
+            var result = await ViewModel.StartVideoCapture(selectedDisplay, filePath);
 
             Process.Start(new ProcessStartInfo()
             {
