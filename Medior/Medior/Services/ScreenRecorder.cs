@@ -45,20 +45,21 @@ namespace Medior.Services
 
                 var captureArea = new Rectangle(Point.Empty, display.Bounds.Size);
 
+                var evenWidth = captureArea.Width % 2 == 0 ? (uint)captureArea.Width : (uint)captureArea.Width + 1;
+                var evenHeight = captureArea.Height % 2 == 0 ? (uint)captureArea.Height : (uint)captureArea.Height + 1;
+
                 var size = captureArea.Width * 4 * captureArea.Height;
+
                 var tempBuffer = new byte[size];
 
                 var sourceVideoProperties = VideoEncodingProperties.CreateUncompressed(
                     MediaEncodingSubtypes.Argb32,
-                    (uint)captureArea.Width,
-                    (uint)captureArea.Height);
+                    evenWidth,
+                    evenHeight);
 
                 var videoDescriptor = new VideoStreamDescriptor(sourceVideoProperties);
-                
-                var mediaStreamSource = new MediaStreamSource(videoDescriptor)
-                {
-                    BufferTime = TimeSpan.Zero
-                };
+
+                var mediaStreamSource = new MediaStreamSource(videoDescriptor);
 
 
                 Bitmap? currentFrame = null;
@@ -70,16 +71,7 @@ namespace Medior.Services
                     try
                     {
                         frameLock.Wait();
-
                         newFrame.RotateFlip(RotateFlipType.RotateNoneFlipY);
-
-                        var diffResult = ImageHelper.HasDifferences(newFrame, currentFrame);
-                        if (diffResult.IsSuccess && !diffResult.Value)
-                        {
-                            newFrame.Dispose();
-                            return;
-                        }
-
                         currentFrame?.Dispose();
                         // Screen capturer will dispose of the bitmap after invoking
                         // handlers, so we need to clone it.
@@ -139,18 +131,20 @@ namespace Medior.Services
                     }
                 };
 
-                var mp4Profile = MediaEncodingProfile.CreateMp4(VideoEncodingQuality.HD1080p);
-                mp4Profile.Video.FrameRate.Numerator = (uint)frameRate;
+                var encodingProfile = MediaEncodingProfile.CreateWmv(VideoEncodingQuality.HD1080p);
+                encodingProfile.Video.Width = evenWidth;
+                encodingProfile.Video.Height = evenHeight;
 
                 var transcoder = new MediaTranscoder
                 {
-                    HardwareAccelerationEnabled = true
+                    HardwareAccelerationEnabled = true,
+                    AlwaysReencode = true
                 };
 
                 var prepareResult = await transcoder.PrepareMediaStreamSourceTranscodeAsync(
                     mediaStreamSource,
                     destinationStream.AsRandomAccessStream(),
-                    mp4Profile);
+                    encodingProfile);
 
                 _screenCapturer.StartCapture(display, cancellationToken);
                 await prepareResult.TranscodeAsync();

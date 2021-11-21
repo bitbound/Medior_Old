@@ -91,6 +91,7 @@ namespace Medior.Utilities
                 mergedFrame.UnlockBits(bd3);
             }
         }
+
         public static Result<bool> HasDifferences(Bitmap? currentFrame, Bitmap? previousFrame)
         {
             if (currentFrame is null || previousFrame is null)
