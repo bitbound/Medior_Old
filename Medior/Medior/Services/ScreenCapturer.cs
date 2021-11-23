@@ -3,7 +3,6 @@ using System.Drawing.Imaging;
 using Medior.Models;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
-
 using Device = SharpDX.Direct3D11.Device;
 using MapFlags = SharpDX.Direct3D11.MapFlags;
 using Resource = SharpDX.DXGI.Resource;
@@ -119,7 +118,7 @@ namespace Medior.Services
                         using Texture2D screenTexture2D = screenResource.QueryInterface<Texture2D>();
                         device.ImmediateContext.CopyResource(screenTexture2D, texture2D);
                         var dataBox = device.ImmediateContext.MapSubresource(texture2D, 0, MapMode.Read, MapFlags.None);
-                        using var bitmap = new Bitmap(width, height, PixelFormat.Format32bppRgb);
+                        using var bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
                         var bitmapData = bitmap.LockBits(bounds, ImageLockMode.WriteOnly, bitmap.PixelFormat);
                         var dataBoxPointer = dataBox.DataPointer;
                         var bitmapDataPointer = bitmapData.Scan0;

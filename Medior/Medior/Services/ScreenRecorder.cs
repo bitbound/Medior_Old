@@ -59,7 +59,10 @@ namespace Medior.Services
 
                 var videoDescriptor = new VideoStreamDescriptor(sourceVideoProperties);
 
-                var mediaStreamSource = new MediaStreamSource(videoDescriptor);
+                var mediaStreamSource = new MediaStreamSource(videoDescriptor)
+                {
+                    BufferTime = TimeSpan.Zero
+                };
 
 
                 Bitmap? currentFrame = null;
@@ -85,7 +88,6 @@ namespace Medior.Services
                 };
 
                 var stopwatch = Stopwatch.StartNew();
-                var frames = 0;
 
                 mediaStreamSource.Starting += (sender, args) =>
                 {
@@ -123,7 +125,6 @@ namespace Medior.Services
                         Marshal.Copy(bd.Scan0, tempBuffer, 0, size);
                         args.Request.Sample = MediaStreamSample.CreateFromBuffer(tempBuffer.AsBuffer(), stopwatch.Elapsed);
                         currentFrame.UnlockBits(bd);
-                        frames++;
                     }
                     finally
                     {
