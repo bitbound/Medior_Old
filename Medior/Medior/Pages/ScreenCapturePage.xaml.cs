@@ -63,7 +63,7 @@ namespace Medior.Pages
                 return;
             }
             
-            var filename = $"{DateTime.Now:yyyyMMdd-HHmm-ss}.mp4";
+            var filename = $"{DateTime.Now:yyyyMMdd-HHmm-ss}.wmv";
             
             var filePath = Path.Combine(AppFolders.RecordingsPath, filename);
 
