@@ -23,11 +23,12 @@
                           Label="Capture Video"
                           Command="{x:Bind CaptureVideo, Mode=OneTime}" />
 
-            <AppBarSeparator Visibility="{x:Bind ViewModel.CurrentImage, Converter={StaticResource ObjectNullToVisibilityConverter}}" />
+            <AppBarSeparator Visibility="{x:Bind ViewModel.IsCaptureImageVisible}" />
 
             <AppBarButton Icon="Share"
                           Label="Share"
-                          Visibility="{x:Bind ViewModel.CurrentImage, Converter={StaticResource ObjectNullToVisibilityConverter}}"/>
+                          Command="{x:Bind ShareImage}"
+                          Visibility="{x:Bind ViewModel.IsCaptureImageVisible}"/>
         </CommandBar>
 
         <Grid Grid.Row="1" Margin="5">

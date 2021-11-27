@@ -90,6 +90,12 @@ namespace Medior.Pages
             File.Delete(filePath);
         });
 
+        public AsyncRelayCommand ShareImage => new(async() =>
+        {
+            // TODO
+            await this.Alert("Coming Later", "This will be implemented in a future update.");
+        });
+
         public RelayCommand StopVideoCapture => new(() => ViewModel.StopVideoCapture());
 
         public ScreenCaptureViewModel ViewModel { get; } = Ioc.Default.GetRequiredService<ScreenCaptureViewModel>();

@@ -39,7 +39,12 @@ namespace Medior.ViewModels
         public BitmapImage? CurrentImage
         {
             get => _currentImage;
-            set => SetProperty(ref _currentImage, value);
+            set
+            {
+                SetProperty(ref _currentImage, value);
+                InvokePropertyChanged(nameof(IsIntroTextVisible));
+                InvokePropertyChanged(nameof(IsCaptureImageVisible));
+            }
         }
 
         public bool IsCaptureImageVisible
