@@ -1,5 +1,6 @@
 ﻿using Medior.AppModules.PhotoSorter.Services;
 using Medior.Services;
+using Medior.Shared.Services;
 using Medior.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -66,7 +67,7 @@ namespace Medior
 
             instance
                 .GetRequiredService<ILoggerFactory>()
-                .AddProvider(new FileLoggerProvider(instance));
+                .AddProvider(new FileLoggerProvider(instance, "Medior"));
 
             Ioc.Default.ConfigureServices(instance);
         }

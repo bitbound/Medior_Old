@@ -1,4 +1,5 @@
 ﻿using Medior.BaseTypes;
+using Medior.Shared.Services;
 using Microsoft.Extensions.Logging;
 using System.IO;
 using System.Threading.Tasks;

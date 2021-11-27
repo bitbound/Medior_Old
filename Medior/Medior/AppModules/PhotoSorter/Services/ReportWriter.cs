@@ -1,6 +1,7 @@
 ﻿using Medior.AppModules.PhotoSorter.Models;
 using Medior.Services;
-using Medior.Utilities;
+using Medior.Shared.Services;
+using Medior.Shared.Utilities;
 using System.IO;
 using System.Threading.Tasks;
 

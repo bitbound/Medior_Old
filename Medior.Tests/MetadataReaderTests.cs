@@ -1,5 +1,6 @@
 using Medior.AppModules.PhotoSorter.Services;
 using Medior.Services;
+using Medior.Shared.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;

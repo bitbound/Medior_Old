@@ -1,19 +1,21 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace Medior.Services
+namespace Medior.Shared.Services
 {
     public class FileLoggerProvider : ILoggerProvider
     {
         private readonly IServiceProvider _services;
+        private readonly string _appName;
 
-        public FileLoggerProvider(IServiceProvider services)
+        public FileLoggerProvider(IServiceProvider services, string appName)
         {
             _services = services;
+            _appName = appName;
         }
 
         public ILogger CreateLogger(string categoryName)
         {
-            return new FileLogger(_services, categoryName);
+            return new FileLogger(_services, _appName, categoryName);
         }
 
         public void Dispose()

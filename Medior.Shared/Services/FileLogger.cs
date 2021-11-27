@@ -1,10 +1,10 @@
-﻿using Medior.Utilities;
+﻿using Medior.Shared.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 using System.IO;
 
-namespace Medior.Services
+namespace Medior.Shared.Services
 {
     public class FileLogger : ILogger
     {
@@ -12,12 +12,14 @@ namespace Medior.Services
         private static readonly ConcurrentStack<string> _scopeStack = new();
         private static readonly SemaphoreSlim _writeLock = new(1, 1);
         private readonly IServiceProvider _services;
+        private readonly string _appName;
         private readonly string _categoryName;
         private readonly System.Timers.Timer _sinkTimer = new(5000) { AutoReset = false };
 
-        public FileLogger(IServiceProvider services, string categoryName)
+        public FileLogger(IServiceProvider services, string appName, string categoryName)
         {
             _services = services;
+            _appName = appName;
             _categoryName = categoryName;
             _sinkTimer.Elapsed += SinkTimer_Elapsed;
         }
@@ -27,7 +29,7 @@ namespace Medior.Services
             get
             {
                 var chrono = _services.GetRequiredService<IChrono>();
-                return Path.Combine(AppFolders.LogsPath, $"{chrono.Now:yyyy-MM-dd}.log");
+                return Path.Combine(AppFolders.LogsPath, _appName, $"{chrono.Now:yyyy-MM-dd}.log");
             }
         }
 

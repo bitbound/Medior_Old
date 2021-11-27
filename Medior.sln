@@ -18,6 +18,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Medior", "Medior\Medior\Med
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Medior.Service", "Medior.Service\Medior.Service.csproj", "{66EFC1E8-59A6-478B-8E20-0F6FFA8DBB91}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Medior.Shared", "Medior.Shared\Medior.Shared.csproj", "{7C11696F-75EB-42CE-8938-E97D326B7130}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -102,6 +104,22 @@ Global
 		{66EFC1E8-59A6-478B-8E20-0F6FFA8DBB91}.Release|x64.Build.0 = Release|Any CPU
 		{66EFC1E8-59A6-478B-8E20-0F6FFA8DBB91}.Release|x86.ActiveCfg = Release|Any CPU
 		{66EFC1E8-59A6-478B-8E20-0F6FFA8DBB91}.Release|x86.Build.0 = Release|Any CPU
+		{7C11696F-75EB-42CE-8938-E97D326B7130}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C11696F-75EB-42CE-8938-E97D326B7130}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C11696F-75EB-42CE-8938-E97D326B7130}.Debug|arm64.ActiveCfg = Debug|Any CPU
+		{7C11696F-75EB-42CE-8938-E97D326B7130}.Debug|arm64.Build.0 = Debug|Any CPU
+		{7C11696F-75EB-42CE-8938-E97D326B7130}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7C11696F-75EB-42CE-8938-E97D326B7130}.Debug|x64.Build.0 = Debug|Any CPU
+		{7C11696F-75EB-42CE-8938-E97D326B7130}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7C11696F-75EB-42CE-8938-E97D326B7130}.Debug|x86.Build.0 = Debug|Any CPU
+		{7C11696F-75EB-42CE-8938-E97D326B7130}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C11696F-75EB-42CE-8938-E97D326B7130}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C11696F-75EB-42CE-8938-E97D326B7130}.Release|arm64.ActiveCfg = Release|Any CPU
+		{7C11696F-75EB-42CE-8938-E97D326B7130}.Release|arm64.Build.0 = Release|Any CPU
+		{7C11696F-75EB-42CE-8938-E97D326B7130}.Release|x64.ActiveCfg = Release|Any CPU
+		{7C11696F-75EB-42CE-8938-E97D326B7130}.Release|x64.Build.0 = Release|Any CPU
+		{7C11696F-75EB-42CE-8938-E97D326B7130}.Release|x86.ActiveCfg = Release|Any CPU
+		{7C11696F-75EB-42CE-8938-E97D326B7130}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

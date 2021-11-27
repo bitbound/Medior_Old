@@ -1,7 +1,6 @@
-﻿using CommunityToolkit.Diagnostics;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
-namespace Medior.Services
+namespace Medior.Shared.Services
 {
     public interface IProcessEx
     {
@@ -24,7 +23,10 @@ namespace Medior.Services
 
         public Process? Start(ProcessStartInfo startInfo)
         {
-            Guard.IsNotNull(startInfo, nameof(startInfo));
+            if (startInfo is null)
+            {
+                throw new ArgumentNullException(nameof(startInfo));
+            }
             return Process.Start(startInfo);
         }
     }

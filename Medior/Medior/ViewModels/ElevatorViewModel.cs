@@ -1,7 +1,8 @@
 ﻿using CommunityToolkit.Diagnostics;
 using Medior.BaseTypes;
 using Medior.Services;
-using Medior.Utilities;
+using Medior.Shared.Services;
+using Medior.Shared.Utilities;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.IO;

@@ -3,6 +3,7 @@ using Medior.BaseTypes;
 using Medior.Extensions;
 using Medior.Models;
 using Medior.Services;
+using Medior.Shared.Services;
 using Medior.Utilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Toolkit.Mvvm.Input;
