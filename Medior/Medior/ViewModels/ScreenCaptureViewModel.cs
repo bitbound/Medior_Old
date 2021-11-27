@@ -5,6 +5,7 @@ using Medior.Models;
 using Medior.Services;
 using Medior.Utilities;
 using Microsoft.Extensions.Logging;
+using Microsoft.Toolkit.Mvvm.Input;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System.Diagnostics;
 using System.Drawing;
@@ -17,12 +18,13 @@ namespace Medior.ViewModels
 {
     public class ScreenCaptureViewModel : ViewModelBase
     {
-        private readonly ILogger<ScreenCaptureViewModel> _logger;
-        private readonly IScreenRecorder _screenRecorder;
-        private readonly IProcessEx _processEx;
         private readonly IFileSystem _fileSystem;
+        private readonly ILogger<ScreenCaptureViewModel> _logger;
+        private readonly IProcessEx _processEx;
+        private readonly IScreenRecorder _screenRecorder;
+        private CancellationTokenSource _cts = new();
         private BitmapImage? _currentImage;
-
+        private bool _isRecording;
         public ScreenCaptureViewModel(IProcessEx processEx, 
             IFileSystem fileSystem,
             IScreenRecorder screenRecorder,
@@ -40,6 +42,26 @@ namespace Medior.ViewModels
             set => SetProperty(ref _currentImage, value);
         }
 
+        public bool IsCaptureImageVisible
+        {
+            get => CurrentImage is not null && !IsRecording;
+        }
+
+        public bool IsIntroTextVisible
+        {
+            get => CurrentImage is null && !IsRecording;
+        }
+        public bool IsRecording
+        {
+            get => _isRecording;
+            set
+            {
+                SetProperty(ref _isRecording, value);
+                InvokePropertyChanged(nameof(IsIntroTextVisible));
+                InvokePropertyChanged(nameof(IsCaptureImageVisible));
+            }
+        }
+
         public void RegisterSubscriptions()
         {
             Clipboard.ContentChanged += Clipboard_ContentChanged;
@@ -55,13 +77,15 @@ namespace Medior.ViewModels
 
         public async Task<Result> StartVideoCapture(DisplayInfo display, string targetPath)
         {
-            var cts = new CancellationTokenSource();
-            cts.CancelAfter(10000);
+            IsRecording = true;
+
+            _cts?.Dispose();
+            _cts = new CancellationTokenSource();
 
             _fileSystem.CreateDirectory(Path.GetDirectoryName(targetPath) ?? "");
             using var destStream = _fileSystem.CreateFile(targetPath);
 
-            var result = await _screenRecorder.CaptureVideo(display, 15, destStream, cts.Token);
+            var result = await _screenRecorder.CaptureVideo(display, 15, destStream, _cts.Token);
 
             if (!result.IsSuccess)
             {
@@ -77,11 +101,16 @@ namespace Medior.ViewModels
             return result;
         }
 
+        public void StopVideoCapture()
+        {
+            IsRecording = false;
+            _cts?.Cancel();
+        }
+
         public void UnregisterSubscriptions()
         {
             Clipboard.ContentChanged -= Clipboard_ContentChanged;
         }
-
         private async void Clipboard_ContentChanged(object? sender, object e)
         {
             try

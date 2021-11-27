@@ -35,11 +35,20 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Style="{ThemeResource HeaderTextBlockStyle}"
-                Visibility="{x:Bind ViewModel.CurrentImage, Converter={StaticResource ReverseObjectNullToVisibilityConverter}}"/>
+                Visibility="{x:Bind ViewModel.IsIntroTextVisible}"/>
             
             <Image
                 Source="{x:Bind ViewModel.CurrentImage}"
-                Visibility="{x:Bind ViewModel.CurrentImage, Converter={StaticResource ObjectNullToVisibilityConverter}}"/>
+                Visibility="{x:Bind ViewModel.IsCaptureImageVisible}"/>
+
+            <StackPanel VerticalAlignment="Center"
+                        Spacing="10"
+                        Visibility="{x:Bind ViewModel.IsRecording}">
+
+                <TextBlock Text="Recording..." HorizontalAlignment="Center" />
+                <Ellipse Fill="Red" Height="50" Width="50" HorizontalAlignment="Center" />
+                <Button Content="Stop" HorizontalAlignment="Center" Command="{x:Bind StopVideoCapture, Mode=OneTime}" />
+            </StackPanel>
         </Grid>
     </Grid>
 </Page>

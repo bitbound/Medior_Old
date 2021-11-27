@@ -9,6 +9,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System.Diagnostics;
 using System.IO;
+using Windows.Storage.Pickers;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -26,9 +27,8 @@ namespace Medior.Pages
             ViewModel.RegisterSubscriptions();
         }
 
-        public ScreenCaptureViewModel ViewModel { get; } = Ioc.Default.GetRequiredService<ScreenCaptureViewModel>();
-
-        public AsyncRelayCommand CaptureScreenShot => new(async () => {
+        public AsyncRelayCommand CaptureScreenShot => new(async () =>
+        {
             Guard.IsNotNull(MainWindow.Instance, nameof(MainWindow.Instance));
 
             MainWindow.Instance.Minimize();
@@ -62,18 +62,12 @@ namespace Medior.Pages
             {
                 return;
             }
-            
+
             var filename = $"{DateTime.Now:yyyyMMdd-HHmm-ss}.wmv";
-            
+
             var filePath = Path.Combine(AppFolders.RecordingsPath, filename);
 
             var result = await ViewModel.StartVideoCapture(selectedDisplay, filePath);
-
-            Process.Start(new ProcessStartInfo()
-            {
-                FileName = filePath,
-                UseShellExecute = true,
-            });
 
             if (!result.IsSuccess)
             {
@@ -81,8 +75,24 @@ namespace Medior.Pages
                 return;
             }
 
-            // TODO: Save the temp video.
+            var fileSavePicker = new FileSavePicker
+            {
+                SuggestedStartLocation = PickerLocationId.VideosLibrary,
+                SuggestedFileName = $"MediorCapture-{filename}"
+            };
+            fileSavePicker.FileTypeChoices.Add("Windows Media Video", new List<string>() { ".wmv" });
+            MainWindow.Instance.InitializeObject(fileSavePicker);
+            var saveResult = await fileSavePicker.PickSaveFileAsync();
+            if (saveResult is not null)
+            {
+                File.Copy(filePath, saveResult.Path, true);
+            }
+            File.Delete(filePath);
         });
+
+        public RelayCommand StopVideoCapture => new(() => ViewModel.StopVideoCapture());
+
+        public ScreenCaptureViewModel ViewModel { get; } = Ioc.Default.GetRequiredService<ScreenCaptureViewModel>();
 
         private void Page_Unloaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
