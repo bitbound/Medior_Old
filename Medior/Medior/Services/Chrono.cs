@@ -1,4 +1,4 @@
-﻿namespace Medior.Shared.Services
+﻿namespace Medior.Services
 {
     public interface IChrono
     {

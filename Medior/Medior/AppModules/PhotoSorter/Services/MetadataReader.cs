@@ -5,7 +5,6 @@ using Medior.Services;
 using Medior.Extensions;
 using Medior.BaseTypes;
 using Medior.AppModules.PhotoSorter.Models;
-using Medior.Shared.Services;
 
 namespace Medior.AppModules.PhotoSorter.Services
 {

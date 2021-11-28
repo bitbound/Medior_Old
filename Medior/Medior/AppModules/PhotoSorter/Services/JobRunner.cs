@@ -6,7 +6,6 @@ using Medior.Services;
 using Medior.AppModules.PhotoSorter.Models;
 using Medior.AppModules.PhotoSorter.Enums;
 using System.IO;
-using Medior.Shared.Services;
 
 namespace Medior.AppModules.PhotoSorter.Services
 {

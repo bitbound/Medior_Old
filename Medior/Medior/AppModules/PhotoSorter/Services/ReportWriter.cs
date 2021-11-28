@@ -1,7 +1,7 @@
 ﻿using Medior.AppModules.PhotoSorter.Models;
 using Medior.Services;
-using Medior.Shared.Services;
-using Medior.Shared.Utilities;
+using Medior.Utilities;
+using Microsoft.Extensions.Logging;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -17,10 +17,13 @@ namespace Medior.AppModules.PhotoSorter.Services
     {
         private readonly IChrono _chrono;
         private readonly IFileSystem _fileSystem;
-        public ReportWriter(IChrono chrono, IFileSystem fileSystem)
+        private readonly ILogger<ReportWriter> _logger;
+
+        public ReportWriter(IChrono chrono, IFileSystem fileSystem, ILogger<ReportWriter> logger)
         {
             _chrono = chrono;
             _fileSystem = fileSystem;
+            _logger = logger;
         }
 
         public async Task<string> WriteReport(JobReport report)
@@ -46,32 +49,36 @@ namespace Medior.AppModules.PhotoSorter.Services
 
         private async Task WriteReportInternal(JobReport report, string logPath)
         {
-            var errors = new List<OperationResult>();
-            var wasSkipped = new List<OperationResult>();
-            var noExif = new List<OperationResult>();
-            var successes = new List<OperationResult>();
-
-            foreach (var result in report.Results)
+            try
             {
-                if (result.HadError)
-                {
-                    errors.Add(result);
-                }
-                if (result.WasSkipped)
-                {
-                    wasSkipped.Add(result);
-                }
-                if (!result.FoundExifData)
-                {
-                    noExif.Add(result);
-                }
-                if (result.IsSuccess)
-                {
-                    successes.Add(result);
-                }
-            }
+                _fileSystem.CreateDirectory(Path.GetDirectoryName(logPath));
 
-            var reportLines = new List<string>
+                var errors = new List<OperationResult>();
+                var wasSkipped = new List<OperationResult>();
+                var noExif = new List<OperationResult>();
+                var successes = new List<OperationResult>();
+
+                foreach (var result in report.Results)
+                {
+                    if (result.HadError)
+                    {
+                        errors.Add(result);
+                    }
+                    if (result.WasSkipped)
+                    {
+                        wasSkipped.Add(result);
+                    }
+                    if (!result.FoundExifData)
+                    {
+                        noExif.Add(result);
+                    }
+                    if (result.IsSuccess)
+                    {
+                        successes.Add(result);
+                    }
+                }
+
+                var reportLines = new List<string>
             {
                 $"Job Name: {report.JobName}",
                 $"Operation: {report.Operation}",
@@ -83,55 +90,60 @@ namespace Medior.AppModules.PhotoSorter.Services
                 $"No Exif: {noExif.Count}"
             };
 
-            reportLines.AddRange(new[]
-            {
+                reportLines.AddRange(new[]
+                {
                 "",
                 "#### Error Files ####",
                 ""
             });
-            foreach (var result in errors)
-            {
-                reportLines.Add($"Pre-Operation Path: {result.PreOperationPath}\t" +
-                    $"Post-Operation Path: {result.PostOperationPath}\t");
-            }
+                foreach (var result in errors)
+                {
+                    reportLines.Add($"Pre-Operation Path: {result.PreOperationPath}\t" +
+                        $"Post-Operation Path: {result.PostOperationPath}\t");
+                }
 
-            reportLines.AddRange(new[]
-            {
+                reportLines.AddRange(new[]
+                {
                 "",
                 "#### Skipped Files ####",
                 ""
             });
-            foreach (var result in wasSkipped)
-            {
-                reportLines.Add($"Pre-Operation Path: {result.PreOperationPath}\t" +
-                    $"Post-Operation Path: {result.PostOperationPath}\t");
-            }
+                foreach (var result in wasSkipped)
+                {
+                    reportLines.Add($"Pre-Operation Path: {result.PreOperationPath}\t" +
+                        $"Post-Operation Path: {result.PostOperationPath}\t");
+                }
 
-            reportLines.AddRange(new[]
-            {
+                reportLines.AddRange(new[]
+                {
                 "",
                 "#### No EXIF Files ####",
                 ""
             });
-            foreach (var result in noExif)
-            {
-                reportLines.Add($"Pre-Operation Path: {result.PreOperationPath}\t" +
-                    $"Post-Operation Path: {result.PostOperationPath}\t");
-            }
+                foreach (var result in noExif)
+                {
+                    reportLines.Add($"Pre-Operation Path: {result.PreOperationPath}\t" +
+                        $"Post-Operation Path: {result.PostOperationPath}\t");
+                }
 
-            reportLines.AddRange(new[]
-            {
+                reportLines.AddRange(new[]
+                {
                 "",
                 "#### Success Files ####",
                 ""
             });
-            foreach (var result in successes)
-            {
-                reportLines.Add($"Pre-Operation Path: {result.PreOperationPath}\t" +
-                    $"Post-Operation Path: {result.PostOperationPath}\t");
-            }
+                foreach (var result in successes)
+                {
+                    reportLines.Add($"Pre-Operation Path: {result.PreOperationPath}\t" +
+                        $"Post-Operation Path: {result.PostOperationPath}\t");
+                }
 
-            await _fileSystem.AppendAllLinesAsync(logPath, reportLines);
+                await _fileSystem.AppendAllLinesAsync(logPath, reportLines);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error writing Photo Sorter report.");
+            }  
         }
     }
 }

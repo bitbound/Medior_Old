@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Diagnostics;
 using Medior.Controls;
 using Medior.Extensions;
-using Medior.Shared.Utilities;
+using Medior.Utilities;
 using Medior.ViewModels;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Input;

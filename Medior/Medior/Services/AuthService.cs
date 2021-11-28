@@ -1,6 +1,5 @@
 ﻿using Medior.BaseTypes;
 using Medior.Models.Messages;
-using Medior.Shared.Services;
 using Medior.Utilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Client;

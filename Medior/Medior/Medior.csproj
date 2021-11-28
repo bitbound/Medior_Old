@@ -59,10 +59,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Medior.Shared\Medior.Shared.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Page Update="Controls\GatedControl.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

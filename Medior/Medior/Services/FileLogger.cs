@@ -1,10 +1,10 @@
-﻿using Medior.Shared.Utilities;
+﻿using Medior.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 using System.IO;
 
-namespace Medior.Shared.Services
+namespace Medior.Services
 {
     public class FileLogger : ILogger
     {

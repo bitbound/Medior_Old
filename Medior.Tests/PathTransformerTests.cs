@@ -3,7 +3,6 @@ using System;
 using System.IO;
 using Medior.Services;
 using Medior.AppModules.PhotoSorter.Services;
-using Medior.Shared.Services;
 
 namespace Medior.Tests
 {

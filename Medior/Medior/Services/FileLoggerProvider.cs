@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace Medior.Shared.Services
+namespace Medior.Services
 {
     public class FileLoggerProvider : ILoggerProvider
     {

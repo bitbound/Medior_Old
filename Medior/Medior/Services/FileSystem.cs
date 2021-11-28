@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
 
-namespace Medior.Shared.Services
+namespace Medior.Services
 {
     public interface IFileSystem
     {

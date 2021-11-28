@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Medior.Shared.Utilities
+namespace Medior.Utilities
 {
     public static class AppFolders
     {

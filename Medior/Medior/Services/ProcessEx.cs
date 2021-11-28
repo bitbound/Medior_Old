@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace Medior.Shared.Services
+namespace Medior.Services
 {
     public interface IProcessEx
     {
