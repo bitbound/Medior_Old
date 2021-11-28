@@ -61,6 +61,7 @@ namespace Medior
             collection.AddSingleton<SettingsViewModel>();
             collection.AddSingleton<GuidGeneratorViewModel>();
             collection.AddSingleton<ElevatorViewModel>();
+            collection.AddSingleton<QrCodeCreatorViewModel>();
 
             var instance = collection.BuildServiceProvider();
 

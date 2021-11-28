@@ -22,10 +22,10 @@
   <ItemGroup>
     <None Remove="Controls\DisplayPicker.xaml" />
     <None Remove="Controls\GatedControl.xaml" />
-    <None Remove="Pages\DashboardPage.xaml" />
     <None Remove="Pages\ElevatorPage.xaml" />
     <None Remove="Pages\GuidGeneratorPage.xaml" />
     <None Remove="Pages\PhotoSorterPage.xaml" />
+    <None Remove="Pages\QrCodeCreatorPage.xaml" />
     <None Remove="Pages\RemoteHelpPage.xaml" />
     <None Remove="Pages\ScreenCapturePage.xaml" />
     <None Remove="Pages\SettingsPage.xaml" />
@@ -53,6 +53,7 @@
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.0.0" />
     <PackageReference Include="PInvoke.Gdi32" Version="0.7.104" />
     <PackageReference Include="PInvoke.User32" Version="0.7.104" />
+    <PackageReference Include="QRCoder" Version="1.4.2" />
     <PackageReference Include="SharpDX.Direct3D11" Version="4.2.0" />
 
     <Manifest Include="$(ApplicationManifest)" />
@@ -69,6 +70,9 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
+    <Page Update="Pages\QrCodeCreatorPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Pages\ElevatorPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -76,9 +80,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="Pages\RemoteHelpPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Pages\DashboardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="Pages\ScreenCapturePage.xaml">
