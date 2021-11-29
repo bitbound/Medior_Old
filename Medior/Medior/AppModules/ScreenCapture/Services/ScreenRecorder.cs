@@ -1,7 +1,5 @@
 ﻿using Medior.BaseTypes;
-using Medior.Extensions;
 using Medior.Models;
-using Medior.Utilities;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -9,20 +7,18 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using System.Windows.Forms;
-using Windows.Media;
 using Windows.Media.Core;
 using Windows.Media.MediaProperties;
 using Windows.Media.Transcoding;
 
-namespace Medior.Services
+namespace Medior.AppModules.ScreenCapture.Services
 {
-    public interface IScreenRecorder 
+    public interface IScreenRecorder
     {
         Task<Result> CaptureVideo(
             DisplayInfo display,
             int frameRate,
-            Stream destinationStream, 
+            Stream destinationStream,
             CancellationToken cancellationToken);
     }
 
@@ -37,7 +33,7 @@ namespace Medior.Services
         public async Task<Result> CaptureVideo(
             DisplayInfo display,
             int frameRate,
-            Stream destinationStream, 
+            Stream destinationStream,
             CancellationToken cancellationToken)
         {
             try
@@ -149,7 +145,7 @@ namespace Medior.Services
 
                 _screenCapturer.StartCapture(display, cancellationToken);
                 await prepareResult.TranscodeAsync();
-                
+
                 return Result.Ok();
             }
             catch (Exception ex)

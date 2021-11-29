@@ -7,7 +7,7 @@ using Device = SharpDX.Direct3D11.Device;
 using MapFlags = SharpDX.Direct3D11.MapFlags;
 using Resource = SharpDX.DXGI.Resource;
 
-namespace Medior.Services
+namespace Medior.AppModules.ScreenCapture.Services
 {
     public interface IScreenCapturer
     {

@@ -51,7 +51,7 @@ namespace Medior.AppModules.PhotoSorter.Services
         {
             try
             {
-                _fileSystem.CreateDirectory(Path.GetDirectoryName(logPath));
+                _fileSystem.CreateDirectory(Path.GetDirectoryName(logPath) ?? "");
 
                 var errors = new List<OperationResult>();
                 var wasSkipped = new List<OperationResult>();
