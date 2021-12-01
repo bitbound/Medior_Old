@@ -5,17 +5,15 @@ namespace Medior.Services
     public class FileLoggerProvider : ILoggerProvider
     {
         private readonly IServiceProvider _services;
-        private readonly string _appName;
 
-        public FileLoggerProvider(IServiceProvider services, string appName)
+        public FileLoggerProvider(IServiceProvider services)
         {
             _services = services;
-            _appName = appName;
         }
 
         public ILogger CreateLogger(string categoryName)
         {
-            return new FileLogger(_services, _appName, categoryName);
+            return new FileLogger(_services, categoryName);
         }
 
         public void Dispose()

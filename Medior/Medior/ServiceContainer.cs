@@ -63,7 +63,7 @@ namespace Medior
 
             instance
                 .GetRequiredService<ILoggerFactory>()
-                .AddProvider(new FileLoggerProvider(instance, "Medior"));
+                .AddProvider(new FileLoggerProvider(instance));
 
             Ioc.Default.ConfigureServices(instance);
         }
