@@ -153,7 +153,7 @@ namespace Medior.ViewModels
                     var authResult = await _apiService.TestAuth();
                     if (!authResult.IsSuccess)
                     {
-                        return Result.Fail("Auth token check failed.");
+                        return Result.Fail(authResult.Error ?? "Unknown error occurred.");
                     }
 
                     if (authResult.Value == System.Net.HttpStatusCode.OK)

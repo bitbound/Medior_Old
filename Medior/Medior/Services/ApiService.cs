@@ -72,12 +72,23 @@ namespace Medior.Services
                 _messagePublisher.Messenger.Send(new SignInStateMessage(true));
                 return Result.Ok(httpResult.StatusCode);
             }
+            catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                _logger.LogError(ex, "HTTP error while testing auth.");
+                return Result.Fail<HttpStatusCode>("Sign-in failed.  Please try again.");
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, "HTTP error while testing auth.");
+                return Result.Fail<HttpStatusCode>("Failed to contact the server.  " +
+                    "Check your internet connection or try again later.");
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error while testing auth.");
             }
 
-            return Result.Fail<HttpStatusCode>("Failed to call API.");
+            return Result.Fail<HttpStatusCode>("An unknown error occurred.");
         }
 
         private async Task<Result<HttpClient>> GetConfiguredClient()
