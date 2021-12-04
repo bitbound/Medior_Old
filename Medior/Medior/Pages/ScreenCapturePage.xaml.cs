@@ -1,12 +1,15 @@
 ﻿using CommunityToolkit.Diagnostics;
+using Medior.Controls;
 using Medior.Extensions;
+using Medior.Utilities;
 using Medior.ViewModels;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Input;
 using Microsoft.UI.Xaml.Controls;
 using System.Diagnostics;
+using System.Drawing.Imaging;
 using System.IO;
-using Windows.Graphics.Capture;
+using Windows.Storage.Pickers;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -24,9 +27,8 @@ namespace Medior.Pages
             ViewModel.RegisterSubscriptions();
         }
 
-        public ScreenCaptureViewModel ViewModel { get; } = Ioc.Default.GetRequiredService<ScreenCaptureViewModel>();
-
-        public AsyncRelayCommand CaptureScreenShot => new(async () => {
+        public AsyncRelayCommand CaptureScreenShot => new(async () =>
+        {
             Guard.IsNotNull(MainWindow.Instance, nameof(MainWindow.Instance));
 
             MainWindow.Instance.Minimize();
@@ -45,20 +47,27 @@ namespace Medior.Pages
         public AsyncRelayCommand CaptureVideo => new(async () =>
         {
             Guard.IsNotNull(MainWindow.Instance, nameof(MainWindow.Instance));
-            
-            var captureItem = await MainWindow.Instance.InvokeGraphicsCapturePicker();
-            
-            if (captureItem is null)
+
+            var displayPicker = new DisplayPicker();
+
+            var dialogResult = await this.ShowDialog("Select a display to capture", displayPicker);
+            if (dialogResult != ContentDialogResult.Primary)
             {
                 return;
             }
 
-            
-            var filename = $"{DateTime.Now:yyyyMMdd-HHmm-ss}.mp4";
-            // TODO: Put paths as static somewhere.
-            var filePath = Path.Combine(Path.GetTempPath(), "Medior", "Recordings", filename);
+            var selectedDisplay = displayPicker.SelectedDisplay;
 
-            var result = await ViewModel.StartVideoCapture(captureItem, filePath);
+            if (selectedDisplay is null)
+            {
+                return;
+            }
+
+            var filename = $"{DateTime.Now:yyyyMMdd-HHmm-ss}.wmv";
+
+            var filePath = Path.Combine(AppFolders.RecordingsPath, filename);
+
+            var result = await ViewModel.StartVideoCapture(selectedDisplay, filePath);
 
             if (!result.IsSuccess)
             {
@@ -66,8 +75,56 @@ namespace Medior.Pages
                 return;
             }
 
-            // TODO: Save the temp video.
+            var fileSavePicker = new FileSavePicker
+            {
+                SuggestedStartLocation = PickerLocationId.VideosLibrary,
+                SuggestedFileName = $"MediorCapture-{filename}"
+            };
+            fileSavePicker.FileTypeChoices.Add("Windows Media Video", new List<string>() { ".wmv" });
+            MainWindow.Instance.InitializeObject(fileSavePicker);
+            var saveResult = await fileSavePicker.PickSaveFileAsync();
+            if (saveResult is not null)
+            {
+                File.Copy(filePath, saveResult.Path, true);
+            }
+            File.Delete(filePath);
         });
+
+        public AsyncRelayCommand SaveImage => new(async () =>
+        {
+            try
+            {
+                var picker = new FileSavePicker
+                {
+                    SuggestedStartLocation = PickerLocationId.PicturesLibrary
+                };
+                picker.FileTypeChoices.Add("JPG Image", new List<string>() { ".jpg" });
+                MainWindow.Instance?.InitializeObject(picker);
+                var storageItem = await picker.PickSaveFileAsync();
+                if (storageItem is null)
+                {
+                    return;
+                }
+
+                using var writeStream = await storageItem.OpenStreamForWriteAsync();
+                ViewModel.CurrentBitmap?.Save(writeStream, ImageFormat.Jpeg);
+                await this.Alert("Save Successful", "Screenshot saved.");
+            }
+            catch
+            {
+                await this.Alert("Save Failed", "Failed to save screenshot.  Make sure you have write access to the directory.");
+            }
+        });
+
+        public AsyncRelayCommand ShareImage => new(async() =>
+        {
+            // TODO
+            await this.Alert("Coming Later", "This will be implemented in a future update.");
+        });
+
+        public RelayCommand StopVideoCapture => new(() => ViewModel.StopVideoCapture());
+
+        public ScreenCaptureViewModel ViewModel { get; } = Ioc.Default.GetRequiredService<ScreenCaptureViewModel>();
 
         private void Page_Unloaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {

@@ -4,7 +4,6 @@ using Medior.Models;
 using Medior.Models.Messages;
 using Medior.Services;
 using Microsoft.Extensions.Logging;
-using Microsoft.Identity.Client;
 using System.Threading.Tasks;
 
 namespace Medior.ViewModels
@@ -154,7 +153,7 @@ namespace Medior.ViewModels
                     var authResult = await _apiService.TestAuth();
                     if (!authResult.IsSuccess)
                     {
-                        return Result.Fail("Auth token check failed.");
+                        return Result.Fail(authResult.Error ?? "Unknown error occurred.");
                     }
 
                     if (authResult.Value == System.Net.HttpStatusCode.OK)

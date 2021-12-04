@@ -20,6 +20,12 @@ namespace Medior.Extensions
             return WindowNative.GetWindowHandle(self);
         }
 
+        public static void InitializeObject(this Window self, object target)
+        {
+            var hwnd = GetWindowHandle(self);
+            InitializeWithWindow.Initialize(target, hwnd);
+        }
+
         public static async Task<GraphicsCaptureItem> InvokeGraphicsCapturePicker(this Window self)
         {
             var hwnd = WindowNative.GetWindowHandle(self);

@@ -1,39 +1,77 @@
-﻿using Medior.BaseTypes;
+﻿using Medior.AppModules.ScreenCapture.Enums;
+using Medior.AppModules.ScreenCapture.Services;
+using Medior.BaseTypes;
+using Medior.Models;
 using Medior.Services;
 using Medior.Utilities;
 using Microsoft.Extensions.Logging;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System.Diagnostics;
+using System.Drawing;
+using System.IO;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Graphics.Capture;
 
 
 namespace Medior.ViewModels
 {
     public class ScreenCaptureViewModel : ViewModelBase
     {
-        private readonly IEnvironmentService _environmentService;
-        private readonly IScreenGrabber _screenGrabber;
+        private readonly IFileSystem _fileSystem;
+
         private readonly ILogger<ScreenCaptureViewModel> _logger;
+
         private readonly IProcessEx _processEx;
+
+        private readonly IScreenRecorder _screenRecorder;
+
+        private CancellationTokenSource _cts = new();
+
         private BitmapImage? _currentImage;
 
-        public ScreenCaptureViewModel(IProcessEx processEx, 
-            IEnvironmentService environmentService,
-            IScreenGrabber screenGrabber,
+        private ScreenCaptureView _currentView;
+
+        public ScreenCaptureViewModel(IProcessEx processEx,
+            IFileSystem fileSystem,
+            IScreenRecorder screenRecorder,
             ILogger<ScreenCaptureViewModel> logger)
         {
+            _screenRecorder = screenRecorder;
             _processEx = processEx;
-            _environmentService = environmentService;
-            _screenGrabber = screenGrabber;
+            _fileSystem = fileSystem;
             _logger = logger;
         }
+
+        public Bitmap? CurrentBitmap { get; private set; }
 
         public BitmapImage? CurrentImage
         {
             get => _currentImage;
-            set => SetProperty(ref _currentImage, value);
+            set
+            {
+                SetProperty(ref _currentImage, value);
+                CurrentView = ScreenCaptureView.Image;
+            }
+        }
+
+        private ScreenCaptureView PreviousView { get; set; }
+        public ScreenCaptureView CurrentView
+        {
+            get => _currentView;
+            set
+            {
+                PreviousView = CurrentView;
+                SetProperty(ref _currentView, value);
+                InvokePropertyChanged(nameof(IsCurrentView));
+            }
+        }
+
+        public Visibility IsCurrentView(ScreenCaptureView screenCaptureView)
+        {
+            return CurrentView == screenCaptureView ?
+                Visibility.Visible :
+                Visibility.Collapsed;
         }
 
         public void RegisterSubscriptions()
@@ -49,38 +87,54 @@ namespace Medior.ViewModels
             });
         }
 
-        public async Task<Result> StartVideoCapture(
-            GraphicsCaptureItem captureItem, 
-            string targetPath)
+        public async Task<Result> StartVideoCapture(DisplayInfo display, string targetPath)
         {
-            var cts = new CancellationTokenSource();
-            cts.CancelAfter(10000);
-
-            var result = await _screenGrabber.EncodeVideo(captureItem, targetPath, cts.Token);
-
-            if (!result.IsSuccess)
+            try
             {
-                if (result.Exception is not null)
+                CurrentView = ScreenCaptureView.Recording;
+
+                _cts?.Dispose();
+                _cts = new CancellationTokenSource();
+
+                _fileSystem.CreateDirectory(Path.GetDirectoryName(targetPath) ?? "");
+                using var destStream = _fileSystem.CreateFile(targetPath);
+
+                var result = await _screenRecorder.CaptureVideo(display, 15, destStream, _cts.Token);
+
+                if (!result.IsSuccess)
                 {
-                    _logger.LogError(result.Exception, "Error while capturing video.");
+                    if (result.Exception is not null)
+                    {
+                        _logger.LogError(result.Exception, "Error while capturing video.");
+                    }
+                    else
+                    {
+                        _logger.LogError(result.Error);
+                    }
                 }
-                else
-                {
-                    _logger.LogError(result.Error);
-                }
+                return result;
             }
-            return result;
+            finally
+            {
+                CurrentView = PreviousView;
+            }
+        }
+
+        public void StopVideoCapture()
+        {
+            _cts?.Cancel();
         }
 
         public void UnregisterSubscriptions()
         {
             Clipboard.ContentChanged -= Clipboard_ContentChanged;
         }
-
         private async void Clipboard_ContentChanged(object? sender, object e)
         {
             try
             {
+                CurrentBitmap?.Dispose();
+
                 var content = Clipboard.GetContent();
 
                 var formats = content.AvailableFormats.ToList();
@@ -90,16 +144,18 @@ namespace Medior.ViewModels
                     return;
                 }
 
-                var bitmap = await content.GetBitmapAsync();
-                using var stream = await bitmap.OpenReadAsync();
+                var bitmapStreamRef = await content.GetBitmapAsync();
+                using var stream = await bitmapStreamRef.OpenReadAsync();
 
+                CurrentBitmap = new Bitmap(stream.AsStreamForRead());
+                stream.Seek(0);
                 var image = new BitmapImage();
                 await image.SetSourceAsync(stream);
                 CurrentImage = image;
             }
             catch (Exception ex) 
             { 
-                if (_environmentService.IsDebug)
+                if (EnvironmentHelper.IsDebug)
                 {
                     _logger.LogError(ex, "Error while getting clipboard content.");
                 }

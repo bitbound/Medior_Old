@@ -24,15 +24,6 @@ namespace Medior.Services
         {
             new()
             {
-                Id = AppModuleIds.Dashboard,
-                Label = "Dashboard",
-                Description = "Overview of your Medior account",
-                PageName = "DashboardPage",
-                Icon = Symbol.Account,
-                ModuleType = AppModuleType.Main
-            },
-            new()
-            {
                 Id = AppModuleIds.ScreenCapture,
                 Label = "Screen Capture",
                 Description = "Capture and share images and videos of your desktop",

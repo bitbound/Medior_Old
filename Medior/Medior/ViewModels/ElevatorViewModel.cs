@@ -1,13 +1,10 @@
 ﻿using CommunityToolkit.Diagnostics;
 using Medior.BaseTypes;
 using Medior.Services;
+using Medior.Utilities;
 using Microsoft.Extensions.Logging;
-using Microsoft.Toolkit.Mvvm.Input;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace Medior.ViewModels
@@ -40,7 +37,7 @@ namespace Medior.ViewModels
             {
                 Guard.IsNotNullOrWhiteSpace(commandLine, nameof(commandLine));
 
-                var targetPath = Path.Combine(Path.GetTempPath(), "Medior", "bin", "paexec.exe");
+                var targetPath = Path.Combine(AppFolders.TempPath, "bin", "paexec.exe");
                 var result = await _resourceExtractor.ExtractPaExec(targetPath);
 
                 if (!result.IsSuccess)

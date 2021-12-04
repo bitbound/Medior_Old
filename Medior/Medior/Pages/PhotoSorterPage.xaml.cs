@@ -6,6 +6,7 @@ using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Input;
 using Microsoft.UI.Xaml.Controls;
 using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,

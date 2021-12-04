@@ -9,9 +9,15 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <Button Content="Start"
+        <StackPanel VerticalAlignment="Center" 
+                    HorizontalAlignment="Center"
+                    Spacing="20">
+            <TextBlock Text="Use Microsoft Quick Assist to give or receive remote support."
+                       Style="{ThemeResource SubtitleTextBlockStyle}" />
+            <Button Content="Start"
                 VerticalAlignment="Center"
                 HorizontalAlignment="Center"
                 Command="{x:Bind StartQuickAssist}" />
+        </StackPanel>
     </Grid>
 </Page>

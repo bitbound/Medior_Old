@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Medior.Pages"
+    xmlns:enums="using:Medior.AppModules.ScreenCapture.Enums"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -23,11 +24,17 @@
                           Label="Capture Video"
                           Command="{x:Bind CaptureVideo, Mode=OneTime}" />
 
-            <AppBarSeparator Visibility="{x:Bind ViewModel.CurrentImage, Converter={StaticResource ObjectNullToVisibilityConverter}}" />
+            <AppBarSeparator Visibility="{x:Bind ViewModel.IsCurrentView(enums:ScreenCaptureView.Image)}" />
+
+            <AppBarButton Icon="Save"
+                          Label="Save"
+                          Command="{x:Bind SaveImage}"
+                          Visibility="{x:Bind ViewModel.IsCurrentView(enums:ScreenCaptureView.Image)}"/>
 
             <AppBarButton Icon="Share"
                           Label="Share"
-                          Visibility="{x:Bind ViewModel.CurrentImage, Converter={StaticResource ObjectNullToVisibilityConverter}}"/>
+                          Command="{x:Bind ShareImage}"
+                          Visibility="{x:Bind ViewModel.IsCurrentView(enums:ScreenCaptureView.Image)}"/>
         </CommandBar>
 
         <Grid Grid.Row="1" Margin="5">
@@ -35,11 +42,20 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Style="{ThemeResource HeaderTextBlockStyle}"
-                Visibility="{x:Bind ViewModel.CurrentImage, Converter={StaticResource ReverseObjectNullToVisibilityConverter}}"/>
+                Visibility="{x:Bind ViewModel.IsCurrentView(enums:ScreenCaptureView.Welcome)}" />
             
             <Image
                 Source="{x:Bind ViewModel.CurrentImage}"
-                Visibility="{x:Bind ViewModel.CurrentImage, Converter={StaticResource ObjectNullToVisibilityConverter}}"/>
+                Visibility="{x:Bind ViewModel.IsCurrentView(enums:ScreenCaptureView.Image)}" />
+
+            <StackPanel VerticalAlignment="Center"
+                        Spacing="10"
+                        Visibility="{x:Bind ViewModel.IsCurrentView(enums:ScreenCaptureView.Recording)}">
+
+                <TextBlock Text="Recording..." HorizontalAlignment="Center" />
+                <Ellipse Fill="Red" Height="50" Width="50" HorizontalAlignment="Center" />
+                <Button Content="Stop" HorizontalAlignment="Center" Command="{x:Bind StopVideoCapture, Mode=OneTime}" />
+            </StackPanel>
         </Grid>
     </Grid>
 </Page>

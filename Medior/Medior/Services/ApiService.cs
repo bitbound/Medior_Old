@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Diagnostics;
 using Medior.BaseTypes;
 using Medior.Models.Messages;
+using Medior.Utilities;
 using Microsoft.Extensions.Logging;
 using System.Net;
 using System.Net.Http;
@@ -16,20 +17,17 @@ namespace Medior.Services
     public class ApiService : IApiService
     {
         private readonly ILogger<ApiService> _logger;
-        private readonly IEnvironmentService _environment;
         private readonly IMessagePublisher _messagePublisher;
         private readonly IAuthService _authService;
         private readonly IHttpClientFactory _httpFactory;
 
         public ApiService(
-            IEnvironmentService environmentService,
             IAuthService authService,
             IMessagePublisher messagePublisher,
             ILogger<ApiService> logger,
             IHttpClientFactory httpClientFactory)
         {
             _logger = logger;
-            _environment = environmentService;
             _messagePublisher = messagePublisher;
             _authService = authService;
             _httpFactory = httpClientFactory;
@@ -39,7 +37,7 @@ namespace Medior.Services
         {
             get
             {
-                if (_environment.IsDebug)
+                if (EnvironmentHelper.IsDebug)
                 {
                     return "https://localhost:7282";
                 }
@@ -74,12 +72,23 @@ namespace Medior.Services
                 _messagePublisher.Messenger.Send(new SignInStateMessage(true));
                 return Result.Ok(httpResult.StatusCode);
             }
+            catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                _logger.LogError(ex, "HTTP error while testing auth.");
+                return Result.Fail<HttpStatusCode>("Sign-in failed.  Please try again.");
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, "HTTP error while testing auth.");
+                return Result.Fail<HttpStatusCode>("Failed to contact the server.  " +
+                    "Check your internet connection or try again later.");
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error while testing auth.");
             }
 
-            return Result.Fail<HttpStatusCode>("Failed to call API.");
+            return Result.Fail<HttpStatusCode>("An unknown error occurred.");
         }
 
         private async Task<Result<HttpClient>> GetConfiguredClient()

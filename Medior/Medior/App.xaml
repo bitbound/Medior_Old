@@ -12,6 +12,7 @@
                     <converters:ObjectNullToVisibilityConverter x:Key="ObjectNullToVisibilityConverter" />
                     <converters:ReverseBoolToVisibilityConverter x:Key="ReverseBoolToVisibilityConverter" />
                     <converters:ReverseObjectNullToVisibilityConverter x:Key="ReverseObjectNullToVisibilityConverter" />
+                    <converters:ObjectNotNullToBooleanConverter x:Key="ObjectNotNullToBooleanConverter" />
                 </ResourceDictionary>
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
                 <!-- Other merged dictionaries here -->

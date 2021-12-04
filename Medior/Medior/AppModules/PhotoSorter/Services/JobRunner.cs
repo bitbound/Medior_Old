@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Medior.Services;
 using Medior.AppModules.PhotoSorter.Models;
 using Medior.AppModules.PhotoSorter.Enums;
+using System.IO;
 
 namespace Medior.AppModules.PhotoSorter.Services
 {

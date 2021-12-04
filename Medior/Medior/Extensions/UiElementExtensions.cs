@@ -34,14 +34,14 @@ namespace Medior.Extensions
         }
 
         public static async Task<(ContentDialogResult, string)> Prompt(
-            this UIElement self, 
-            string title, 
+            this UIElement self,
+            string title,
             string? message,
             string? placeholderText,
             string? primaryButtonText = "OK",
             string? closeButtonText = "Cancel")
         {
-            var sp = new StackPanel() {  Spacing = 10 };
+            var sp = new StackPanel() { Spacing = 10 };
 
             if (!string.IsNullOrWhiteSpace(message))
             {
@@ -71,6 +71,20 @@ namespace Medior.Extensions
             var result = await dialog.ShowAsync();
 
             return (result, input.Text);
+        }
+
+        public static async Task<ContentDialogResult> ShowDialog(this UIElement self, string title, UIElement content)
+        {
+            var dialog = new ContentDialog
+            {
+                Title = title,
+                XamlRoot = self.XamlRoot,
+                Content = content,
+                PrimaryButtonText = "Ok",
+                CloseButtonText = "Cancel",
+                DefaultButton = ContentDialogButton.Primary
+            };
+            return await dialog.ShowAsync();
         }
     }
 }
