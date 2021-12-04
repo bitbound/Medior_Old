@@ -25,6 +25,12 @@
                 <Run Text="{x:Bind Version}" FontWeight="Bold" />
             </TextBlock>
             <TextBlock>
+                <Run Text="Contact:" />
+                <Hyperlink Click="ContactHyperlink_Click">
+                    hello@lucency.co
+                </Hyperlink>
+            </TextBlock>
+            <TextBlock>
                 <Run>Main icon made by</Run>
                 <Hyperlink NavigateUri="https://www.flaticon.com/authors/nikita-golubev">
                     Nikita Golubev
@@ -77,7 +83,16 @@
                     (License)
                 </Hyperlink>
             </TextBlock>
-            
+
+            <TextBlock Text="Upcoming Features" Style="{StaticResource HeaderStyle}" />
+            <TextBlock Margin="10,0,0,0" Text="- Image sharing" />
+            <TextBlock Margin="10,0,0,0" Text="- Cloud syncing for app settings" />
+
+            <TextBlock Text="Roadmap Features" Style="{StaticResource HeaderStyle}" />
+            <TextBlock Margin="10,0,0,0" Text="- Unattended remote PC access" />
+            <TextBlock Margin="10,0,0,0" Text="- Batch photo compression/resizing" />
+            <TextBlock Margin="10,0,0,0" Text="- Batch video transcoding/resizing" />
+
             <TextBlock Text="Disclaimer" Style="{StaticResource HeaderStyle}" />
             <TextBlock TextWrapping="Wrap" Text="THIS APPLICATION IS PROVIDED 'AS IS' WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED." />
         </StackPanel>

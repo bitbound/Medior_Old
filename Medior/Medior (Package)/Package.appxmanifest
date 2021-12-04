@@ -58,5 +58,7 @@
     <uap6:Capability Name="graphicsCapture"/>
     <Capability Name="internetClientServer"/>
     <uap3:Capability Name="backgroundMediaPlayback"/>
+    <uap:Capability Name="picturesLibrary"/>
+    <uap:Capability Name="videosLibrary"/>
   </Capabilities>
 </Package>
