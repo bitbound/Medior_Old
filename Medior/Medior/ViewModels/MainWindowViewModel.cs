@@ -83,7 +83,7 @@ namespace Medior.ViewModels
         public AppModule SettingsAppModule { get; } = new()
         {
             Label = "Settings",
-            PageName = "Medior.Pages.SettingsPage"
+            PageName = "SettingsPage"
         };
 
         public SubscriptionLevel SubscriptionLevel
