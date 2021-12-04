@@ -18,6 +18,7 @@ namespace Medior.Tests
     {
 
         [TestMethod]
+        [Ignore("Manual tests.")]
         public void Test()
         {
             // Do some manual tests here.
