@@ -8,6 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     x:DefaultBindMode="OneWay"
+    Loaded="Page_Loaded"
     Unloaded="Page_Unloaded"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 

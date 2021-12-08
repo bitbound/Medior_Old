@@ -181,6 +181,8 @@ namespace Medior.ViewModels
         {
             _messagePublisher.Messenger.Register<SignInStateMessage>(this, 
                 (r,m) => IsSignedIn = m.Value);
+            _messagePublisher.Messenger.Register<IsLoadingMessage>(this,
+             (r, m) => IsLoading = m.Value);
         }
     }
 }

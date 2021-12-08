@@ -9,17 +9,19 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
-
+using Windows.Graphics.Imaging;
 
 namespace Medior.ViewModels
 {
     public class ScreenCaptureViewModel : ViewModelBase
     {
+        private readonly IApiService _apiService;
+        private readonly IChrono _chrono;
         private readonly IFileSystem _fileSystem;
-
         private readonly ILogger<ScreenCaptureViewModel> _logger;
 
         private readonly IProcessEx _processEx;
@@ -35,15 +37,17 @@ namespace Medior.ViewModels
         public ScreenCaptureViewModel(IProcessEx processEx,
             IFileSystem fileSystem,
             IScreenRecorder screenRecorder,
+            IApiService apiService,
+            IChrono chrono,
             ILogger<ScreenCaptureViewModel> logger)
         {
             _screenRecorder = screenRecorder;
             _processEx = processEx;
             _fileSystem = fileSystem;
+            _apiService = apiService;
+            _chrono = chrono;
             _logger = logger;
         }
-
-        public Bitmap? CurrentBitmap { get; private set; }
 
         public BitmapImage? CurrentImage
         {
@@ -55,7 +59,8 @@ namespace Medior.ViewModels
             }
         }
 
-        private ScreenCaptureView PreviousView { get; set; }
+        public byte[]? CurrentImageBytes { get; private set; }
+
         public ScreenCaptureView CurrentView
         {
             get => _currentView;
@@ -66,7 +71,7 @@ namespace Medior.ViewModels
                 InvokePropertyChanged(nameof(IsCurrentView));
             }
         }
-
+        private ScreenCaptureView PreviousView { get; set; }
         public Visibility IsCurrentView(ScreenCaptureView screenCaptureView)
         {
             return CurrentView == screenCaptureView ?
@@ -78,6 +83,31 @@ namespace Medior.ViewModels
         {
             Clipboard.ContentChanged += Clipboard_ContentChanged;
         }
+        public async Task<Result<string>> ShareImage()
+        {
+            try
+            {
+                if (CurrentImageBytes is null)
+                {
+                    return Result.Fail<string>("There is no image to upload.");
+                }
+
+                var filename = $"Screenshot-{_chrono.Now:yyyy-MM-dd HHmm}.jpg";
+                var result = await _apiService.ShareImage(filename, CurrentImageBytes);
+                if (!result.IsSuccess)
+                {
+                    return result;
+                }
+
+                return Result.Ok(result.Value ?? "");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while sharing image.");
+                return Result.Fail<string>("An error occurred while uploading the image.");
+            }
+        }
+
         public void StartScreenClip()
         {
             _processEx.Start(new ProcessStartInfo()
@@ -133,8 +163,6 @@ namespace Medior.ViewModels
         {
             try
             {
-                CurrentBitmap?.Dispose();
-
                 var content = Clipboard.GetContent();
 
                 var formats = content.AvailableFormats.ToList();
@@ -147,7 +175,11 @@ namespace Medior.ViewModels
                 var bitmapStreamRef = await content.GetBitmapAsync();
                 using var stream = await bitmapStreamRef.OpenReadAsync();
 
-                CurrentBitmap = new Bitmap(stream.AsStreamForRead());
+                using var bitmap = new Bitmap(stream.AsStream());
+                using var ms = new MemoryStream();
+                bitmap.Save(ms, ImageFormat.Jpeg);
+                CurrentImageBytes = ms.ToArray();
+
                 stream.Seek(0);
                 var image = new BitmapImage();
                 await image.SetSourceAsync(stream);

@@ -1,8 +1,13 @@
 ﻿using CommunityToolkit.Diagnostics;
+using Medior.BaseTypes;
 using Medior.Controls;
+using Medior.Enums;
 using Medior.Extensions;
+using Medior.Models.Messages;
+using Medior.Services;
 using Medior.Utilities;
 using Medior.ViewModels;
+using Microsoft.Extensions.Logging;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Input;
 using Microsoft.UI.Xaml.Controls;
@@ -21,6 +26,12 @@ namespace Medior.Pages
     /// </summary>
     public sealed partial class ScreenCapturePage : Page
     {
+        private readonly ILogger<ScreenCapturePage> _logger = Ioc.Default.GetRequiredService<ILogger<ScreenCapturePage>>();
+        private readonly IAccountService _accountService = Ioc.Default.GetRequiredService<IAccountService>();
+        private readonly IMessagePublisher _messagePublisher = Ioc.Default.GetRequiredService<IMessagePublisher>();
+        private readonly IAuthService _authService = Ioc.Default.GetRequiredService<IAuthService>();
+        private Result<SubscriptionLevel> _subscriptionLevel = Result.Ok(SubscriptionLevel.Free);
+
         public ScreenCapturePage()
         {
             InitializeComponent();
@@ -28,103 +39,150 @@ namespace Medior.Pages
         }
 
         public AsyncRelayCommand CaptureScreenShot => new(async () =>
-        {
-            Guard.IsNotNull(MainWindow.Instance, nameof(MainWindow.Instance));
+         {
+             Guard.IsNotNull(MainWindow.Instance, nameof(MainWindow.Instance));
 
-            MainWindow.Instance.Minimize();
+             MainWindow.Instance.Minimize();
 
-            ViewModel.StartScreenClip();
+             ViewModel.StartScreenClip();
 
-            var clipProc = Process.GetProcessesByName("ScreenClippingHost").FirstOrDefault();
-            if (clipProc is not null)
-            {
-                await clipProc.WaitForExitAsync();
-            }
+             var clipProc = Process.GetProcessesByName("ScreenClippingHost").FirstOrDefault();
+             if (clipProc is not null)
+             {
+                 await clipProc.WaitForExitAsync();
+             }
 
-            MainWindow.Instance.Restore();
-        });
+             MainWindow.Instance.Restore();
+         });
 
         public AsyncRelayCommand CaptureVideo => new(async () =>
-        {
-            Guard.IsNotNull(MainWindow.Instance, nameof(MainWindow.Instance));
+         {
+             Guard.IsNotNull(MainWindow.Instance, nameof(MainWindow.Instance));
 
-            var displayPicker = new DisplayPicker();
+             var displayPicker = new DisplayPicker();
 
-            var dialogResult = await this.ShowDialog("Select a display to capture", displayPicker);
-            if (dialogResult != ContentDialogResult.Primary)
-            {
-                return;
-            }
+             var dialogResult = await this.ShowDialog("Select a display to capture", displayPicker);
+             if (dialogResult != ContentDialogResult.Primary)
+             {
+                 return;
+             }
 
-            var selectedDisplay = displayPicker.SelectedDisplay;
+             var selectedDisplay = displayPicker.SelectedDisplay;
 
-            if (selectedDisplay is null)
-            {
-                return;
-            }
+             if (selectedDisplay is null)
+             {
+                 return;
+             }
 
-            var filename = $"{DateTime.Now:yyyyMMdd-HHmm-ss}.wmv";
+             var filename = $"{DateTime.Now:yyyyMMdd-HHmm-ss}.wmv";
 
-            var filePath = Path.Combine(AppFolders.RecordingsPath, filename);
+             var filePath = Path.Combine(AppFolders.RecordingsPath, filename);
 
-            var result = await ViewModel.StartVideoCapture(selectedDisplay, filePath);
+             var result = await ViewModel.StartVideoCapture(selectedDisplay, filePath);
 
-            if (!result.IsSuccess)
-            {
-                await this.Alert("Capture Error", "An error occurred while capturing the video.");
-                return;
-            }
+             if (!result.IsSuccess)
+             {
+                 await this.Alert("Capture Error", "An error occurred while capturing the video.");
+                 return;
+             }
 
-            var fileSavePicker = new FileSavePicker
-            {
-                SuggestedStartLocation = PickerLocationId.VideosLibrary,
-                SuggestedFileName = $"MediorCapture-{filename}"
-            };
-            fileSavePicker.FileTypeChoices.Add("Windows Media Video", new List<string>() { ".wmv" });
-            MainWindow.Instance.InitializeObject(fileSavePicker);
-            var saveResult = await fileSavePicker.PickSaveFileAsync();
-            if (saveResult is not null)
-            {
-                File.Copy(filePath, saveResult.Path, true);
-            }
-            File.Delete(filePath);
-        });
+             var fileSavePicker = new FileSavePicker
+             {
+                 SuggestedStartLocation = PickerLocationId.VideosLibrary,
+                 SuggestedFileName = $"MediorCapture-{filename}"
+             };
+             fileSavePicker.FileTypeChoices.Add("Windows Media Video", new List<string>() { ".wmv" });
+             MainWindow.Instance.InitializeObject(fileSavePicker);
+             var saveResult = await fileSavePicker.PickSaveFileAsync();
+             if (saveResult is not null)
+             {
+                 File.Copy(filePath, saveResult.Path, true);
+             }
+             File.Delete(filePath);
+         });
 
         public AsyncRelayCommand SaveImage => new(async () =>
-        {
-            try
-            {
-                var picker = new FileSavePicker
-                {
-                    SuggestedStartLocation = PickerLocationId.PicturesLibrary
-                };
-                picker.FileTypeChoices.Add("JPG Image", new List<string>() { ".jpg" });
-                MainWindow.Instance?.InitializeObject(picker);
-                var storageItem = await picker.PickSaveFileAsync();
-                if (storageItem is null)
-                {
-                    return;
-                }
+         {
+             try
+             {
+                 var picker = new FileSavePicker
+                 {
+                     SuggestedStartLocation = PickerLocationId.PicturesLibrary
+                 };
+                 picker.FileTypeChoices.Add("JPG Image", new List<string>() { ".jpg" });
+                 MainWindow.Instance?.InitializeObject(picker);
+                 var storageItem = await picker.PickSaveFileAsync();
+                 if (storageItem is null)
+                 {
+                     return;
+                 }
 
-                using var writeStream = await storageItem.OpenStreamForWriteAsync();
-                ViewModel.CurrentBitmap?.Save(writeStream, ImageFormat.Jpeg);
-                await this.Alert("Save Successful", "Screenshot saved.");
-            }
-            catch
-            {
-                await this.Alert("Save Failed", "Failed to save screenshot.  Make sure you have write access to the directory.");
-            }
-        });
+                 using var writeStream = await storageItem.OpenStreamForWriteAsync();
+                 await writeStream.WriteAsync(ViewModel.CurrentImageBytes.AsMemory());
+                 await this.Alert("Save Successful", "Screenshot saved.");
+             }
+             catch (Exception ex)
+             {
+                 _logger.LogError(ex, "Error while saving image.");
+                 await this.Alert("Save Failed", "Failed to save screenshot.  Make sure you have write access to the directory.");
+             }
+         });
 
-        public AsyncRelayCommand ShareImage => new(async() =>
-        {
-            // TODO
-            await this.Alert("Coming Later", "This will be implemented in a future update.");
-        });
+        public AsyncRelayCommand ShareImage => new(async () =>
+         {
+             try
+             {
+                 if (!EnvironmentHelper.IsDebug)
+                 {
+                     if (!_authService.IsSignedIn)
+                     {
+                         await this.Alert("Sign In Required", "You must be signed in and have a Pro subscription to use this feature.");
+                         return;
+                     }
+
+                     if (!_subscriptionLevel.IsSuccess)
+                     {
+                         await this.Alert("Account Issue", "Unable to check for active subscriptions.  Please try again later.");
+                         return;
+                     }
+                     if (_subscriptionLevel.Value == SubscriptionLevel.Free)
+                     {
+                         await this.Alert("Pro Subscription Required", "This feature requires a Pro subscription.");
+                         return;
+                     }
+                 }
+
+                 _messagePublisher.Messenger.Send(new IsLoadingMessage(true));
+                 var result = await ViewModel.ShareImage();
+                 _messagePublisher.Messenger.Send(new IsLoadingMessage(false));
+
+                 if (!result.IsSuccess)
+                 {
+                     await this.Alert("Upload Failed", result.Error ?? "");
+                     return;
+                 }
+
+                 var dialog = new TextBoxDialog()
+                 {
+                     IsReadOnly = true,
+                     CurrentText = result.Value ?? ""
+                 };
+
+                 var dialogResult = await this.ShowDialog("Image URL", dialog);
+             }
+             finally
+             {
+                 _messagePublisher.Messenger.Send(new IsLoadingMessage(false));
+             }
+         });
 
         public RelayCommand StopVideoCapture => new(() => ViewModel.StopVideoCapture());
-
         public ScreenCaptureViewModel ViewModel { get; } = Ioc.Default.GetRequiredService<ScreenCaptureViewModel>();
+
+        private async void Page_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        {
+            _subscriptionLevel = await _accountService.GetSubscriptionLevel();
+        }
 
         private void Page_Unloaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {

@@ -1,0 +1,25 @@
+﻿<UserControl
+    x:Class="Medior.Controls.TextBoxDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Medior.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <StackPanel Spacing="10">
+        <TextBox x:Name="CurrentTextBox" IsReadOnly="{x:Bind IsReadOnly}" Text="{x:Bind CurrentText}" />
+        <Button  Content="Copy"
+                 HorizontalAlignment="Right"
+                 Command="{x:Bind CopyUrl}" />
+
+        <TeachingTip x:Name="CopiedTip" 
+                         Title="Copied to clipboard."
+                         Target="{x:Bind CurrentTextBox, Mode=OneTime}"
+                         IsLightDismissEnabled="True">
+            <TeachingTip.IconSource>
+                <SymbolIconSource Symbol="Accept"></SymbolIconSource>
+            </TeachingTip.IconSource>
+        </TeachingTip>
+    </StackPanel>
+</UserControl>

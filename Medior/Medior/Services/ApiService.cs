@@ -3,8 +3,11 @@ using Medior.BaseTypes;
 using Medior.Models.Messages;
 using Medior.Utilities;
 using Microsoft.Extensions.Logging;
+using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Security.Authentication;
 using System.Threading.Tasks;
 
 namespace Medior.Services
@@ -12,6 +15,7 @@ namespace Medior.Services
     public interface IApiService
     {
         Task<Result<HttpStatusCode>> TestAuth();
+        Task<Result<string>> ShareImage(string filename, byte[] imageBytes);
     }
 
     public class ApiService : IApiService
@@ -45,19 +49,49 @@ namespace Medior.Services
             }
         }
 
+        public async Task<Result<string>> ShareImage(string filename, byte[] imageBytes)
+        {
+            try
+            {
+                Guard.IsNotNull(filename, nameof(filename));
+                Guard.IsNotNull(imageBytes, nameof(imageBytes));
+
+                using var client = await GetConfiguredClient();
+
+                var content = new MultipartFormDataContent();
+                var byteContent = new ByteArrayContent(imageBytes);
+                content.Add(byteContent, "formFile", filename);
+
+                var httpResult = await client.PostAsync($"{ApiEndpoint}/Files", content);
+
+                if (!httpResult.IsSuccessStatusCode)
+                {
+                    return Result.Fail<string>($"Upload failed with status code: {httpResult.StatusCode}");
+                }
+
+                var fileId = await httpResult.Content.ReadAsStringAsync();
+                return Result.Ok($"{ApiEndpoint}/Files/{fileId}");
+            }
+            catch (AuthenticationException ex)
+            {
+                return Result.Fail<string>(ex.Message ?? "");
+            }
+            catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.RequestEntityTooLarge) 
+            {
+                return Result.Fail<string>("The image size is too large.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Image upload failed.");
+                return Result.Fail<string>("Image upload failed.");
+            }
+        }
+
         public async Task<Result<HttpStatusCode>> TestAuth()
         {
             try
             {
-                var result = await GetConfiguredClient();
-                if (!result.IsSuccess)
-                {
-                    return Result.Fail<HttpStatusCode>(result.Error ?? "");
-                }
-
-                Guard.IsNotNull(result.Value, nameof(result.Value));
-
-                using var client = result.Value;
+                using var client = await GetConfiguredClient();
 
                 var httpResult = await client.GetAsync($"{ApiEndpoint}/Auth/Check");
 
@@ -71,6 +105,10 @@ namespace Medior.Services
 
                 _messagePublisher.Messenger.Send(new SignInStateMessage(true));
                 return Result.Ok(httpResult.StatusCode);
+            }
+            catch (AuthenticationException ex)
+            {
+                return Result.Fail<HttpStatusCode>(ex.Message ?? "");
             }
             catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
             {
@@ -91,17 +129,17 @@ namespace Medior.Services
             return Result.Fail<HttpStatusCode>("An unknown error occurred.");
         }
 
-        private async Task<Result<HttpClient>> GetConfiguredClient()
+        private async Task<HttpClient> GetConfiguredClient()
         {
             var result = await _authService.GetTokenSilently(IntPtr.Zero, false);
             if (!result.IsSuccess)
             {
-                return Result.Fail<HttpClient>("Authentication failed.");
+                throw new AuthenticationException("Authentication failed.");
             }
 
             var client = _httpFactory.CreateClient();
             client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Bearer {result.Value?.AccessToken}");
-            return Result.Ok(client);
+            return client;
         }
     }
 }
