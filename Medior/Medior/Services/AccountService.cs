@@ -1,5 +1,6 @@
 ﻿using Medior.BaseTypes;
 using Medior.Enums;
+using Medior.Models.Messages;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using Windows.Services.Store;
@@ -11,15 +12,20 @@ namespace Medior.Services
     {
         Task<User> GetCurrentUser();
         Task<Result<SubscriptionLevel>> GetSubscriptionLevel();
+        Task<Result> PurchaseProSubscription();
     }
 
     public class AccountService : IAccountService
     {
-        private readonly string _pro1Sku = "Pro1";
+        private readonly IMessagePublisher _messagePublisher;
         private readonly ILogger<AccountService> _logger;
-
-        public AccountService(ILogger<AccountService> logger)
+        private readonly string _pro1ProductId = "9NGBJCSW13PW";
+        private readonly string _pro1Sku = "Pro1";
+        public AccountService(
+            IMessagePublisher messagePublisher,
+            ILogger<AccountService> logger)
         {
+            _messagePublisher = messagePublisher;
             _logger = logger;
         }
 
@@ -60,6 +66,36 @@ namespace Medior.Services
                 _logger.LogError(ex, "Error while checking subscription level.");
                 return Result.Fail<SubscriptionLevel>("Failed to get subscription information.");
             }
+        }
+
+        public async Task<Result> PurchaseProSubscription()
+        {
+            var context = StoreContext.GetDefault();
+            var result = await context.GetAssociatedStoreProductsAsync(new string[] { "Durable" });
+
+            if (result.ExtendedError is not null)
+            {
+                _logger.LogError(result.ExtendedError, "Error getting store products.");
+                return Result.Fail("Unable to communicate with Windows Store.");
+            }
+
+            var product = result.Products?.Values?.FirstOrDefault(x => x.StoreId == _pro1ProductId);
+
+            if (product is null)
+            {
+                _logger.LogError("Could not find product in Windows Store.");
+                return Result.Fail("Unable to find item in the Windows Store.");
+            }
+
+            var purchaseResult = await product.RequestPurchaseAsync();
+            if (purchaseResult.Status != StorePurchaseStatus.Succeeded)
+            {
+                _logger.LogError(result.ExtendedError, "Error getting store products.");
+                return Result.Fail("Unable to communicate with Windows Store.");
+            }
+
+            _messagePublisher.Messenger.Send(new SubscriptionMessage(SubscriptionLevel.Pro1));
+            return Result.Ok();
         }
     }
 }

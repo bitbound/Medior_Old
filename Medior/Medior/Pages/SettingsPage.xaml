@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+    x:DefaultBindMode="OneWay"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Page.Resources>
@@ -18,29 +19,46 @@
 
     <StackPanel Margin="10" Spacing="5">
         <TextBlock Text="Account" Style="{StaticResource HeaderStyle}" />
-        
-        <StackPanel Orientation="Horizontal"
-                    Visibility="{x:Bind ViewModel.IsSignedIn}">
+
+        <StackPanel Visibility="{x:Bind ViewModel.IsSignedIn}">
+            <TextBlock Text="Account Name" FontWeight="Bold" />
             <TextBlock>
-                <Run Text="Hello, " />
                 <Run Text="{x:Bind ViewModel.Email}" />
-            </TextBlock>
-            <TextBlock Margin="10,0,0,0" VerticalAlignment="Center">
-                <Hyperlink FontSize="12">
+                <Hyperlink FontSize="12" Click="SignOutHyperlink_Click">
                     Sign Out
                 </Hyperlink>
             </TextBlock>
+
         </StackPanel>
 
-        <StackPanel Orientation="Horizontal"
-                    Visibility="{x:Bind ViewModel.IsSignedIn, Converter={StaticResource ReverseBoolToVisibilityConverter}}">
-            
-            <TextBlock Text="You are signed out." />
-            <TextBlock Margin="10,0,0,0" VerticalAlignment="Center">
-                <Hyperlink FontSize="12">
+        <TextBlock Visibility="{x:Bind ViewModel.IsSignedIn, Converter={StaticResource ReverseBoolToVisibilityConverter}}">
+                <Run Text="You are signed out." />
+                <Hyperlink FontSize="12" Click="SignInHyperlink_Click">
                     Sign In
                 </Hyperlink>
-            </TextBlock>
+        </TextBlock>
+
+        <StackPanel>
+            <TextBlock Text="Subscription Level" FontWeight="Bold" />
+            <TextBlock Text="{x:Bind ViewModel.SubscriptionLevel}" />
+        </StackPanel>
+
+        <StackPanel Visibility="{x:Bind ViewModel.UpgradeVisibility}">
+            <Button Content="Upgrade to Pro" Margin="0,10,0,0" Command="{x:Bind UpgradeToPro}" />
+
+            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                <TextBox Text="{x:Bind ViewModel.UnlockCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         Width="200"
+                         VerticalAlignment="Center"
+                         PlaceholderText="Unlock code for dev/test." 
+                         PreviewKeyDown="UnlockCodeTextBox_PreviewKeyDown"
+                         TextChanged="UnlockCodeTextBox_TextChanged"/>
+                
+                <Button Content="Submit" 
+                        Margin="10,0,0,0"
+                        VerticalAlignment="Center"
+                        Command="{x:Bind SubmitUnlockCode}" />
+            </StackPanel>
         </StackPanel>
 
         <TextBlock Text="Profile" Style="{StaticResource HeaderStyle}" />
@@ -50,8 +68,8 @@
                       IsEnabled="False" />
         
         <StackPanel Orientation="Horizontal" Spacing="10">
-            <Button Content="Import" />
-            <Button Content="Export" />
+            <Button Content="Import" IsEnabled="False" ToolTipService.ToolTip="Coming soon." />
+            <Button Content="Export" IsEnabled="False" ToolTipService.ToolTip="Coming soon." />
         </StackPanel>
         
     </StackPanel>

@@ -24,11 +24,11 @@ namespace Medior.Services
         private static readonly string _policyResetPassword = "b2c_1_reset_password";
         private static readonly string _policySignUpSignIn = "b2c_1_signup_signin";
         private static readonly string _tenantName = "mediorapp";
+        private static AuthenticationResult? _lastAuthResult;
         private readonly IChrono _chrono;
         private readonly IMessagePublisher _messagePublisher;
         private readonly ILogger<AuthService> _logger;
         private readonly IPublicClientApplication _publicClientApp;
-        private AuthenticationResult? _lastAuthResult;
 
         public AuthService(
             IMessagePublisher messagePublisher,
@@ -58,7 +58,7 @@ namespace Medior.Services
             ?.Value ?? string.Empty;
 
         public bool IsSignedIn =>
-                    _lastAuthResult?.AccessToken is not null &&
+            _lastAuthResult?.AccessToken is not null &&
             _lastAuthResult.ExpiresOn > _chrono.Now;
         private string[] ApiScopes => new[] { $"https://{Tenant}/medior-api/app.user" };
         private string AuthorityBase => $"https://{AzureAdB2CHostname}/tfp/{Tenant}/";

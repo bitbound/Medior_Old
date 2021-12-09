@@ -14,17 +14,18 @@ namespace Medior.Services
 {
     public interface IApiService
     {
-        Task<Result<HttpStatusCode>> TestAuth();
         Task<Result<string>> ShareImage(string filename, byte[] imageBytes);
+
+        Task<Result<HttpStatusCode>> TestAuth();
+        Task<Result> TrySignIn(IntPtr hwnd);
     }
 
     public class ApiService : IApiService
     {
-        private readonly ILogger<ApiService> _logger;
-        private readonly IMessagePublisher _messagePublisher;
         private readonly IAuthService _authService;
         private readonly IHttpClientFactory _httpFactory;
-
+        private readonly ILogger<ApiService> _logger;
+        private readonly IMessagePublisher _messagePublisher;
         public ApiService(
             IAuthService authService,
             IMessagePublisher messagePublisher,
@@ -107,7 +108,7 @@ namespace Medior.Services
                     _logger.LogWarning("Auth check failed. Sign in required.");
                     _authService.SignOut();
                     _messagePublisher.Messenger.Send(new SignInStateMessage(false));
-                    return Result.Fail<HttpStatusCode>("Auth check failed.  Sign-in required.");
+                    return Result.Fail<HttpStatusCode>("Session has expired.  Sign-in required.");
                 }
 
                 _messagePublisher.Messenger.Send(new SignInStateMessage(true));
@@ -134,6 +135,42 @@ namespace Medior.Services
             }
 
             return Result.Fail<HttpStatusCode>("An unknown error occurred.");
+        }
+
+        public async Task<Result> TrySignIn(IntPtr hwnd)
+        {
+            try
+            {
+                _messagePublisher.Messenger.Send(new IsLoadingMessage(true));
+
+                var result = await _authService.SignInInteractive(hwnd);
+                if (result.IsSuccess)
+                {
+                    var authResult = await TestAuth();
+                    if (!authResult.IsSuccess)
+                    {
+                        return Result.Fail(authResult.Error ?? "Unknown error occurred.");
+                    }
+
+                    if (authResult.Value == System.Net.HttpStatusCode.OK)
+                    {
+                        return Result.Ok();
+                    }
+
+                    if (authResult.Value == System.Net.HttpStatusCode.Unauthorized)
+                    {
+                        return Result.Fail("Not authorized.");
+                    }
+
+                    return Result.Fail($"Auth token check returned response code: {authResult.Value}");
+                }
+
+                return Result.Fail("Sign-in process failed.");
+            }
+            finally
+            {
+                _messagePublisher.Messenger.Send(new IsLoadingMessage(false));
+            }
         }
 
         private async Task<HttpClient> GetConfiguredClient()

@@ -2,6 +2,7 @@
 using Medior.AppModules.ScreenCapture.Services;
 using Medior.BaseTypes;
 using Medior.Models;
+using Medior.Models.Messages;
 using Medior.Services;
 using Medior.Utilities;
 using Microsoft.Extensions.Logging;
@@ -21,6 +22,7 @@ namespace Medior.ViewModels
     {
         private readonly IApiService _apiService;
         private readonly IChrono _chrono;
+        private readonly IMessagePublisher _messagePublisher;
         private readonly IFileSystem _fileSystem;
         private readonly ILogger<ScreenCaptureViewModel> _logger;
 
@@ -39,6 +41,7 @@ namespace Medior.ViewModels
             IScreenRecorder screenRecorder,
             IApiService apiService,
             IChrono chrono,
+            IMessagePublisher messagePublisher,
             ILogger<ScreenCaptureViewModel> logger)
         {
             _screenRecorder = screenRecorder;
@@ -46,7 +49,13 @@ namespace Medior.ViewModels
             _fileSystem = fileSystem;
             _apiService = apiService;
             _chrono = chrono;
+            _messagePublisher = messagePublisher;
             _logger = logger;
+
+            _messagePublisher.Messenger.Register<SignInStateMessage>(this, (r, m) =>
+            {
+                IsSignedIn = m.Value;
+            });
         }
 
         public BitmapImage? CurrentImage

@@ -73,15 +73,20 @@ namespace Medior.Extensions
             return (result, input.Text);
         }
 
-        public static async Task<ContentDialogResult> ShowDialog(this UIElement self, string title, UIElement content)
+        public static async Task<ContentDialogResult> ShowDialog(
+            this UIElement self, 
+            string title, 
+            UIElement content,
+            string? primaryButtonText = "OK",
+            string? closeButtonText = "Cancel")
         {
             var dialog = new ContentDialog
             {
                 Title = title,
                 XamlRoot = self.XamlRoot,
                 Content = content,
-                PrimaryButtonText = "Ok",
-                CloseButtonText = "Cancel",
+                PrimaryButtonText = primaryButtonText,
+                CloseButtonText = closeButtonText,
                 DefaultButton = ContentDialogButton.Primary
             };
             return await dialog.ShowAsync();

@@ -144,43 +144,17 @@ namespace Medior.ViewModels
 
         public async Task<Result> SignUpSignIn(IntPtr windowHandle)
         {
-            try
-            {
-                IsLoading = true;
-                var result = await _authService.SignInInteractive(windowHandle);
-                if (result.IsSuccess)
-                {
-                    var authResult = await _apiService.TestAuth();
-                    if (!authResult.IsSuccess)
-                    {
-                        return Result.Fail(authResult.Error ?? "Unknown error occurred.");
-                    }
-
-                    if (authResult.Value == System.Net.HttpStatusCode.OK)
-                    {
-                        return Result.Ok();
-                    }
-
-                    if (authResult.Value == System.Net.HttpStatusCode.Unauthorized)
-                    {
-                        return Result.Fail("Not authorized.");
-                    }
-
-                    return Result.Fail($"Auth token check returned response code: {authResult.Value}");
-                }
-
-                return Result.Fail("Sign-in process failed.");
-            }
-            finally
-            {
-                IsLoading = false;
-            }
+            return await _apiService.TrySignIn(windowHandle);
         }
 
         private void RegisterMessageHandlers()
         {
             _messagePublisher.Messenger.Register<SignInStateMessage>(this, 
-                (r,m) => IsSignedIn = m.Value);
+                (r,m) =>
+                {
+                    IsSignedIn = m.Value;
+                    IsGuestMode = false;
+                });
             _messagePublisher.Messenger.Register<IsLoadingMessage>(this,
                 (r, m) => IsLoading = m.Value);
         }

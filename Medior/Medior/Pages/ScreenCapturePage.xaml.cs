@@ -165,10 +165,10 @@ namespace Medior.Pages
                  var dialog = new TextBoxDialog()
                  {
                      IsReadOnly = true,
-                     CurrentText = result.Value ?? ""
+                     CurrentText = result.Value ?? "",
                  };
 
-                 var dialogResult = await this.ShowDialog("Image URL", dialog);
+                 var dialogResult = await this.ShowDialog("Image URL", dialog, "OK", null);
              }
              finally
              {
