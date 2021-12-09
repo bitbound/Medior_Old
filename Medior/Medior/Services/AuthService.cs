@@ -54,8 +54,7 @@ namespace Medior.Services
 
         public string Email => _lastAuthResult
             ?.ClaimsPrincipal
-            ?.Claims
-            ?.FirstOrDefault(x => x.Type == "emails")
+            ?.FindFirst("emails")
             ?.Value ?? string.Empty;
 
         public bool IsSignedIn =>

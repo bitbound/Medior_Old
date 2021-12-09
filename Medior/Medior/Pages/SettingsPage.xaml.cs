@@ -1,4 +1,5 @@
-﻿using Medior.ViewModels;
+﻿using Medior.Services;
+using Medior.ViewModels;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 

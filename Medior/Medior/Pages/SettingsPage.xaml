@@ -15,10 +15,44 @@
             <Setter Property="Margin" Value="0,10,0,5" />
         </Style>
     </Page.Resources>
-    <Grid Padding="10">
-        <StackPanel>
-            
-            
+
+    <StackPanel Margin="10" Spacing="5">
+        <TextBlock Text="Account" Style="{StaticResource HeaderStyle}" />
+        
+        <StackPanel Orientation="Horizontal"
+                    Visibility="{x:Bind ViewModel.IsSignedIn}">
+            <TextBlock>
+                <Run Text="Hello, " />
+                <Run Text="{x:Bind ViewModel.Email}" />
+            </TextBlock>
+            <TextBlock Margin="10,0,0,0" VerticalAlignment="Center">
+                <Hyperlink FontSize="12">
+                    Sign Out
+                </Hyperlink>
+            </TextBlock>
         </StackPanel>
-    </Grid>
+
+        <StackPanel Orientation="Horizontal"
+                    Visibility="{x:Bind ViewModel.IsSignedIn, Converter={StaticResource ReverseBoolToVisibilityConverter}}">
+            
+            <TextBlock Text="You are signed out." />
+            <TextBlock Margin="10,0,0,0" VerticalAlignment="Center">
+                <Hyperlink FontSize="12">
+                    Sign In
+                </Hyperlink>
+            </TextBlock>
+        </StackPanel>
+
+        <TextBlock Text="Profile" Style="{StaticResource HeaderStyle}" />
+
+        <ToggleSwitch OffContent="Cloud sync (coming soon)"
+                      OnContent="Cloud sync (coming soon)"
+                      IsEnabled="False" />
+        
+        <StackPanel Orientation="Horizontal" Spacing="10">
+            <Button Content="Import" />
+            <Button Content="Export" />
+        </StackPanel>
+        
+    </StackPanel>
 </Page>

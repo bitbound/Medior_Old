@@ -7,17 +7,15 @@ namespace Medior.BaseTypes
     {
         private bool _isSignedIn;
 
-        public void InvokePropertyChanged(string propertyName)
-        {
-            OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
-        }
-
-        
-
         public virtual bool IsSignedIn
         {
             get => _isSignedIn;
             set => SetProperty(ref _isSignedIn, value);
+        }
+
+        public void InvokePropertyChanged(string propertyName)
+        {
+            OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
         }
     }
 }
