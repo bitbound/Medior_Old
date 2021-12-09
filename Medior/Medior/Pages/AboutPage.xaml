@@ -31,12 +31,6 @@
                 </Hyperlink>
             </TextBlock>
             <TextBlock>
-                <Run Text="Donate (things are expensive):" />
-                <Hyperlink Click="ContactHyperlink_Click">
-                    https://paypal.me/translucency
-                </Hyperlink>
-            </TextBlock>
-            <TextBlock>
                 <Run>Main icon made by</Run>
                 <Hyperlink NavigateUri="https://www.flaticon.com/authors/nikita-golubev">
                     Nikita Golubev

@@ -41,11 +41,18 @@ namespace Medior.Services
         {
             get
             {
+                var args = Environment.GetCommandLineArgs().ToList();
+                var index = args.IndexOf("--medior-api");
+                if (index > -1)
+                {
+                    return args[index + 1];
+                }
+
                 if (EnvironmentHelper.IsDebug)
                 {
                     return "https://localhost:7282";
                 }
-                return "https://api.medior.com";
+                return "https://medior-api.lucency.co";
             }
         }
 
