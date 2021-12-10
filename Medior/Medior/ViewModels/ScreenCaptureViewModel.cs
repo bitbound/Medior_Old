@@ -22,10 +22,9 @@ namespace Medior.ViewModels
     {
         private readonly IApiService _apiService;
         private readonly IChrono _chrono;
-        private readonly IMessagePublisher _messagePublisher;
         private readonly IFileSystem _fileSystem;
         private readonly ILogger<ScreenCaptureViewModel> _logger;
-
+        private readonly IMessagePublisher _messagePublisher;
         private readonly IProcessEx _processEx;
 
         private readonly IScreenRecorder _screenRecorder;
@@ -52,10 +51,7 @@ namespace Medior.ViewModels
             _messagePublisher = messagePublisher;
             _logger = logger;
 
-            _messagePublisher.Messenger.Register<SignInStateMessage>(this, (r, m) =>
-            {
-                IsSignedIn = m.Value;
-            });
+            RegisterSubscriptions();
         }
 
         public BitmapImage? CurrentImage
@@ -88,9 +84,17 @@ namespace Medior.ViewModels
                 Visibility.Collapsed;
         }
 
-        public void RegisterSubscriptions()
+        public void RegisterClipboardChangedHandler()
         {
             Clipboard.ContentChanged += Clipboard_ContentChanged;
+        }
+
+        public void RegisterSubscriptions()
+        {
+            _messagePublisher.Messenger.Register<SignInStateMessage>(this, (r, m) =>
+            {
+                IsSignedIn = m.Value;
+            });
         }
         public async Task<Result<string>> ShareImage()
         {
@@ -164,7 +168,7 @@ namespace Medior.ViewModels
             _cts?.Cancel();
         }
 
-        public void UnregisterSubscriptions()
+        public void UnregisterClipboardChangeHandler()
         {
             Clipboard.ContentChanged -= Clipboard_ContentChanged;
         }

@@ -35,7 +35,7 @@ namespace Medior.Pages
         public ScreenCapturePage()
         {
             InitializeComponent();
-            ViewModel.RegisterSubscriptions();
+            ViewModel.RegisterClipboardChangedHandler();
         }
 
         public AsyncRelayCommand CaptureScreenShot => new(async () =>
@@ -186,7 +186,7 @@ namespace Medior.Pages
 
         private void Page_Unloaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
-            ViewModel.UnregisterSubscriptions();
+            ViewModel.UnregisterClipboardChangeHandler();
         }
     }
 }

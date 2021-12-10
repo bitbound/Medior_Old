@@ -52,7 +52,12 @@ namespace Medior.ViewModels
 
         public async Task<Result> UpgradeToPro()
         {
-            return  await _accountService.PurchaseProSubscription();
+            var result = await _accountService.PurchaseProSubscription();
+            if (result.IsSuccess)
+            {
+                _messagePublisher.Messenger.Send(new SubscriptionMessage(SubscriptionLevel.Pro1));
+            }
+            return result;
         }
 
         public string Email => _authService.Email;

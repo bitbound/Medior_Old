@@ -17,7 +17,6 @@ namespace Medior.Pages
     /// </summary>
     public sealed partial class SettingsPage : Page
     {
-        private RelayCommand? _submitUnlockCode;
 
         public SettingsPage()
         {
@@ -26,29 +25,12 @@ namespace Medior.Pages
 
         public SettingsViewModel ViewModel { get; } = Ioc.Default.GetRequiredService<SettingsViewModel>();
 
-        private RelayCommand SubmitUnlockCode
-        {
-            get
-            {
-                if (_submitUnlockCode is null)
-                {
-                    _submitUnlockCode = new RelayCommand(() =>
-                    {
-                        // TODO;
-                    },
-                    () => !string.IsNullOrWhiteSpace(ViewModel.UnlockCode));
-                }
-                return _submitUnlockCode;
-            }
-        }
-
         private AsyncRelayCommand UpgradeToPro => new(async () =>
         {
             var result = await ViewModel.UpgradeToPro();
             if (result.IsSuccess)
             {
                 await this.Alert("Purchase Success", "Subscription purchase completed successfully!");
-                // TODO: Publish message of subscription change.
             }
             else
             {
@@ -70,18 +52,6 @@ namespace Medior.Pages
         private void SignOutHyperlink_Click(Microsoft.UI.Xaml.Documents.Hyperlink sender, Microsoft.UI.Xaml.Documents.HyperlinkClickEventArgs args)
         {
             ViewModel.SignOut();
-        }
-        private async void UnlockCodeTextBox_PreviewKeyDown(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs e)
-        {
-            if (e.Key == Windows.System.VirtualKey.Enter)
-            {
-                await UpgradeToPro.ExecuteAsync(null);
-            }
-        }
-
-        private void UnlockCodeTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            SubmitUnlockCode?.NotifyCanExecuteChanged();
         }
     }
 }

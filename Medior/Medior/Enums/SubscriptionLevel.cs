@@ -3,6 +3,7 @@
     public enum SubscriptionLevel
     {
         Free,
-        Pro1
+        Pro1,
+        DevUnlock
     }
 }

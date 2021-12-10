@@ -43,24 +43,8 @@
             <TextBlock Text="{x:Bind ViewModel.SubscriptionLevel}" />
         </StackPanel>
 
-        <StackPanel Visibility="{x:Bind ViewModel.UpgradeVisibility}">
-            <Button Content="Upgrade to Pro" Margin="0,10,0,0" Command="{x:Bind UpgradeToPro}" />
-
-            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                <TextBox Text="{x:Bind ViewModel.UnlockCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                         Width="200"
-                         VerticalAlignment="Center"
-                         PlaceholderText="Unlock code for dev/test." 
-                         PreviewKeyDown="UnlockCodeTextBox_PreviewKeyDown"
-                         TextChanged="UnlockCodeTextBox_TextChanged"/>
-                
-                <Button Content="Submit" 
-                        Margin="10,0,0,0"
-                        VerticalAlignment="Center"
-                        Command="{x:Bind SubmitUnlockCode}" />
-            </StackPanel>
-        </StackPanel>
-
+        <Button Content="Upgrade to Pro" Margin="0,10,0,0" Command="{x:Bind UpgradeToPro}" Visibility="{x:Bind ViewModel.UpgradeVisibility}" />
+        
         <TextBlock Text="Profile" Style="{StaticResource HeaderStyle}" />
 
         <ToggleSwitch OffContent="Cloud sync (coming soon)"
