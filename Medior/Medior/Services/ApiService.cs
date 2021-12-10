@@ -43,7 +43,7 @@ namespace Medior.Services
             get
             {
                 var args = Environment.GetCommandLineArgs().ToList();
-                var index = args.IndexOf("--medior-api");
+                var index = args.IndexOf("--api");
                 if (index > -1)
                 {
                     return args[index + 1];
