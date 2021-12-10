@@ -4,6 +4,7 @@
 using System.IO;
 using System.Security.Cryptography;
 using Microsoft.Identity.Client;
+using Windows.Storage;
 
 namespace Medior.Utilities
 {
@@ -12,7 +13,7 @@ namespace Medior.Utilities
         /// <summary>
         /// Path to the token cache
         /// </summary>
-        public static readonly string CacheFilePath = System.Reflection.Assembly.GetExecutingAssembly().Location + ".msalcache.bin";
+        public static readonly string CacheFilePath = Path.Combine(ApplicationData.Current.LocalFolder.Path, ".msalcache.bin");
 
         private static readonly object FileLock = new();
 
