@@ -25,19 +25,6 @@ namespace Medior.Pages
 
         public SettingsViewModel ViewModel { get; } = Ioc.Default.GetRequiredService<SettingsViewModel>();
 
-        private AsyncRelayCommand UpgradeToPro => new(async () =>
-        {
-            var result = await ViewModel.UpgradeToPro();
-            if (result.IsSuccess)
-            {
-                await this.Alert("Purchase Success", "Subscription purchase completed successfully!");
-            }
-            else
-            {
-                await this.Alert("Purchase Failed", "Subscription purchase failed.  Please check your network connection or try again later.");
-            }
-        });
-
         private async void SignInHyperlink_Click(Microsoft.UI.Xaml.Documents.Hyperlink sender, Microsoft.UI.Xaml.Documents.HyperlinkClickEventArgs args)
         {
             Guard.IsNotNull(MainWindow.Instance, nameof(MainWindow.Instance));

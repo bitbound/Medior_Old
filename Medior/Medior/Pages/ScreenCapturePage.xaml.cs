@@ -27,10 +27,8 @@ namespace Medior.Pages
     public sealed partial class ScreenCapturePage : Page
     {
         private readonly ILogger<ScreenCapturePage> _logger = Ioc.Default.GetRequiredService<ILogger<ScreenCapturePage>>();
-        private readonly IAccountService _accountService = Ioc.Default.GetRequiredService<IAccountService>();
         private readonly IMessagePublisher _messagePublisher = Ioc.Default.GetRequiredService<IMessagePublisher>();
         private readonly IAuthService _authService = Ioc.Default.GetRequiredService<IAuthService>();
-        private Result<SubscriptionLevel> _subscriptionLevel = Result.Ok(SubscriptionLevel.Free);
 
         public ScreenCapturePage()
         {
@@ -136,18 +134,7 @@ namespace Medior.Pages
                  {
                      if (!_authService.IsSignedIn)
                      {
-                         await this.Alert("Sign In Required", "You must be signed in and have a Pro subscription to use this feature.");
-                         return;
-                     }
-
-                     if (!_subscriptionLevel.IsSuccess)
-                     {
-                         await this.Alert("Account Issue", "Unable to check for active subscriptions.  Please try again later.");
-                         return;
-                     }
-                     if (_subscriptionLevel.Value == SubscriptionLevel.Free)
-                     {
-                         await this.Alert("Pro Subscription Required", "This feature requires a Pro subscription.");
+                         await this.Alert("Sign In Required", "You must be signed in to use this feature.");
                          return;
                      }
                  }
@@ -178,11 +165,6 @@ namespace Medior.Pages
 
         public RelayCommand StopVideoCapture => new(() => ViewModel.StopVideoCapture());
         public ScreenCaptureViewModel ViewModel { get; } = Ioc.Default.GetRequiredService<ScreenCaptureViewModel>();
-
-        private async void Page_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
-        {
-            _subscriptionLevel = await _accountService.GetSubscriptionLevel();
-        }
 
         private void Page_Unloaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {

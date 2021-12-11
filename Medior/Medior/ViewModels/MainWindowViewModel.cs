@@ -19,7 +19,6 @@ namespace Medior.ViewModels
         private bool _isLoading = true;
         private bool _isSignedIn;
         private AppModule? _selectedModule;
-        private SubscriptionLevel _subscriptionLevel;
         public MainWindowViewModel(
             IAppModuleStore appModuleStore,
             IAuthService authService,
@@ -85,12 +84,6 @@ namespace Medior.ViewModels
             Label = "Settings",
             PageName = "SettingsPage"
         };
-
-        public SubscriptionLevel SubscriptionLevel
-        {
-            get => _subscriptionLevel;
-            set => SetProperty(ref _subscriptionLevel, value);
-        }
 
         public void FilterModules(string searchText)
         {

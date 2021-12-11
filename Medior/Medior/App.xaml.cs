@@ -36,7 +36,7 @@ namespace Medior
         /// will be used such as when the application is launched to open a specific file.
         /// </summary>
         /// <param name="args">Details about the launch request and process.</param>
-        protected override async void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
+        protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
             UnhandledException += App_UnhandledException;
 
@@ -47,15 +47,10 @@ namespace Medior
                 // TODO: Handle Uri.
             }
 
-            var accountService = Ioc.Default.GetRequiredService<IAccountService>();
-            var subResult = await accountService.GetSubscriptionLevel();
-
             _mainWindow = new MainWindow
             {
                 ExtendsContentIntoTitleBar = true
             };
-
-            _mainWindow.ViewModel.SubscriptionLevel = subResult.Value;
 
             _mainWindow.SetTitleBar(_mainWindow.CustomTitleBar);
             

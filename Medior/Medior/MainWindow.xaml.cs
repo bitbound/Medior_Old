@@ -19,7 +19,6 @@ namespace Medior
             Instance = this;
 
             Title = "Medior";
-            this.SetStoreContext();
 
             InitializeComponent();            
         }

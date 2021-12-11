@@ -40,7 +40,6 @@ namespace Medior
             collection.AddSingleton<IDispatcherService, DispatcherService>();
             collection.AddSingleton<IAppSettings, AppSettings>();
             collection.AddSingleton<IAuthService, AuthService>();
-            collection.AddSingleton<IAccountService, AccountService>();
             collection.AddSingleton<ISorterState>(new SorterState()
             {
                 ConfigPath = string.Empty,

@@ -38,13 +38,6 @@
                 </Hyperlink>
         </TextBlock>
 
-        <StackPanel>
-            <TextBlock Text="Subscription Level" FontWeight="Bold" />
-            <TextBlock Text="{x:Bind ViewModel.SubscriptionLevel}" />
-        </StackPanel>
-
-        <Button Content="Upgrade to Pro" Margin="0,10,0,0" Command="{x:Bind UpgradeToPro}" Visibility="{x:Bind ViewModel.UpgradeVisibility}" />
-        
         <TextBlock Text="Profile" Style="{StaticResource HeaderStyle}" />
 
         <ToggleSwitch OffContent="Cloud sync (coming soon)"
