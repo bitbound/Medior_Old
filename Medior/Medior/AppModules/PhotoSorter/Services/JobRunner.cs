@@ -61,6 +61,8 @@ namespace Medior.AppModules.PhotoSorter.Services
 
                 _logger.LogInformation("Starting job run: {job}", JsonSerializer.Serialize(job));
 
+                var fileList = new List<string>();
+
                 for (var extIndex = 0; extIndex < job.IncludeExtensions.Length; extIndex++)
                 {
                     if (cancellationToken.IsCancellationRequested)
@@ -75,26 +77,28 @@ namespace Medior.AppModules.PhotoSorter.Services
                         .Where(file => !job.ExcludeExtensions.Any(ext => ext.Equals(Path.GetExtension(file)[1..], StringComparison.OrdinalIgnoreCase)))
                         .ToArray();
 
-                    for (var fileIndex = 0; fileIndex < files.Length; fileIndex++)
+                    fileList.AddRange(files);
+                }
+
+
+                for (var fileIndex = 0; fileIndex < fileList.Count; fileIndex++)
+                {
+                    var file = fileList[fileIndex];
+
+                    CurrentTaskChanged?.Invoke(this, $"File: {Path.GetFileName(file)}");
+
+                    if (cancellationToken.IsCancellationRequested)
                     {
-                        var file = files[fileIndex];
-
-                        CurrentTaskChanged?.Invoke(this, $"Extension: {extension}. File: {Path.GetFileName(file)}");
-
-                        if (cancellationToken.IsCancellationRequested)
-                        {
-                            _logger.LogInformation("Job run cancelled.");
-                            break;
-                        }
-
-                        var result = await PerformFileOperation(job, dryRun, file);
-                        jobReport.Results.Add(result);
-
-                        var progress = extIndex / (double)job.IncludeExtensions.Length * 100 +
-                            1 / (double)job.IncludeExtensions.Length * (fileIndex + 1) / files.Length * 100;
-
-                        ProgressChanged?.Invoke(this, new ProgressChangedEventArgs((int)progress, null));
+                        _logger.LogInformation("Job run cancelled.");
+                        break;
                     }
+
+                    var result = await PerformFileOperation(job, dryRun, file);
+                    jobReport.Results.Add(result);
+
+                    var progress = (double)fileIndex / fileList.Count * 100;
+
+                    ProgressChanged?.Invoke(this, new ProgressChangedEventArgs((int)progress, null));
                 }
             }
             catch (Exception ex)

@@ -38,7 +38,7 @@ namespace Medior
             collection.AddSingleton<IAppModuleStore, AppModuleStore>();
             collection.AddSingleton<IChrono, Chrono>();
             collection.AddSingleton<IDispatcherService, DispatcherService>();
-            collection.AddSingleton<IAppSettings, AppSettings>();
+            collection.AddSingleton<IProfileService, ProfileService>();
             collection.AddSingleton<IAuthService, AuthService>();
             collection.AddSingleton<ISorterState>(new SorterState()
             {

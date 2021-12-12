@@ -13,12 +13,12 @@ namespace Medior.Services
     {
         public Process Start(string fileName)
         {
-            return Process.Start("explorer.exe");
+            return Process.Start(fileName);
         }
 
         public Process Start(string fileName, string arguments)
         {
-            return Process.Start("explorer.exe", arguments);
+            return Process.Start(fileName, arguments);
         }
 
         public Process? Start(ProcessStartInfo startInfo)

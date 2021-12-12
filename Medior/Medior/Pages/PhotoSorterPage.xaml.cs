@@ -21,7 +21,7 @@ namespace Medior.Pages
     {
         private AsyncRelayCommand? _deleteJob;
         private AsyncRelayCommand? _renameJob;
-        private RelayCommand? _saveJob;
+        private AsyncRelayCommand? _saveJob;
         private AsyncRelayCommand? _newJob;
         private AsyncRelayCommand? _showDestinationTransform;
         private AsyncRelayCommand? _startJob;
@@ -75,7 +75,7 @@ namespace Medior.Pages
                                     await this.Alert("Name Required", "You must specify a name.");
                                     return;
                                 }
-                                ViewModel.CreateNewSortJob(sortJobName.Trim());
+                                await ViewModel.CreateNewSortJob(sortJobName.Trim());
                             }
                         }
                     );
@@ -98,7 +98,7 @@ namespace Medior.Pages
 
                             if (result == ContentDialogResult.Primary)
                             {
-                                ViewModel.DeleteSortJob();
+                                await ViewModel.DeleteSortJob();
                             }
                         },
                         () => ViewModel.SelectedJob is not null
@@ -129,7 +129,7 @@ namespace Medior.Pages
                                     await this.Alert("Name Required", "You must specify a name.");
                                     return;
                                 }
-                                ViewModel.RenameSortJob(newName.Trim());
+                                await ViewModel.RenameSortJob(newName.Trim());
                             }
                         },
                         () => ViewModel.SelectedJob is not null
@@ -139,16 +139,16 @@ namespace Medior.Pages
             }
         }
 
-        public RelayCommand SaveJob
+        public AsyncRelayCommand SaveJob
         {
             get
             {
                 if (_saveJob is null)
                 {
                     _saveJob = new(
-                        () =>
+                        async () =>
                         {
-                            ViewModel.SaveJob();
+                            await ViewModel.SaveJob();
                             SavedTip.IsOpen = true;
                             UpdateCommandsCanExecute();
 
@@ -195,7 +195,7 @@ namespace Medior.Pages
                     _startJob = new(
                         async () =>
                         {
-                            ViewModel.SaveJob();
+                            await ViewModel.SaveJob();
                             _jobCancelTokenSource = new CancellationTokenSource();
                             _jobCancelToken = _jobCancelTokenSource.Token;
                             ViewModel.IsJobRunning = true;

@@ -45,9 +45,12 @@
                       IsEnabled="False" />
         
         <StackPanel Orientation="Horizontal" Spacing="10">
-            <Button Content="Import" IsEnabled="False" ToolTipService.ToolTip="Coming soon." />
-            <Button Content="Export" IsEnabled="False" ToolTipService.ToolTip="Coming soon." />
+            <Button Content="Import" Command="{x:Bind ImportProfile}" />
+            <Button Content="Export" Command="{x:Bind ExportProfile}" />
         </StackPanel>
-        
+
+        <TextBlock Text="General" Style="{StaticResource HeaderStyle}" />
+        <Button Content="Open Logs" Command="{x:Bind OpenLogs}" />
+
     </StackPanel>
 </Page>

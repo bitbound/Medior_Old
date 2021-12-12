@@ -4,6 +4,7 @@ namespace Medior.Utilities
 {
     public static class AppFolders
     {
+        public static string AppData => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Medior");
         public static string LogsPath => Path.Combine(TempPath, "Logs");
         public static string PhotoSorterLogsPath => Path.Combine(TempPath, "PhotoSorter");
         public static string RecordingsPath => Path.Combine(TempPath, "Recordings");

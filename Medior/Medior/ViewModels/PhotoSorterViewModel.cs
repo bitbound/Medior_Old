@@ -11,7 +11,7 @@ namespace Medior.ViewModels
 {
     public class PhotoSorterViewModel : ViewModelBase
     {
-        private readonly IAppSettings _appSettings;
+        private readonly IProfileService _profileService;
         private readonly IJobRunner _jobRunner;
         private readonly ILogger<PhotoSorterViewModel> _logger;
         private readonly IPathTransformer _pathTransformer;
@@ -24,14 +24,14 @@ namespace Medior.ViewModels
         private int _jobRunnerProgress;
 
         public PhotoSorterViewModel(
-            IAppSettings appSettings,
+            IProfileService profileService,
             IPathTransformer pathTransformer,
             IJobRunner jobRunner,
             IReportWriter reportWriter,
             IDispatcherService dispatcherService,
             ILogger<PhotoSorterViewModel> logger)
         {
-            _appSettings = appSettings;
+            _profileService = profileService;
             _pathTransformer = pathTransformer;
             _jobRunner = jobRunner;
             _reportWriter = reportWriter;
@@ -69,7 +69,7 @@ namespace Medior.ViewModels
 
         public ObservableCollectionEx<SortJob> SortJobs { get; } = new();
 
-        public void CreateNewSortJob(string sortJobName)
+        public async Task CreateNewSortJob(string sortJobName)
         {
             var sortJob = new SortJob()
             {
@@ -77,18 +77,18 @@ namespace Medior.ViewModels
             };
 
             SortJobs.Add(sortJob);
-            SaveAppSettings();
+            await SaveAppSettings();
 
             LoadSortJobs();
             SelectedJob = SortJobs.FirstOrDefault(x => x.Id == sortJob.Id);
         }
 
-        public void DeleteSortJob()
+        public async Task DeleteSortJob()
         {
             if (SelectedJob is not null)
             {
                 SortJobs.Remove(SelectedJob);
-                SaveAppSettings();
+                await SaveAppSettings();
                 LoadSortJobs();
                 SelectedJob = SortJobs.FirstOrDefault();
             }
@@ -136,7 +136,7 @@ namespace Medior.ViewModels
             return Enum.GetValues<SortOperation>();
         }
 
-        public void RenameSortJob(string newName)
+        public async Task RenameSortJob(string newName)
         {
             var modifiedJob = SortJobs.FirstOrDefault(x => x.Id == SelectedJob?.Id);
             if (modifiedJob is null)
@@ -145,19 +145,19 @@ namespace Medior.ViewModels
             }
 
             modifiedJob.Name = newName;
-            SaveAppSettings();
+            await SaveAppSettings();
             LoadSortJobs();
             SelectedJob = SortJobs.FirstOrDefault(x => x.Id == modifiedJob.Id);
         }
 
-        public void SaveJob()
+        public async Task SaveJob()
         {
             if (_selectedJob is null)
             {
                 return;
             }
 
-            SaveAppSettings();
+            await SaveAppSettings();
         }
 
         public void SetExcludeExtensions(string extensions)
@@ -168,7 +168,6 @@ namespace Medior.ViewModels
             }
 
             SelectedJob.ExcludeExtensions = extensions.Split(",", StringSplitOptions.TrimEntries);
-            SaveAppSettings();
         }
 
         public void SetIncludeExtensions(string extensions)
@@ -179,7 +178,6 @@ namespace Medior.ViewModels
             }
 
             SelectedJob.IncludeExtensions = extensions.Split(",", StringSplitOptions.TrimEntries);
-            SaveAppSettings();
         }
 
         public async Task<JobReport> StartJob(CancellationToken cancellationToken)
@@ -231,7 +229,7 @@ namespace Medior.ViewModels
         {
             SortJobs.Clear();
 
-            foreach (var job in _appSettings.SortJobs.OrderBy(x => x.Name))
+            foreach (var job in _profileService.Profile.SortJobs.OrderBy(x => x.Name))
             {
                 SortJobs.Add(job);
             }
@@ -239,9 +237,11 @@ namespace Medior.ViewModels
             InvokePropertyChanged(nameof(GetExcludeExtensions));
         }
 
-        private void SaveAppSettings()
+        private async Task SaveAppSettings()
         {
-            _appSettings.SortJobs = SortJobs;
+            _profileService.Profile.SortJobs.Clear();
+            _profileService.Profile.SortJobs.AddRange(SortJobs);
+            await _profileService.Save();
         }
     }
 }
