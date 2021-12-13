@@ -40,9 +40,9 @@
 
         <TextBlock Text="Profile" Style="{StaticResource HeaderStyle}" />
 
-        <ToggleSwitch OffContent="Cloud sync (coming soon)"
-                      OnContent="Cloud sync (coming soon)"
-                      IsEnabled="False" />
+        <ToggleSwitch OffContent="Cloud sync disabled"
+                      OnContent="Cloud sync enabled"
+                      IsOn="{x:Bind ViewModel.IsCloudSyncEnabled, Mode=TwoWay}" />
         
         <StackPanel Orientation="Horizontal" Spacing="10">
             <Button Content="Import" Command="{x:Bind ImportProfile}" />

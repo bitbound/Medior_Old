@@ -21,17 +21,24 @@ namespace Medior.Services
 
     public class ProfileService : IProfileService
     {
+        private readonly IApiService _apiService;
         private readonly IFileSystem _fileSystem;
         private readonly JsonSerializerOptions _indentedJson = new() { WriteIndented = true };
         private readonly ILogger<ProfileService> _logger;
+        private readonly SemaphoreSlim _profileLock = new(1, 1);
 
         private readonly string _profilePath = Path.Combine(AppFolders.AppData, "Profile.json");
 
-        public ProfileService(IFileSystem fileSystem, ILogger<ProfileService> logger)
+        public ProfileService(
+            IFileSystem fileSystem,
+            IApiService apiService,
+            ILogger<ProfileService> logger)
         {
             _fileSystem = fileSystem;
+            _apiService = apiService;
             _logger = logger;
             Profile = Load();
+            _ = SyncWithServer();
         }
 
         public Profile Profile { get; private set; }
@@ -40,6 +47,7 @@ namespace Medior.Services
         {
             try
             {
+                await _profileLock.WaitAsync();
                 var profile = JsonSerializer.Serialize(Profile, _indentedJson);
                 await _fileSystem.WriteAllTextAsync(path, profile);
                 return Result.Ok();
@@ -48,6 +56,10 @@ namespace Medior.Services
             {
                 _logger.LogError(ex, "Error while exporting profile.");
             }
+            finally
+            {
+                _profileLock.Release();
+            }
             return Result.Fail("Failed to export profile.  Make sure you have access to the target directory.");
         }
 
@@ -55,18 +67,23 @@ namespace Medior.Services
         {
             try
             {
+                await _profileLock.WaitAsync();
                 var content = await _fileSystem.ReadAllTextAsync(path);
                 var profile = JsonSerializer.Deserialize<Profile>(content);
                 if (profile is not null)
                 {
                     Profile = profile;
-                    await Save();
+                    await SaveInternal();
                     return Result.Ok();
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error importing profile.");
+            }
+            finally
+            {
+                _profileLock.Release();
             }
             return Result.Fail("Failed to import profile.  Please make sure the file is accessible and contains valid JSON.");
         }
@@ -75,16 +92,17 @@ namespace Medior.Services
         {
             try
             {
-                if (!File.Exists(_profilePath))
-                {
-                    _fileSystem.CreateDirectory(Path.GetDirectoryName(_profilePath) ?? "");
-                }
+                await _profileLock.WaitAsync();
 
-                await _fileSystem.WriteAllTextAsync(_profilePath, JsonSerializer.Serialize(Profile, _indentedJson));
+                await SaveInternal();
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error saving profile.");
+            }
+            finally
+            {
+                _profileLock.Release();
             }
         }
 
@@ -92,6 +110,7 @@ namespace Medior.Services
         {
             try
             {
+                _profileLock.Wait();
                 if (!_fileSystem.FileExists(_profilePath))
                 {
                     return new();
@@ -104,6 +123,58 @@ namespace Medior.Services
             {
                 _logger.LogError(ex, "Error while loading profile.");
                 return new();
+            }
+            finally
+            {
+                _profileLock.Release();
+            }
+        }
+
+        private async Task SaveInternal()
+        {
+            await SyncWithServer();
+
+            Profile.LastSaved = DateTimeOffset.Now;
+
+            if (!File.Exists(_profilePath))
+            {
+                _fileSystem.CreateDirectory(Path.GetDirectoryName(_profilePath) ?? "");
+            }
+
+            await _fileSystem.WriteAllTextAsync(_profilePath, JsonSerializer.Serialize(Profile, _indentedJson));
+        }
+
+        private async Task SyncWithServer()
+        {
+            if (!Profile.IsCloudSyncEnabled)
+            {
+                return;
+            }
+
+            try
+            {
+                var result = await _apiService.GetProfile();
+
+                if (!result.IsSuccess)
+                {
+                    _logger.LogWarning("Failed to retrieve profile from server.  Error: {err}", result.Error);
+                    return;
+                }
+
+                var profile = result.Value;
+
+                if (profile?.LastSaved > Profile.LastSaved)
+                {
+                    Profile = profile;
+                }
+                else
+                {
+                    await _apiService.UploadProfile(Profile);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while syncing profile with server.");
             }
         }
     }

@@ -13,11 +13,10 @@ namespace Medior.ViewModels
 {
     public class SettingsViewModel : ViewModelBase
     {
-        private readonly IAuthService _authService;
         private readonly IApiService _apiService;
-        private readonly IProfileService _profileService;
+        private readonly IAuthService _authService;
         private readonly IMessagePublisher _messagePublisher;
-
+        private readonly IProfileService _profileService;
         public SettingsViewModel(
             IMessagePublisher messagePublisher, 
             IAuthService authService,
@@ -33,25 +32,22 @@ namespace Medior.ViewModels
             RegisterSubscriptions();
         }
 
-        private void RegisterSubscriptions()
-        {
-            _messagePublisher.Messenger.Register<SignInStateMessage>(this, (r, m) =>
-            {
-                IsSignedIn = m.Value;
-                InvokePropertyChanged(nameof(Email));
-            });
-        }
-
         public string Email => _authService.Email;
 
-        public void SignOut()
+        public bool IsCloudSyncEnabled
         {
-            _authService.SignOut();
+            get => _profileService.Profile.IsCloudSyncEnabled;
+            set
+            {
+                _profileService.Profile.IsCloudSyncEnabled = value;
+                _ = _profileService.Save();
+                InvokePropertyChanged(nameof(IsCloudSyncEnabled));
+            }
         }
 
-        public async Task<Result> SignIn(IntPtr hwnd)
+        public async Task<Result> ExportProfile(string path)
         {
-            return await _apiService.TrySignIn(hwnd);
+            return await _profileService.Export(path);
         }
 
         public async Task<Result> ImportProfile(string path)
@@ -59,9 +55,23 @@ namespace Medior.ViewModels
             return await _profileService.Import(path);
         }
 
-        public async Task<Result> ExportProfile(string path)
+        public async Task<Result> SignIn(IntPtr hwnd)
         {
-            return await _profileService.Export(path);
+            return await _apiService.TrySignIn(hwnd);
+        }
+
+        public void SignOut()
+        {
+            _authService.SignOut();
+        }
+
+        private void RegisterSubscriptions()
+        {
+            _messagePublisher.Messenger.Register<SignInStateMessage>(this, (r, m) =>
+            {
+                IsSignedIn = m.Value;
+                InvokePropertyChanged(nameof(Email));
+            });
         }
     }
 }

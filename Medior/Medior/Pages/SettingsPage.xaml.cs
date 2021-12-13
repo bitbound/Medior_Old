@@ -25,7 +25,7 @@ namespace Medior.Pages
         private AsyncRelayCommand? _exportProfile;
 
         private AsyncRelayCommand? _importProfile;
-        private RelayCommand _openLogs;
+        private RelayCommand? _openLogs;
 
         public SettingsPage()
         {
