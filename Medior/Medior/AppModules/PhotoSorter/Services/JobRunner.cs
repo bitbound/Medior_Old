@@ -149,9 +149,9 @@ namespace Medior.AppModules.PhotoSorter.Services
                     operationResult = new OperationResult()
                     {
                         FoundExifData = exifFound,
-                        PostOperationPath = file,
+                        PostOperationPath = destinationFile,
                         WasSkipped = true,
-                        PreOperationPath = destinationFile,
+                        PreOperationPath = file,
                     };
 
                     return Task.FromResult(operationResult);
