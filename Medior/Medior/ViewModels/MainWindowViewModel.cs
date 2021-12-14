@@ -146,7 +146,10 @@ namespace Medior.ViewModels
                 (r,m) =>
                 {
                     IsSignedIn = m.Value;
-                    IsGuestMode = false;
+                    if (IsSignedIn)
+                    {
+                        IsGuestMode = false;
+                    }
                 });
             _messagePublisher.Messenger.Register<IsLoadingMessage>(this,
                 (r, m) => IsLoading = m.Value);

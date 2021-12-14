@@ -148,8 +148,8 @@ namespace Medior.Pages
                     _saveJob = new(
                         async () =>
                         {
-                            await ViewModel.SaveJob();
                             SavedTip.IsOpen = true;
+                            await ViewModel.SaveJob();
                             UpdateCommandsCanExecute();
 
                             Debouncer.Debounce(TimeSpan.FromSeconds(2), () =>

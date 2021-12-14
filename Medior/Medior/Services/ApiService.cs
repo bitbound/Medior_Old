@@ -145,7 +145,7 @@ namespace Medior.Services
                 if (httpResult.StatusCode != HttpStatusCode.OK)
                 {
                     _logger.LogWarning("Auth check failed. Sign in required.");
-                    _authService.SignOut();
+                    await _authService.SignOut(false);
                     _messagePublisher.Messenger.Send(new SignInStateMessage(false));
                     return Result.Fail<HttpStatusCode>("Session has expired.  Sign-in required.");
                 }

@@ -60,9 +60,9 @@ namespace Medior.ViewModels
             return await _apiService.TrySignIn(hwnd);
         }
 
-        public void SignOut()
+        public async Task SignOut()
         {
-            _authService.SignOut();
+            await _authService.SignOut(true);
         }
 
         private void RegisterSubscriptions()

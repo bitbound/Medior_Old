@@ -42,6 +42,7 @@
 
         <ToggleSwitch OffContent="Cloud sync disabled"
                       OnContent="Cloud sync enabled"
+                      IsEnabled="{x:Bind ViewModel.IsSignedIn}"
                       IsOn="{x:Bind ViewModel.IsCloudSyncEnabled, Mode=TwoWay}" />
         
         <StackPanel Orientation="Horizontal" Spacing="10">
@@ -50,7 +51,7 @@
         </StackPanel>
 
         <TextBlock Text="General" Style="{StaticResource HeaderStyle}" />
-        <Button Content="Open Logs" Command="{x:Bind OpenLogs}" />
+        <Button Content="Open Logs" Command="{x:Bind OpenLogs, Mode=OneTime}" />
 
     </StackPanel>
 </Page>

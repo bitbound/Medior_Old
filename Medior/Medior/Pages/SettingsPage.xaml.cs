@@ -29,7 +29,7 @@ namespace Medior.Pages
 
         public SettingsPage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         public AsyncRelayCommand ExportProfile
@@ -135,9 +135,9 @@ namespace Medior.Pages
             }
         }
 
-        private void SignOutHyperlink_Click(Microsoft.UI.Xaml.Documents.Hyperlink sender, Microsoft.UI.Xaml.Documents.HyperlinkClickEventArgs args)
+        private async void SignOutHyperlink_Click(Microsoft.UI.Xaml.Documents.Hyperlink sender, Microsoft.UI.Xaml.Documents.HyperlinkClickEventArgs args)
         {
-            ViewModel.SignOut();
+            await ViewModel.SignOut();
         }
     }
 }

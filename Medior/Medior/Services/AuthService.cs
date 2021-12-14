@@ -3,6 +3,7 @@ using Medior.Models.Messages;
 using Medior.Utilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Client;
+using Microsoft.Toolkit;
 using System.Threading.Tasks;
 
 namespace Medior.Services
@@ -14,7 +15,7 @@ namespace Medior.Services
         Task<Result<AuthenticationResult>> EditProfile(IntPtr windowHandle);
         Task<Result<AuthenticationResult>> GetTokenSilently(IntPtr windowHandle, bool fallbackToInteractive);
         Task<Result<AuthenticationResult>> SignInInteractive(IntPtr windowHandle);
-        void SignOut();
+        Task SignOut(bool removeAccount);
     }
 
     public class AuthService : IAuthService
@@ -161,9 +162,22 @@ namespace Medior.Services
             return Result.Ok(_lastAuthResult);
         }
 
-        public void SignOut()
+        public async Task SignOut(bool removeAccount)
         {
             _lastAuthResult = null;
+
+            if (removeAccount)
+            {
+                var result = await _publicClientApp.GetAccountsAsync();
+                if (result is not null)
+                {
+                    foreach (var account in result)
+                    {
+                        await _publicClientApp.RemoveAsync(account);
+                    }
+                }
+            }
+
             UpdateSignInState(false);
         }
 
