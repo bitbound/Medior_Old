@@ -13,6 +13,9 @@
     <PackageIcon>comet.png</PackageIcon>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
+  <PropertyGroup Condition="$(Configuration) == Debug">
+	<WindowsPackageType>None</WindowsPackageType>
+  </PropertyGroup>
   <ItemGroup>
     <Content Remove="Media\Screenshots\Dashboard.png" />
     <Content Remove="Media\Screenshots\Login.png" />

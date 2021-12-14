@@ -13,7 +13,7 @@ namespace Medior.Utilities
         /// <summary>
         /// Path to the token cache
         /// </summary>
-        public static readonly string CacheFilePath = Path.Combine(ApplicationData.Current.LocalFolder.Path, ".msalcache.bin");
+        public static readonly string CacheFilePath = Path.Combine(AppFolders.AppData, ".msalcache.bin");
 
         private static readonly object FileLock = new();
 
