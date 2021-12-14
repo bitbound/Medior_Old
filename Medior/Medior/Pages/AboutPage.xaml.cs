@@ -1,4 +1,5 @@
 ﻿using Microsoft.UI.Xaml.Controls;
+using Windows.ApplicationModel;
 using Windows.System;
 
 namespace Medior.Pages
@@ -13,7 +14,21 @@ namespace Medior.Pages
             InitializeComponent();
         }
 
-        public string? Version => typeof(AboutPage)?.Assembly?.GetName()?.Version?.ToString();
+        public string? Version
+        {
+            get
+            {
+                try
+                {
+                    var version = Package.Current?.Id?.Version ?? new PackageVersion();
+                    return $"{version.Major}.{version.Minor}.{version.Build}.{version.Revision}";
+                }
+                catch
+                {
+                    return typeof(AboutPage)?.Assembly?.GetName()?.Version?.ToString();
+                }
+            }
+        }
 
         private async void ContactHyperlink_Click(Microsoft.UI.Xaml.Documents.Hyperlink sender, Microsoft.UI.Xaml.Documents.HyperlinkClickEventArgs args)
         {
