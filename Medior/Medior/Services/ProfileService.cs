@@ -27,7 +27,7 @@ namespace Medior.Services
         private readonly JsonSerializerOptions _indentedJson = new() { WriteIndented = true };
         private readonly ILogger<ProfileService> _logger;
         private readonly SemaphoreSlim _profileLock = new(1, 1);
-        private readonly string _profilePath = Path.Combine(AppFolders.AppData, $"Profile_{_configuration}.json");
+        private readonly string _profilePath = Path.Combine(AppFolders.AppData, $"Profile{_configuration}.json");
 
         public ProfileService(
             IFileSystem fileSystem,
