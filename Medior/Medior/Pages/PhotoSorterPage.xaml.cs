@@ -5,6 +5,7 @@ using Medior.ViewModels;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Input;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
@@ -19,22 +20,19 @@ namespace Medior.Pages
     /// </summary>
     public sealed partial class PhotoSorterPage : Page
     {
+        private RelayCommand? _cancelJob;
         private AsyncRelayCommand? _deleteJob;
+        private CancellationToken _jobCancelToken;
+        private CancellationTokenSource? _jobCancelTokenSource;
+        private AsyncRelayCommand? _newJob;
         private AsyncRelayCommand? _renameJob;
         private AsyncRelayCommand? _saveJob;
-        private AsyncRelayCommand? _newJob;
         private AsyncRelayCommand? _showDestinationTransform;
         private AsyncRelayCommand? _startJob;
-        private RelayCommand? _cancelJob;
-        private CancellationTokenSource? _jobCancelTokenSource;
-        private CancellationToken _jobCancelToken;
-
         public PhotoSorterPage()
         {
             InitializeComponent();
         }
-
-        public PhotoSorterViewModel ViewModel { get; } = Ioc.Default.GetRequiredService<PhotoSorterViewModel>();
 
         public RelayCommand CancelJob
         {
@@ -51,6 +49,30 @@ namespace Medior.Pages
                     );
                 }
                 return _cancelJob;
+            }
+        }
+
+        public AsyncRelayCommand DeleteJob
+        {
+            get
+            {
+                if (_deleteJob is null)
+                {
+                    _deleteJob = new(
+                        async () =>
+                        {
+                            var result = await this.Confirm("Confirm Delete",
+                               "Are you sure you want to delete this sort job?");
+
+                            if (result == ContentDialogResult.Primary)
+                            {
+                                await ViewModel.DeleteSortJob();
+                            }
+                        },
+                        () => ViewModel.SelectedJob is not null
+                    );
+                }
+                return _deleteJob;
             }
         }
 
@@ -81,30 +103,6 @@ namespace Medior.Pages
                     );
                 }
                 return _newJob;
-            }
-        }
-
-        public AsyncRelayCommand DeleteJob
-        {
-            get
-            {
-                if (_deleteJob is null)
-                {
-                    _deleteJob = new(
-                        async () =>
-                        {
-                            var result = await this.Confirm("Confirm Delete",
-                               "Are you sure you want to delete this sort job?");
-
-                            if (result == ContentDialogResult.Primary)
-                            {
-                                await ViewModel.DeleteSortJob();
-                            }
-                        },
-                        () => ViewModel.SelectedJob is not null
-                    );
-                }
-                return _deleteJob;
             }
         }
 
@@ -159,7 +157,7 @@ namespace Medior.Pages
                                     SavedTip.IsOpen = false;
                                 });
                             });
-                          
+
                         },
                         () => ViewModel.SelectedJob is not null
                     );
@@ -230,6 +228,13 @@ namespace Medior.Pages
             }
         }
 
+        public PhotoSorterViewModel ViewModel { get; } = Ioc.Default.GetRequiredService<PhotoSorterViewModel>();
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            ViewModel.LoadSortJobs();
+            base.OnNavigatedTo(e);
+        }
         private void DestinationFileTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             ShowDestinationTransform.NotifyCanExecuteChanged();

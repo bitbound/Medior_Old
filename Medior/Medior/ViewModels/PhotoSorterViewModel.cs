@@ -11,18 +11,17 @@ namespace Medior.ViewModels
 {
     public class PhotoSorterViewModel : ViewModelBase
     {
-        private readonly IProfileService _profileService;
+        private readonly IDispatcherService _dispatcherService;
         private readonly IJobRunner _jobRunner;
         private readonly ILogger<PhotoSorterViewModel> _logger;
         private readonly IPathTransformer _pathTransformer;
+        private readonly IProfileService _profileService;
         private readonly IReportWriter _reportWriter;
-        private readonly IDispatcherService _dispatcherService;
         private string? _currentJobRunnerFile;
         private bool _isDryRun;
         private bool _isJobRunning;
-        private SortJob? _selectedJob;
         private int _jobRunnerProgress;
-
+        private SortJob? _selectedJob;
         public PhotoSorterViewModel(
             IProfileService profileService,
             IPathTransformer pathTransformer,
@@ -37,11 +36,15 @@ namespace Medior.ViewModels
             _reportWriter = reportWriter;
             _dispatcherService = dispatcherService;
             _logger = logger;
-            
-            LoadSortJobs();
 
             _jobRunner.ProgressChanged += JobRunner_ProgressChanged;
             _jobRunner.CurrentTaskChanged += JobRunner_CurrentTaskChanged;
+        }
+
+        public string CurrentJobRunnerTask
+        {
+            get => _currentJobRunnerFile ?? "";
+            set => SetProperty(ref _currentJobRunnerFile, value);
         }
 
         public bool IsDryRun
@@ -54,6 +57,21 @@ namespace Medior.ViewModels
         {
             get => _isJobRunning;
             set => SetProperty(ref _isJobRunning, value);
+        }
+
+        public int JobRunnerProgress
+        {
+            get => _jobRunnerProgress;
+            set
+            {
+                SetProperty(ref _jobRunnerProgress, value);
+                InvokePropertyChanged(nameof(JobRunnerProgressPercent));
+            }
+        }
+
+        public string JobRunnerProgressPercent
+        {
+            get => $"{JobRunnerProgress}%";
         }
 
         public SortJob? SelectedJob
@@ -136,6 +154,18 @@ namespace Medior.ViewModels
             return Enum.GetValues<SortOperation>();
         }
 
+        public void LoadSortJobs()
+        {
+            SortJobs.Clear();
+
+            foreach (var job in _profileService.Profile.SortJobs.OrderBy(x => x.Name))
+            {
+                SortJobs.Add(job);
+            }
+            InvokePropertyChanged(nameof(GetIncludeExtensions));
+            InvokePropertyChanged(nameof(GetExcludeExtensions));
+        }
+
         public async Task RenameSortJob(string newName)
         {
             var modifiedJob = SortJobs.FirstOrDefault(x => x.Id == SelectedJob?.Id);
@@ -187,28 +217,6 @@ namespace Medior.ViewModels
             report.ReportPath = await _reportWriter.WriteReport(report);
             return report;
         }
-
-        public string CurrentJobRunnerTask
-        {
-            get => _currentJobRunnerFile ?? "";
-            set => SetProperty(ref _currentJobRunnerFile, value);
-        }
-
-        public int JobRunnerProgress
-        {
-            get => _jobRunnerProgress;
-            set
-            {
-                SetProperty(ref _jobRunnerProgress, value);
-                InvokePropertyChanged(nameof(JobRunnerProgressPercent));
-            }
-        }
-
-        public string JobRunnerProgressPercent
-        {
-            get => $"{JobRunnerProgress}%";
-        }
-
         private void JobRunner_CurrentTaskChanged(object? sender, string task)
         {
             _dispatcherService.MainWindowDispatcher?.TryEnqueue(() =>
@@ -224,17 +232,6 @@ namespace Medior.ViewModels
             {
                 JobRunnerProgress = e.ProgressPercentage;
             });
-        }
-        private void LoadSortJobs()
-        {
-            SortJobs.Clear();
-
-            foreach (var job in _profileService.Profile.SortJobs.OrderBy(x => x.Name))
-            {
-                SortJobs.Add(job);
-            }
-            InvokePropertyChanged(nameof(GetIncludeExtensions));
-            InvokePropertyChanged(nameof(GetExcludeExtensions));
         }
 
         private async Task SaveAppSettings()
