@@ -26,18 +26,18 @@ namespace Medior.Services
         private static readonly string _policySignUpSignIn = "b2c_1_signup_signin";
         private static readonly string _tenantName = "mediorapp";
         private static AuthenticationResult? _lastAuthResult;
-        private readonly IChrono _chrono;
+        private readonly ISystemTime _systemTime;
         private readonly IMessagePublisher _messagePublisher;
         private readonly ILogger<AuthService> _logger;
         private readonly IPublicClientApplication _publicClientApp;
 
         public AuthService(
             IMessagePublisher messagePublisher,
-            IChrono chrono,
+            ISystemTime systemTime,
             ILogger<AuthService> logger)
         {
             _messagePublisher = messagePublisher;
-            _chrono = chrono;
+            _systemTime = systemTime;
             _logger = logger;
 
             _publicClientApp = PublicClientApplicationBuilder.Create(_clientId)
@@ -60,7 +60,7 @@ namespace Medior.Services
 
         public bool IsSignedIn =>
             _lastAuthResult?.AccessToken is not null &&
-            _lastAuthResult.ExpiresOn > _chrono.Now;
+            _lastAuthResult.ExpiresOn > _systemTime.Now;
         private string[] ApiScopes => new[] { $"https://{Tenant}/medior-api/app.user" };
         private string AuthorityBase => $"https://{AzureAdB2CHostname}/tfp/{Tenant}/";
         private string AuthorityEditProfile => $"{AuthorityBase}{_policyEditProfile}";

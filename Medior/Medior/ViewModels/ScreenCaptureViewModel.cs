@@ -21,7 +21,7 @@ namespace Medior.ViewModels
     public class ScreenCaptureViewModel : ViewModelBase
     {
         private readonly IApiService _apiService;
-        private readonly IChrono _chrono;
+        private readonly ISystemTime _chrono;
         private readonly IFileSystem _fileSystem;
         private readonly ILogger<ScreenCaptureViewModel> _logger;
         private readonly IMessagePublisher _messagePublisher;
@@ -39,7 +39,7 @@ namespace Medior.ViewModels
             IFileSystem fileSystem,
             IScreenRecorder screenRecorder,
             IApiService apiService,
-            IChrono chrono,
+            ISystemTime chrono,
             IMessagePublisher messagePublisher,
             ILogger<ScreenCaptureViewModel> logger)
         {

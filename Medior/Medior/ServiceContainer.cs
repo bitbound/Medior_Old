@@ -21,7 +21,12 @@ namespace Medior
 
             _isBuilt = true;
             var collection = new ServiceCollection();
-            collection.AddLogging();
+            collection.AddLogging(builder =>
+            {
+                builder.ClearProviders();
+                var fileLoggerProvider = new FileLoggerProvider(new SystemTime(), new FileSystem());
+                builder.AddProvider(fileLoggerProvider);
+            });
             collection.AddHttpClient();
             collection.AddScoped<IMetadataReader, MetadataReader>();
             collection.AddScoped<IJobRunner, JobRunner>();
@@ -36,7 +41,7 @@ namespace Medior
             collection.AddScoped<IScreenRecorder, ScreenRecorder>();
             collection.AddScoped<IScreenCapturer, ScreenCapturer>();
             collection.AddSingleton<IAppModuleStore, AppModuleStore>();
-            collection.AddSingleton<IChrono, Chrono>();
+            collection.AddSingleton<ISystemTime, SystemTime>();
             collection.AddSingleton<IDispatcherService, DispatcherService>();
             collection.AddSingleton<IProfileService, ProfileService>();
             collection.AddSingleton<IAuthService, AuthService>();
@@ -58,10 +63,6 @@ namespace Medior
             collection.AddSingleton<QrCodeCreatorViewModel>();
 
             var instance = collection.BuildServiceProvider();
-
-            instance
-                .GetRequiredService<ILoggerFactory>()
-                .AddProvider(new FileLoggerProvider(instance));
 
             Ioc.Default.ConfigureServices(instance);
         }

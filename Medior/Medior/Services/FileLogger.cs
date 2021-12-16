@@ -11,13 +11,15 @@ namespace Medior.Services
         private static readonly ConcurrentQueue<string> _logQueue = new();
         private static readonly ConcurrentStack<string> _scopeStack = new();
         private static readonly SemaphoreSlim _writeLock = new(1, 1);
-        private readonly IServiceProvider _services;
+        private readonly ISystemTime _systemTime;
+        private readonly IFileSystem _fileSystem;
         private readonly string _categoryName;
         private readonly System.Timers.Timer _sinkTimer = new(5000) { AutoReset = false };
 
-        public FileLogger(IServiceProvider services, string categoryName)
+        public FileLogger(ISystemTime systemTime, IFileSystem fileSystem, string categoryName)
         {
-            _services = services;
+            _systemTime = systemTime;
+            _fileSystem = fileSystem;
             _categoryName = categoryName;
             _sinkTimer.Elapsed += SinkTimer_Elapsed;
         }
@@ -26,8 +28,7 @@ namespace Medior.Services
         {
             get
             {
-                var chrono = _services.GetRequiredService<IChrono>();
-                return Path.Combine(AppFolders.LogsPath, $"{chrono.Now:yyyy-MM-dd}.log");
+                return Path.Combine(AppFolders.LogsPath, $"{_systemTime.Now:yyyy-MM-dd}.log");
             }
         }
 
@@ -82,7 +83,6 @@ namespace Medior.Services
         {
             var ex = exception;
             var exMessage = exception?.Message;
-            var chrono = _services.GetRequiredService<IChrono>();
 
             while (ex?.InnerException is not null)
             {
@@ -91,7 +91,7 @@ namespace Medior.Services
             }
 
             return $"[{logLevel}]\t" +
-                $"{chrono.Now:yyyy-MM-dd HH:mm:ss.fff}\t" +
+                $"{_systemTime.Now:yyyy-MM-dd HH:mm:ss.fff}\t" +
                 (
                     scopeStack.Any() ?
                         $"[{string.Join(" - ", scopeStack)} - {categoryName}]\t" :
@@ -107,9 +107,6 @@ namespace Medior.Services
             {
                 await _writeLock.WaitAsync();
 
-                using var scope = _services.CreateScope();
-                var fileSystem = scope.ServiceProvider.GetRequiredService<IFileSystem>();
-
                 var lines = new List<string>();
 
                 while (_logQueue.TryDequeue(out var entry))
@@ -123,13 +120,13 @@ namespace Medior.Services
                     return;
                 }
 
-                if (!fileSystem.FileExists(LogPath))
+                if (!_fileSystem.FileExists(LogPath))
                 {
-                    fileSystem.CreateDirectory(dirPath);
-                    fileSystem.CreateFile(LogPath).Close();
+                    _fileSystem.CreateDirectory(dirPath);
+                    _fileSystem.CreateFile(LogPath).Close();
                 }
 
-                await fileSystem.AppendAllLinesAsync(LogPath, lines);
+                await _fileSystem.AppendAllLinesAsync(LogPath, lines);
             }
             catch (Exception ex)
             {

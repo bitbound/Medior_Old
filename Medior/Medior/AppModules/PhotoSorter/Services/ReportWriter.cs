@@ -15,13 +15,13 @@ namespace Medior.AppModules.PhotoSorter.Services
 
     public class ReportWriter : IReportWriter
     {
-        private readonly IChrono _chrono;
+        private readonly ISystemTime _systemTime;
         private readonly IFileSystem _fileSystem;
         private readonly ILogger<ReportWriter> _logger;
 
-        public ReportWriter(IChrono chrono, IFileSystem fileSystem, ILogger<ReportWriter> logger)
+        public ReportWriter(ISystemTime systemTime, IFileSystem fileSystem, ILogger<ReportWriter> logger)
         {
-            _chrono = chrono;
+            _systemTime = systemTime;
             _fileSystem = fileSystem;
             _logger = logger;
         }
@@ -45,7 +45,7 @@ namespace Medior.AppModules.PhotoSorter.Services
 
         private string GetLogPath() => Path.Combine(
             AppFolders.PhotoSorterLogsPath,
-            $"PhotoSorter_Report_{_chrono.Now:yyyy-MM-dd HH.mm.ss.fff}.log");
+            $"PhotoSorter_Report_{_systemTime.Now:yyyy-MM-dd HH.mm.ss.fff}.log");
 
         private async Task WriteReportInternal(JobReport report, string logPath)
         {

@@ -1,11 +1,11 @@
 ﻿namespace Medior.Services
 {
-    public interface IChrono
+    public interface ISystemTime
     {
         DateTimeOffset Now { get; }
     }
 
-    public class Chrono : IChrono
+    public class SystemTime : ISystemTime
     {
         public DateTimeOffset Now => DateTimeOffset.Now;
     }

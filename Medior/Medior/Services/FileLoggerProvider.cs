@@ -4,16 +4,18 @@ namespace Medior.Services
 {
     public class FileLoggerProvider : ILoggerProvider
     {
-        private readonly IServiceProvider _services;
+        private readonly ISystemTime _systemTime;
+        private readonly IFileSystem _fileSystem;
 
-        public FileLoggerProvider(IServiceProvider services)
+        public FileLoggerProvider(ISystemTime systemTime, IFileSystem fileSystem)
         {
-            _services = services;
+            _systemTime = systemTime;
+            _fileSystem = fileSystem;
         }
 
         public ILogger CreateLogger(string categoryName)
         {
-            return new FileLogger(_services, categoryName);
+            return new FileLogger(_systemTime, _fileSystem, categoryName);
         }
 
         public void Dispose()
