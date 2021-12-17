@@ -85,13 +85,7 @@
             </TextBlock>
 
             <TextBlock Text="Upcoming Features" Style="{StaticResource HeaderStyle}" />
-            <TextBlock Margin="10,0,0,0" Text="- Cloud syncing for app settings" />
-
-            <TextBlock Text="Roadmap Features" Style="{StaticResource HeaderStyle}" />
             <TextBlock Margin="10,0,0,0" Text="- General file sharing" />
-            <TextBlock Margin="10,0,0,0" Text="- Batch photo compression/resizing" />
-            <TextBlock Margin="10,0,0,0" Text="- Cross-device clipboard syncing" />
-            <TextBlock Margin="10,0,0,0" Text="- Unattended remote PC access" />
 
             <TextBlock Text="Disclaimer" Style="{StaticResource HeaderStyle}" />
             <TextBlock TextWrapping="Wrap" Text="THIS APPLICATION IS PROVIDED 'AS IS' WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED." />
