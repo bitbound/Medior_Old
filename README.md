@@ -1,8 +1,7 @@
 # Medior
 A productivity and multimedia toolkit for Windows.  Powered by .NET 6, WinUI 3, Azure AD B2C, and CosmosDB.
 
-
-## Coming soon!
+> Notice: Project has been archived.
 
 Currently in development, Medior is a Windows-only productivity app that will release on the Windows Store.  Authentication is powered by Azure AD B2C, and data is stored in Azure CosmosDB.  The back-end is built with ASP.NET Core Web API and SignalR.
 
